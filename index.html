@@ -10,6 +10,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@500;600;700&family=Work+Sans:wght@400;500;600&family=Jost:wght@500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 
 <link rel="stylesheet" href="styles.css">
 </head>
@@ -25,6 +26,7 @@
 
     <nav class="main-nav" id="main-nav">
       <a href="#mesas">Mesas</a>
+      <a href="#configurador">Configurador 3D</a>
       <a href="#oficio">Nuestro oficio</a>
       <a href="#contacto">Contacto</a>
     </nav>
@@ -84,7 +86,7 @@
       <div class="cards-grid">
 
         <!-- Card 1 -->
-        <article class="card" data-product
+        <article class="card" data-product data-mp="true"
           data-name="Mesa Ratona Mosaico Negro"
           data-price="100.000"
           data-img="assets/images/mesa-rustica-negra.jpg"
@@ -102,14 +104,14 @@
               <span class="price">$100.000</span>
               <div class="card-actions">
                 <button class="btn btn-outline btn-small" data-action="ver-mas">Ver más</button>
-                <a href="#" class="btn btn-mustard btn-small" data-action="comprar" target="_blank" rel="noopener">Comprar</a>
+                <button class="btn btn-mustard btn-small" data-action="pagar">Pagar</button>
               </div>
             </div>
           </div>
         </article>
 
         <!-- Card 2 -->
-        <article class="card" data-product
+        <article class="card" data-product data-mp="true"
           data-name="Mesa Ratona Mosaico Mostaza"
           data-price="100.000"
           data-img="assets/images/mesa-rustica-amarilla.jpg"
@@ -127,7 +129,7 @@
               <span class="price">$100.000</span>
               <div class="card-actions">
                 <button class="btn btn-outline btn-small" data-action="ver-mas">Ver más</button>
-                <a href="#" class="btn btn-mustard btn-small" data-action="comprar" target="_blank" rel="noopener">Comprar</a>
+                <button class="btn btn-mustard btn-small" data-action="pagar">Pagar</button>
               </div>
             </div>
           </div>
@@ -189,6 +191,9 @@
             <span class="price price-lg" id="modal-price"></span>
             <a href="#" class="btn btn-mustard" id="modal-comprar" target="_blank" rel="noopener">Comprar por WhatsApp</a>
           </div>
+          <p class="modal-alt">
+            ¿Preferís consultar antes? <a href="#" id="modal-whatsapp-alt" target="_blank" rel="noopener">Escribinos por WhatsApp</a>
+          </p>
         </div>
       </div>
     </div>
@@ -221,6 +226,72 @@
           <li>Producción y entrega coordinadas por WhatsApp</li>
         </ul>
         <a href="#mesas" class="btn btn-ink">Ver la colección</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ CONFIGURADOR 3D ============ -->
+  <section class="configurador-section" id="configurador">
+    <div class="container">
+      <p class="eyebrow center">Diseñá la tuya</p>
+      <h2 class="section-title center">Armá tu mesa<br>en 3D</h2>
+      <p class="section-sub center">
+        Elegí el modelo, el mosaico y el color. Cuando estés listo, la pedís directo por WhatsApp.
+      </p>
+
+      <div class="configurador-grid">
+
+        <!-- Canvas 3D -->
+        <div class="ganchito-canvas-box" id="ganchito-canvas-box">
+          <canvas id="ganchito-canvas"></canvas>
+          <span class="ganchito-hint">arrastrá para rotar</span>
+        </div>
+
+        <!-- Controles -->
+        <div class="ganchito-controles">
+
+          <div class="ganchito-grupo">
+            <p class="ganchito-label">Tipo de mesa</p>
+            <div class="ganchito-btn-grupo" id="ganchito-btn-tipo">
+              <button class="ganchito-opt activo" data-val="ratona-madera">Ratona c/ patas</button>
+              <button class="ganchito-opt" data-val="ratona-yeso">Ratona de yeso (U)</button>
+              <button class="ganchito-opt" data-val="cubo">Cubo</button>
+            </div>
+          </div>
+
+          <div class="ganchito-grupo">
+            <p class="ganchito-label">Tamaño del mosaico</p>
+            <div class="ganchito-btn-grupo" id="ganchito-btn-tamano">
+              <button class="ganchito-opt activo" data-val="chico">Chico</button>
+              <button class="ganchito-opt" data-val="grande">Grande</button>
+            </div>
+          </div>
+
+          <div class="ganchito-grupo">
+            <p class="ganchito-label">Color</p>
+            <div class="ganchito-colores-wrap" id="ganchito-colores">
+              <button class="ganchito-color-dot activo" data-color="negro"     aria-label="Negro"     style="background:#1a1a1a;"></button>
+              <button class="ganchito-color-dot"        data-color="navy"      aria-label="Navy"      style="background:#14213E;"></button>
+              <button class="ganchito-color-dot"        data-color="mostaza"   aria-label="Mostaza"   style="background:#C2872E;"></button>
+              <button class="ganchito-color-dot"        data-color="rojo"      aria-label="Rojo"      style="background:#C0392B;"></button>
+              <button class="ganchito-color-dot"        data-color="oliva"     aria-label="Oliva"     style="background:#6B7A5E;"></button>
+              <button class="ganchito-color-dot"        data-color="terracota" aria-label="Terracota" style="background:#A0522D;"></button>
+              <button class="ganchito-color-dot"        data-color="celeste"   aria-label="Celeste"   style="background:#2980B9;"></button>
+            </div>
+          </div>
+
+          <!-- Resumen y CTA -->
+          <div class="ganchito-resumen-card">
+            <p class="ganchito-resumen-label">Tu mesa:</p>
+            <p class="ganchito-resumen-texto" id="ganchito-resumen">
+              Mesa ratona c/ patas · Mosaico chico · Negro
+            </p>
+            <a class="btn btn-mustard" id="ganchito-wsp" href="#" target="_blank" rel="noopener">
+              Pedir por WhatsApp
+            </a>
+          </div>
+
+        </div>
       </div>
     </div>
   </section>
@@ -258,5 +329,6 @@
 </footer>
 
 <script src="script.js"></script>
+<script src="ganchito-configurador.js"></script>
 </body>
 </html>
