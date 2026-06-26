@@ -16,6 +16,18 @@
 </head>
 <body>
 
+<!-- Fondo vivo de mosaico — canvas que respira detrás de todo -->
+<canvas id="mosaic-bg-canvas" aria-hidden="true"></canvas>
+
+<!-- Story nav lateral (desktop) -->
+<nav class="story-nav" id="story-nav" aria-label="Progreso">
+  <button class="story-dot active" data-target="top"          aria-label="Inicio"><span>Inicio</span></button>
+  <button class="story-dot"        data-target="mesas"        aria-label="Las mesas"><span>Las mesas</span></button>
+  <button class="story-dot"        data-target="configurador" aria-label="Diseñá la tuya"><span>Diseñá la tuya</span></button>
+  <button class="story-dot"        data-target="oficio"       aria-label="El oficio"><span>El oficio</span></button>
+  <button class="story-dot"        data-target="pedir"        aria-label="Pedila"><span>Pedila</span></button>
+</nav>
+
 <!-- ============ HEADER ============ -->
 <header class="site-header" id="top">
   <div class="container header-row">
@@ -28,7 +40,7 @@
       <a href="#mesas">Mesas</a>
       <a href="#configurador">Configurador 3D</a>
       <a href="#oficio">Nuestro oficio</a>
-      <a href="#contacto">Contacto</a>
+      <a href="#pedir">Contacto</a>
     </nav>
 
     <a class="btn btn-mustard btn-small header-cta" target="_blank" rel="noopener" id="header-whatsapp">
@@ -43,35 +55,49 @@
 
 <main>
 
-  <!-- ============ HERO ============ -->
-  <section class="hero">
-    <div class="container hero-grid">
-      <div class="hero-copy">
-        <p class="eyebrow">Hecho a mano · Olavarría, Bs. As.</p>
-        <h1 class="hero-title">Muebles con<br>historia,<br>hechos a mano.</h1>
-        <p class="hero-sub">
-          Mosaico armado pieza por pieza, madera maciza y el mismo cuidado
-          que le pondrías a una guitarra criolla. Elegís el diseño, nosotros
-          la construimos en el taller.
-        </p>
-        <div class="hero-actions">
-          <a href="#mesas" class="btn btn-ink">Ver las mesas</a>
-          <a href="#configurador" class="btn btn-outline">Diseñar en 3D</a>
-        </div>
-      </div>
+  <!-- ============ HERO — video full screen ============ -->
+  <section class="hero hero-video" id="hero-section">
+  <div class="hero-video-wrap">
+    <video
+      id="hero-vid"
+      class="hero-vid"
+      autoplay
+      muted
+      loop
+      playsinline
+      src="assets/video/videoganchito.mov"
+    ></video>
+    <div class="hero-vid-overlay"></div>
+  </div>
 
-      <div class="hero-media">
-        <figure class="framed-photo">
-          <img src="assets/images/mesa-rustica-negra.jpg" alt="Mesa ratona con mosaico negro y blanco, foto del taller de Ganchito en Olavarría">
-        </figure>
-        <span class="hero-badge">Tope 100% mosaico<br>armado a mano</span>
+    <!-- Contenido encima del video -->
+    <div class="hero-video-content">
+      <p class="eyebrow hero-eyebrow">Hecho a mano · Olavarría, Bs. As.</p>
+      <h1 class="hero-title hero-title-video">Muebles con<br>historia,<br>hechos a mano.</h1>
+      <p class="hero-sub hero-sub-video">
+        Mosaico armado pieza por pieza, madera maciza y el mismo cuidado
+        que le pondrías a una guitarra criolla.
+      </p>
+      <div class="hero-actions">
+        <a href="#mesas" class="btn btn-mustard">Ver las mesas</a>
+        <a href="#configurador" class="btn btn-outline-light">Diseñar en 3D</a>
       </div>
     </div>
 
-    <div class="mosaic-strip" aria-hidden="true">
-      <div class="mosaic-strip-track"></div>
-    </div>
+    <!-- Flecha scroll -->
+    <a href="#mesas" class="hero-scroll-arrow" aria-label="Ir a las mesas">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+    </a>
+
   </section>
+
+  <!-- Puente hero → mesas -->
+  <div class="story-bridge" data-bridge>
+    <a href="#mesas" class="bridge-link">
+      <span class="bridge-text">Tres modelos, un solo oficio</span>
+      <span class="bridge-arrow">↓</span>
+    </a>
+  </div>
 
   <!-- ============ PRODUCTOS ============ -->
   <section class="productos" id="mesas">
@@ -79,7 +105,7 @@
       <p class="eyebrow center">Colección</p>
       <h2 class="section-title center">Tres mesas,<br>una para vos</h2>
       <p class="section-sub center">
-        Cada modelo tiene su carácter. Tocá "ver más" para conocer medidas, materiales y tiempos.
+        Tocá "ver más" para conocer medidas, materiales y tiempos.
       </p>
 
       <div class="cards-grid">
@@ -108,6 +134,8 @@
                 <div class="photo-placeholder"><span>Foto 4</span></div>
               </div>
             </div>
+            <button class="gallery-arrow gallery-arrow-prev" aria-label="Foto anterior">&#8249;</button>
+            <button class="gallery-arrow gallery-arrow-next" aria-label="Foto siguiente">&#8250;</button>
             <div class="gallery-dots" aria-hidden="true">
               <span class="gdot active"></span>
               <span class="gdot"></span>
@@ -152,6 +180,8 @@
                 <div class="photo-placeholder"><span>Foto 4</span></div>
               </div>
             </div>
+            <button class="gallery-arrow gallery-arrow-prev" aria-label="Foto anterior">&#8249;</button>
+            <button class="gallery-arrow gallery-arrow-next" aria-label="Foto siguiente">&#8250;</button>
             <div class="gallery-dots" aria-hidden="true">
               <span class="gdot active"></span>
               <span class="gdot"></span>
@@ -196,6 +226,8 @@
                 <div class="photo-placeholder"><span>Foto 4</span></div>
               </div>
             </div>
+            <button class="gallery-arrow gallery-arrow-prev" aria-label="Foto anterior">&#8249;</button>
+            <button class="gallery-arrow gallery-arrow-next" aria-label="Foto siguiente">&#8250;</button>
             <div class="gallery-dots" aria-hidden="true">
               <span class="gdot active"></span>
               <span class="gdot"></span>
@@ -219,6 +251,14 @@
       </div>
     </div>
   </section>
+
+  <!-- Puente mesas → configurador -->
+  <div class="story-bridge story-bridge-dark" data-bridge>
+    <a href="#configurador" class="bridge-link">
+      <span class="bridge-text">¿Y si la armás exactamente como la querés?</span>
+      <span class="bridge-arrow">↓</span>
+    </a>
+  </div>
 
   <!-- ============ MODAL PRODUCTO ============ -->
   <div class="modal-overlay" id="modal-overlay" hidden>
@@ -253,20 +293,127 @@
       <p class="eyebrow center">Diseñá la tuya</p>
       <h2 class="section-title center">Armá tu mesa<br>en 3D</h2>
       <p class="section-sub center">
-        Elegí el modelo, el patrón de mosaico y los colores. Cuando estés listo, la pedís directo por WhatsApp.
+        Elegí el modelo, el patrón de mosaico y los colores.
       </p>
 
-      <div class="configurador-grid">
+      <!-- WIZARD MOBILE (oculto en desktop) -->
+      <div class="wizard-mobile" id="wizard-mobile">
+        <div class="wizard-steps">
+
+          <div class="wizard-step active" data-step="0">
+            <p class="wizard-step-label">¿Qué mesa querés?</p>
+            <div class="wizard-opciones">
+              <button class="wizard-opt activo" data-key="tipo" data-val="ratona-madera">
+                <span class="wizard-opt-icon">🪑</span>
+                <span class="wizard-opt-nombre">Ratona con patas</span>
+                <span class="wizard-opt-desc">Madera + mosaico</span>
+              </button>
+              <button class="wizard-opt" data-key="tipo" data-val="ratona-yeso">
+                <span class="wizard-opt-icon">⬜</span>
+                <span class="wizard-opt-nombre">Ratona de yeso</span>
+                <span class="wizard-opt-desc">Forma U, moderna</span>
+              </button>
+              <button class="wizard-opt" data-key="tipo" data-val="cubo">
+                <span class="wizard-opt-icon">🟫</span>
+                <span class="wizard-opt-nombre">Mesa cubo</span>
+                <span class="wizard-opt-desc">Mosaico total</span>
+              </button>
+            </div>
+            <button class="wizard-next btn btn-ink">Siguiente →</button>
+          </div>
+
+          <div class="wizard-step" data-step="1">
+            <p class="wizard-step-label">¿Qué colores te gustan?</p>
+            <p class="wizard-step-sub">Color principal</p>
+            <div class="wizard-colores" id="wizard-colores-1">
+              <button class="wizard-color activo" data-key="color" data-val="negro"     style="background:#1a1a1a" aria-label="Negro"></button>
+              <button class="wizard-color"        data-key="color" data-val="navy"      style="background:#14213E" aria-label="Navy"></button>
+              <button class="wizard-color"        data-key="color" data-val="mostaza"   style="background:#C2872E" aria-label="Mostaza"></button>
+              <button class="wizard-color"        data-key="color" data-val="rojo"      style="background:#C0392B" aria-label="Rojo"></button>
+              <button class="wizard-color"        data-key="color" data-val="oliva"     style="background:#5C6B4C" aria-label="Oliva"></button>
+              <button class="wizard-color"        data-key="color" data-val="terracota" style="background:#A0522D" aria-label="Terracota"></button>
+              <button class="wizard-color"        data-key="color" data-val="celeste"   style="background:#2980B9" aria-label="Celeste"></button>
+            </div>
+            <p class="wizard-step-sub" style="margin-top:16px">Color secundario</p>
+            <div class="wizard-colores" id="wizard-colores-2">
+              <button class="wizard-color activo" data-key="color2" data-val="crema"     style="background:#F7F3EC;border:1.5px solid #ccc" aria-label="Crema"></button>
+              <button class="wizard-color"        data-key="color2" data-val="negro"     style="background:#1a1a1a" aria-label="Negro"></button>
+              <button class="wizard-color"        data-key="color2" data-val="navy"      style="background:#14213E" aria-label="Navy"></button>
+              <button class="wizard-color"        data-key="color2" data-val="mostaza"   style="background:#C2872E" aria-label="Mostaza"></button>
+              <button class="wizard-color"        data-key="color2" data-val="rojo"      style="background:#C0392B" aria-label="Rojo"></button>
+              <button class="wizard-color"        data-key="color2" data-val="oliva"     style="background:#5C6B4C" aria-label="Oliva"></button>
+            </div>
+            <button class="wizard-next btn btn-ink">Siguiente →</button>
+          </div>
+
+          <div class="wizard-step" data-step="2">
+            <p class="wizard-step-label">¿Qué patrón?</p>
+            <div class="wizard-opciones">
+              <button class="wizard-opt activo" data-key="patron" data-val="damero">
+                <span class="wizard-opt-icon">▪️</span>
+                <span class="wizard-opt-nombre">Damero</span>
+                <span class="wizard-opt-desc">Clásico alternado</span>
+              </button>
+              <button class="wizard-opt" data-key="patron" data-val="guarda">
+                <span class="wizard-opt-icon">⬛</span>
+                <span class="wizard-opt-nombre">Guarda</span>
+                <span class="wizard-opt-desc">Borde con interior</span>
+              </button>
+              <button class="wizard-opt" data-key="patron" data-val="diagonal">
+                <span class="wizard-opt-icon">◆</span>
+                <span class="wizard-opt-nombre">Diagonal</span>
+                <span class="wizard-opt-desc">Cruz en diagonal</span>
+              </button>
+              <button class="wizard-opt" data-key="patron" data-val="uniforme">
+                <span class="wizard-opt-icon">⬜</span>
+                <span class="wizard-opt-nombre">Uniforme</span>
+                <span class="wizard-opt-desc">Un solo color</span>
+              </button>
+            </div>
+            <button class="wizard-next btn btn-ink">Ver mi mesa →</button>
+          </div>
+
+          <div class="wizard-step wizard-result" data-step="3">
+            <p class="wizard-step-label">Tu mesa 🎉</p>
+            <div class="wizard-3d-wrap">
+              <div class="ganchito-canvas-box" id="ganchito-canvas-box">
+                <canvas id="ganchito-canvas"></canvas>
+                <span class="ganchito-hint">arrastrá para rotar</span>
+              </div>
+            </div>
+            <div class="wizard-resumen-card">
+              <p class="wizard-resumen-texto" id="wizard-resumen-texto">—</p>
+              <a class="btn btn-mustard wizard-wsp-btn" id="wizard-wsp" href="#" target="_blank" rel="noopener">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+                Pedir esta mesa
+              </a>
+            </div>
+            <button class="wizard-reiniciar" id="wizard-reiniciar">↺ Cambiar diseño</button>
+          </div>
+
+        </div>
+
+        <!-- Indicador de pasos -->
+        <div class="wizard-progress" id="wizard-progress">
+          <span class="wp active"></span>
+          <span class="wp"></span>
+          <span class="wp"></span>
+          <span class="wp"></span>
+        </div>
+
+      </div>
+
+      <!-- CONFIGURADOR DESKTOP (oculto en mobile) -->
+      <div class="configurador-grid configurador-desktop" id="configurador-desktop">
 
         <!-- Canvas 3D -->
-        <div class="ganchito-canvas-box" id="ganchito-canvas-box">
-          <canvas id="ganchito-canvas"></canvas>
+        <div class="ganchito-canvas-box" id="ganchito-canvas-box-desktop">
+          <canvas id="ganchito-canvas-desktop"></canvas>
           <span class="ganchito-hint">arrastrá para rotar</span>
         </div>
 
         <!-- Controles -->
         <div class="ganchito-controles">
-
           <div class="ganchito-grupo">
             <p class="ganchito-label">Tipo de mesa</p>
             <div class="ganchito-btn-grupo" id="ganchito-btn-tipo">
@@ -275,7 +422,6 @@
               <button class="ganchito-opt" data-val="cubo">Cubo</button>
             </div>
           </div>
-
           <div class="ganchito-grupo">
             <p class="ganchito-label">Patrón de mosaico</p>
             <div class="ganchito-btn-grupo" id="ganchito-btn-patron">
@@ -285,7 +431,6 @@
               <button class="ganchito-opt" data-val="uniforme">Uniforme</button>
             </div>
           </div>
-
           <div class="ganchito-grupo">
             <p class="ganchito-label">Tamaño de pieza</p>
             <div class="ganchito-btn-grupo" id="ganchito-btn-tamano">
@@ -293,7 +438,6 @@
               <button class="ganchito-opt" data-val="grande">Grande</button>
             </div>
           </div>
-
           <div class="ganchito-grupo">
             <p class="ganchito-label">Color principal</p>
             <div class="ganchito-colores-wrap" id="ganchito-colores">
@@ -306,35 +450,36 @@
               <button class="ganchito-color-dot"        data-color="celeste"   aria-label="Celeste"   style="background:#2980B9;"></button>
             </div>
           </div>
-
           <div class="ganchito-grupo">
             <p class="ganchito-label">Color secundario</p>
             <div class="ganchito-colores-wrap" id="ganchito-colores-secundario">
-              <button class="ganchito-color-dot2 activo" data-color2="crema"    aria-label="Crema"    style="background:#F7F3EC; border: 1.5px solid #DDD3BE;"></button>
-              <button class="ganchito-color-dot2"        data-color2="negro"    aria-label="Negro"    style="background:#1a1a1a;"></button>
-              <button class="ganchito-color-dot2"        data-color2="navy"     aria-label="Navy"     style="background:#14213E;"></button>
-              <button class="ganchito-color-dot2"        data-color2="mostaza"  aria-label="Mostaza"  style="background:#C2872E;"></button>
-              <button class="ganchito-color-dot2"        data-color2="rojo"     aria-label="Rojo"     style="background:#C0392B;"></button>
-              <button class="ganchito-color-dot2"        data-color2="oliva"    aria-label="Oliva"    style="background:#6B7A5E;"></button>
-              <button class="ganchito-color-dot2"        data-color2="terracota"aria-label="Terracota"style="background:#A0522D;"></button>
+              <button class="ganchito-color-dot2 activo" data-color2="crema"     aria-label="Crema"     style="background:#F7F3EC; border: 1.5px solid #DDD3BE;"></button>
+              <button class="ganchito-color-dot2"        data-color2="negro"     aria-label="Negro"     style="background:#1a1a1a;"></button>
+              <button class="ganchito-color-dot2"        data-color2="navy"      aria-label="Navy"      style="background:#14213E;"></button>
+              <button class="ganchito-color-dot2"        data-color2="mostaza"   aria-label="Mostaza"   style="background:#C2872E;"></button>
+              <button class="ganchito-color-dot2"        data-color2="rojo"      aria-label="Rojo"      style="background:#C0392B;"></button>
+              <button class="ganchito-color-dot2"        data-color2="oliva"     aria-label="Oliva"     style="background:#6B7A5E;"></button>
+              <button class="ganchito-color-dot2"        data-color2="terracota" aria-label="Terracota" style="background:#A0522D;"></button>
             </div>
           </div>
-
-          <!-- Resumen y CTA -->
           <div class="ganchito-resumen-card">
             <p class="ganchito-resumen-label">Tu mesa:</p>
-            <p class="ganchito-resumen-texto" id="ganchito-resumen">
-              Mesa ratona c/ patas · Damero · Negro + Crema
-            </p>
-            <a class="btn btn-mustard" id="ganchito-wsp" href="#" target="_blank" rel="noopener">
-              Pedir por WhatsApp
-            </a>
+            <p class="ganchito-resumen-texto" id="ganchito-resumen">Mesa ratona c/ patas · Damero · Negro + Crema</p>
+            <a class="btn btn-mustard" id="ganchito-wsp" href="#" target="_blank" rel="noopener">Pedir por WhatsApp</a>
           </div>
-
         </div>
       </div>
+
     </div>
   </section>
+
+  <!-- Puente configurador → oficio -->
+  <div class="story-bridge" data-bridge>
+    <a href="#oficio" class="bridge-link">
+      <span class="bridge-text">¿Cómo se hace una mesa así?</span>
+      <span class="bridge-arrow">↓</span>
+    </a>
+  </div>
 
   <!-- ============ NUESTRO OFICIO ============ -->
   <section class="oficio" id="oficio">
@@ -406,7 +551,7 @@
   </section>
 
   <!-- ============ TESTIMONIOS ============ -->
-  <section class="testimonios-section">
+  <section class="testimonios-section" id="testimonios">
     <div class="container">
       <p class="eyebrow center">Lo que dicen</p>
       <h2 class="section-title center">Mesas que ya<br>están en casa</h2>
@@ -515,6 +660,27 @@
   </section>
 
 </main>
+
+<!-- ============ SECCIÓN PEDIR ============ -->
+<section class="pedir-section" id="pedir">
+  <div class="pedir-mosaic-bg" aria-hidden="true"></div>
+  <div class="container pedir-inner">
+    <p class="eyebrow pedir-eyebrow">Ya la imaginaste.</p>
+    <h2 class="pedir-title" id="pedir-title">Ahora pedila.</h2>
+    <p class="pedir-sub" id="pedir-sub">
+      Escribinos por WhatsApp. En menos de 24 horas te contestamos con precio, tiempo y todo lo que necesitás saber.
+    </p>
+    <div class="pedir-config-resumen" id="pedir-config-resumen" hidden>
+      <div class="pedir-config-label">Tu diseño:</div>
+      <div class="pedir-config-texto" id="pedir-config-texto">—</div>
+    </div>
+    <a class="btn btn-pedir" id="pedir-wsp" href="#" target="_blank" rel="noopener">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+      Escribir a Ganchito
+    </a>
+    <p class="pedir-hint">Sin formulario. Sin esperas. Directo al taller.</p>
+  </div>
+</section>
 
 <!-- ============ FOOTER / CONTACTO ============ -->
 <footer class="site-footer" id="contacto">

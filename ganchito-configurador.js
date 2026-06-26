@@ -102,8 +102,12 @@
   /* ---------------------------------------------------------
      SETUP THREE.JS
   --------------------------------------------------------- */
-  const canvasBox = document.getElementById('ganchito-canvas-box');
-  const canvasEl  = document.getElementById('ganchito-canvas');
+  const isMobile = window.matchMedia('(max-width: 760px)').matches;
+  const canvasBoxId = isMobile ? 'ganchito-canvas-box' : 'ganchito-canvas-box-desktop';
+  const canvasElId  = isMobile ? 'ganchito-canvas'     : 'ganchito-canvas-desktop';
+
+  const canvasBox = document.getElementById(canvasBoxId);
+  const canvasEl  = document.getElementById(canvasElId);
 
   if (!canvasBox || !canvasEl) {
     console.warn('Ganchito configurador: no se encontró #ganchito-canvas-box o #ganchito-canvas');

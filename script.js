@@ -384,3 +384,137 @@ document.querySelectorAll('.faq-trigger').forEach(trigger => {
     }
   });
 });
+
+/* =========================================================
+   12) STORY NAV — progreso narrativo lateral
+   ========================================================= */
+(function () {
+  const dots = document.querySelectorAll('.story-dot');
+  const sections = ['#top', '#mesas', '#configurador', '#oficio', '#pedir'];
+
+  function getActive() {
+    const scrollY = window.scrollY + window.innerHeight * 0.35;
+    let active = 0;
+    sections.forEach((sel, i) => {
+      const el = document.querySelector(sel === '#top' ? 'body' : sel);
+      if (!el) return;
+      const top = sel === '#top' ? 0 : el.getBoundingClientRect().top + window.scrollY;
+      if (scrollY >= top) active = i;
+    });
+    return active;
+  }
+
+  function updateDots() {
+    const active = getActive();
+    dots.forEach((dot, i) => dot.classList.toggle('active', i === active));
+  }
+
+  dots.forEach((dot, i) => {
+    dot.addEventListener('click', () => {
+      const sel = sections[i];
+      const el = sel === '#top' ? document.body : document.querySelector(sel);
+      if (el) el.scrollIntoView({ behavior: 'smooth' });
+    });
+  });
+
+  window.addEventListener('scroll', updateDots, { passive: true });
+  updateDots();
+})();
+
+/* =========================================================
+   13) STORY BRIDGES — reveal + IntersectionObserver
+   ========================================================= */
+(function () {
+  if (!('IntersectionObserver' in window)) {
+    document.querySelectorAll('.story-bridge').forEach(el => el.classList.add('is-visible'));
+    return;
+  }
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('is-visible'); obs.unobserve(e.target); } });
+  }, { threshold: 0.3 });
+  document.querySelectorAll('.story-bridge').forEach(el => obs.observe(el));
+})();
+
+/* =========================================================
+   14) SECCIÓN PEDIR — reveal + sincronizar con configurador
+   ========================================================= */
+(function () {
+  // Reveal de la sección
+  const section = document.querySelector('.pedir-section');
+  if (!section) return;
+  if ('IntersectionObserver' in window) {
+    const obs = new IntersectionObserver((entries) => {
+      entries.forEach(e => { if (e.isIntersecting) { section.classList.add('is-visible'); obs.unobserve(section); } });
+    }, { threshold: 0.15 });
+    obs.observe(section);
+  } else {
+    section.classList.add('is-visible');
+  }
+
+  // Leer diseño del configurador para personalizar el CTA
+  // El configurador expone window._ganchoEstado (lo vamos a parchear)
+  // Fallback: escuchar evento custom 'ganchito:update'
+  const resumenCard = document.getElementById('pedir-config-resumen');
+  const resumenTexto = document.getElementById('pedir-config-texto');
+  const pedrirWsp   = document.getElementById('pedir-wsp');
+  const pedrirTitle = document.getElementById('pedir-title');
+  const pedrirSub   = document.getElementById('pedir-sub');
+
+  function syncFromConfigurador() {
+    const resumenEl = document.getElementById('ganchito-resumen');
+    const wspEl     = document.getElementById('ganchito-wsp');
+    if (!resumenEl || !wspEl) return;
+    const texto = resumenEl.textContent.trim();
+    if (!texto || texto === '—') return;
+
+    // Mostramos el resumen
+    if (resumenCard && resumenTexto) {
+      resumenTexto.textContent = texto;
+      resumenCard.hidden = false;
+    }
+
+    // Personalizamos el CTA
+    if (pedrirTitle)  pedrirTitle.textContent = 'Tu mesa está lista para pedir.';
+    if (pedrirSub)    pedrirSub.textContent   = 'Ya la diseñaste. El siguiente paso es escribirnos y la ponemos en producción.';
+
+    // Copiamos el href del WSP del configurador
+    if (pedrirWsp && wspEl.href && wspEl.href !== '#') {
+      pedrirWsp.href = wspEl.href;
+    }
+  }
+
+  // Escuchar cambios del configurador (lo dispara el script del config via MutationObserver)
+  const resumenTarget = document.getElementById('ganchito-resumen');
+  if (resumenTarget) {
+    const mo = new MutationObserver(syncFromConfigurador);
+    mo.observe(resumenTarget, { childList: true, characterData: true, subtree: true });
+  }
+
+  // También al entrar a la sección
+  window.addEventListener('scroll', function onScroll() {
+    if (!section) return;
+    const rect = section.getBoundingClientRect();
+    if (rect.top < window.innerHeight * 0.8) {
+      syncFromConfigurador();
+      window.removeEventListener('scroll', onScroll);
+    }
+  }, { passive: true });
+
+  // Fallback link inicial
+  if (pedrirWsp) pedrirWsp.href = buildWhatsAppLink('Hola Ganchito! 👋 Quiero consultar sobre una mesa. ¿Me contás más?');
+})();
+
+/* =========================================================
+   15) REVEAL para secciones con data-reveal-section
+   ========================================================= */
+(function () {
+  if (!('IntersectionObserver' in window)) {
+    document.querySelectorAll('[data-reveal-section]').forEach(el => el.classList.add('is-visible'));
+    return;
+  }
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('is-visible'); obs.unobserve(e.target); } });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('[data-reveal-section]').forEach(el => obs.observe(el));
+})();
+
