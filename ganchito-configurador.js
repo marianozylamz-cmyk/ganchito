@@ -8,41 +8,72 @@
   /* ---------------------------------------------------------
      PALETAS DE COLOR
   --------------------------------------------------------- */
-  const PALETAS = {
-    negro:     { main: '#1a1a1a', mid: '#3a3a3a', junta: '#F7F3EC', label: 'Negro' },
-    navy:      { main: '#14213E', mid: '#2B3B63', junta: '#F7F3EC', label: 'Navy' },
-    mostaza:   { main: '#C2872E', mid: '#E3B45B', junta: '#F7F3EC', label: 'Mostaza' },
-    rojo:      { main: '#C0392B', mid: '#E74C3C', junta: '#FDECEA', label: 'Rojo' },
-    oliva:     { main: '#5C6B4C', mid: '#8A9A78', junta: '#F4F2EC', label: 'Oliva' },
-    terracota: { main: '#A0522D', mid: '#C2703F', junta: '#FAF0E8', label: 'Terracota' },
-    celeste:   { main: '#1A5276', mid: '#2980B9', junta: '#EBF5FB', label: 'Celeste' },
+  const COLORES = {
+    negro:     { hex: '#1a1a1a', label: 'Negro' },
+    navy:      { hex: '#14213E', label: 'Navy' },
+    mostaza:   { hex: '#C2872E', label: 'Mostaza' },
+    rojo:      { hex: '#C0392B', label: 'Rojo' },
+    oliva:     { hex: '#5C6B4C', label: 'Oliva' },
+    terracota: { hex: '#A0522D', label: 'Terracota' },
+    celeste:   { hex: '#1A5276', label: 'Celeste' },
+    crema:     { hex: '#F7F3EC', label: 'Crema' },
   };
 
-  // Mismo número que en script.js — solo un lugar para cambiar
   const WANUM = (typeof WHATSAPP_NUMBER !== 'undefined')
     ? WHATSAPP_NUMBER
-    : '5492280000000'; // TODO: reemplazar si usás este archivo sin script.js
+    : '5492280000000';
 
-  let estado = { tipo: 'ratona-madera', tamano: 'chico', color: 'negro' };
+  let estado = {
+    tipo:    'ratona-madera',
+    patron:  'damero',
+    tamano:  'chico',
+    color:   'negro',
+    color2:  'crema',
+  };
   let needsRender = true;
 
   /* ---------------------------------------------------------
-     TEXTURAS
+     GENERADOR DE TEXTURA según patrón
   --------------------------------------------------------- */
-  function makeMosaicTexture(palKey, grande) {
-    const pal = PALETAS[palKey];
+  function makeMosaicTexture(colorKey, color2Key, patron, grande) {
+    const c1 = COLORES[colorKey]  ? COLORES[colorKey].hex  : '#1a1a1a';
+    const c2 = COLORES[color2Key] ? COLORES[color2Key].hex : '#F7F3EC';
+    const junta = '#CCBFAE';
+
     const cols = grande ? 4 : 8;
     const rows = grande ? 4 : 8;
     const size = 512;
     const c = document.createElement('canvas');
     c.width = size; c.height = size;
     const ctx = c.getContext('2d');
-    const tW = size / cols, tH = size / rows, gap = grande ? 6 : 3;
-    ctx.fillStyle = pal.junta;
+    const tW = size / cols, tH = size / rows;
+    const gap = grande ? 6 : 3;
+
+    // Fondo de junta
+    ctx.fillStyle = junta;
     ctx.fillRect(0, 0, size, size);
+
     for (let r = 0; r < rows; r++) {
       for (let col = 0; col < cols; col++) {
-        ctx.fillStyle = (r + col) % 2 === 0 ? pal.main : pal.mid;
+        let color;
+        switch (patron) {
+          case 'damero':
+            color = (r + col) % 2 === 0 ? c1 : c2;
+            break;
+          case 'guarda':
+            // borde = c1, interior = c2
+            color = (r === 0 || r === rows - 1 || col === 0 || col === cols - 1) ? c1 : c2;
+            break;
+          case 'diagonal':
+            // diagonal de c1 sobre fondo c2
+            color = (r === col || r === cols - 1 - col) ? c1 : c2;
+            break;
+          case 'uniforme':
+          default:
+            color = c1;
+            break;
+        }
+        ctx.fillStyle = color;
         ctx.beginPath();
         ctx.roundRect(col * tW + gap, r * tH + gap, tW - gap * 2, tH - gap * 2, 2);
         ctx.fill();
@@ -91,7 +122,6 @@
   camera.position.set(3.4, 2.9, 3.4);
   camera.lookAt(0, 0.55, 0);
 
-  // Luces
   scene.add(new THREE.AmbientLight(0xffffff, 0.6));
   const dirLight = new THREE.DirectionalLight(0xffffff, 1.1);
   dirLight.position.set(5, 9, 5);
@@ -103,7 +133,6 @@
   fillLight.position.set(-4, 3, -3);
   scene.add(fillLight);
 
-  // Piso
   const ground = new THREE.Mesh(
     new THREE.PlaneGeometry(14, 14),
     new THREE.MeshLambertMaterial({ color: 0x111122 })
@@ -120,12 +149,11 @@
      CONSTRUCCIÓN DE LA MESA
   --------------------------------------------------------- */
   function buildMesa() {
-    // Limpiar meshes anteriores y liberar geometrías/materiales
     while (mesaGroup.children.length) {
       const obj = mesaGroup.children[0];
       if (obj.geometry) obj.geometry.dispose();
       if (obj.material) {
-        if (Array.isArray(obj.material)) obj.material.forEach(m => m.dispose && m.map && m.map.dispose());
+        if (Array.isArray(obj.material)) obj.material.forEach(m => { if (m.map) m.map.dispose(); m.dispose(); });
         else { if (obj.material.map) obj.material.map.dispose(); obj.material.dispose(); }
       }
       mesaGroup.remove(obj);
@@ -133,14 +161,13 @@
 
     const grande = estado.tamano === 'grande';
     const tipo   = estado.tipo;
-    const mTex   = makeMosaicTexture(estado.color, grande);
+    const mTex   = makeMosaicTexture(estado.color, estado.color2, estado.patron, grande);
     const wTex   = makeWoodTexture();
     const mMat   = new THREE.MeshLambertMaterial({ map: mTex });
     const woodMat= new THREE.MeshLambertMaterial({ map: wTex });
     const allM   = [mMat, mMat, mMat, mMat, mMat, mMat];
 
     if (tipo === 'ratona-madera') {
-      // Tope: mosaico arriba, madera en los lados
       const topMats = [woodMat, woodMat, mMat, woodMat, woodMat, woodMat];
       const top = new THREE.Mesh(new THREE.BoxGeometry(2.0, 0.1, 1.3), topMats);
       top.position.y = 0.92; top.castShadow = true; mesaGroup.add(top);
@@ -150,57 +177,38 @@
         const leg = new THREE.Mesh(legGeo, woodMat);
         leg.position.set(x, 0.45, z); leg.castShadow = true; mesaGroup.add(leg);
       });
-      // Travesaños
       [-0.46, 0.46].forEach(z => {
         const s = new THREE.Mesh(new THREE.BoxGeometry(1.62, 0.07, 0.07), woodMat);
         s.position.set(0, 0.32, z); mesaGroup.add(s);
       });
 
     } else if (tipo === 'ratona-yeso') {
-      /*
-        Forma real: U invertida vista de frente.
-        - Dos paneles laterales macizos (patas tipo "panel")
-        - Tope que los une arriba
-        - Franja de base en cemento/yeso sin mosaico (como en la foto)
-        Todo el resto: mosaico.
-      */
-      const H     = 0.95;   // altura total del panel lateral
-      const BASE  = 0.10;   // franja de base sin mosaico
-      const MOSH  = H - BASE; // altura con mosaico en el panel
-      const W     = 2.20;   // ancho total de la mesa
-      const D     = 0.95;   // profundidad
-      const THICK = 0.26;   // grosor de cada panel lateral
-      const topH  = 0.11;   // grosor del tope
+      const H     = 0.95;
+      const BASE  = 0.10;
+      const MOSH  = H - BASE;
+      const W     = 2.20;
+      const D     = 0.95;
+      const THICK = 0.26;
+      const topH  = 0.11;
 
-      // Tope — mosaico en todas las caras
-      const top = new THREE.Mesh(
-        new THREE.BoxGeometry(W, topH, D), allM
-      );
+      const top = new THREE.Mesh(new THREE.BoxGeometry(W, topH, D), allM);
       top.position.y = H + topH / 2;
       top.castShadow = true;
       mesaGroup.add(top);
 
-      // Paneles laterales: parte de mosaico (superior)
       [-1, 1].forEach(side => {
-        const mosPanel = new THREE.Mesh(
-          new THREE.BoxGeometry(THICK, MOSH, D), allM
-        );
+        const mosPanel = new THREE.Mesh(new THREE.BoxGeometry(THICK, MOSH, D), allM);
         mosPanel.position.set(side * (W / 2 - THICK / 2), BASE + MOSH / 2, 0);
         mosPanel.castShadow = true;
         mesaGroup.add(mosPanel);
 
-        // Franja de base de cemento (sin mosaico, tono crema/gris)
         const cementMat = new THREE.MeshLambertMaterial({ color: 0xE8DDD0 });
-        const baseFranja = new THREE.Mesh(
-          new THREE.BoxGeometry(THICK, BASE, D), cementMat
-        );
+        const baseFranja = new THREE.Mesh(new THREE.BoxGeometry(THICK, BASE, D), cementMat);
         baseFranja.position.set(side * (W / 2 - THICK / 2), BASE / 2, 0);
-        baseFranja.castShadow = true;
         mesaGroup.add(baseFranja);
       });
 
     } else {
-      // Cubo todo mosaico
       const mesh = new THREE.Mesh(new THREE.BoxGeometry(1.6, 1.6, 1.6), allM);
       mesh.position.y = 0.8; mesh.castShadow = true; mesaGroup.add(mesh);
     }
@@ -213,13 +221,21 @@
      RESUMEN Y WHATSAPP
   --------------------------------------------------------- */
   function actualizarResumen() {
-    const pal = PALETAS[estado.color];
+    const c1 = COLORES[estado.color]  ? COLORES[estado.color].label  : estado.color;
+    const c2 = COLORES[estado.color2] ? COLORES[estado.color2].label : estado.color2;
     const tipos = {
       'ratona-madera': 'Mesa ratona c/ patas',
       'ratona-yeso':   'Mesa ratona de yeso (U)',
       'cubo':          'Mesa cubo',
     };
-    const txt = `${tipos[estado.tipo]} · Mosaico ${estado.tamano} · ${pal.label}`;
+    const patrones = {
+      damero:   'Damero',
+      guarda:   'Guarda',
+      diagonal: 'Diagonal',
+      uniforme: 'Uniforme',
+    };
+    const tamanos = { chico: 'pieza chica', grande: 'pieza grande' };
+    const txt = `${tipos[estado.tipo]} · ${patrones[estado.patron]} · ${c1} + ${c2} · ${tamanos[estado.tamano]}`;
     const resEl = document.getElementById('ganchito-resumen');
     const wspEl = document.getElementById('ganchito-wsp');
     if (resEl) resEl.textContent = txt;
@@ -235,9 +251,7 @@
   let isDragging = false, prevX = 0, prevY = 0;
   let rotY = Math.PI / 5, rotX = 0.22;
 
-  canvasBox.addEventListener('mousedown', e => {
-    isDragging = true; prevX = e.clientX; prevY = e.clientY;
-  });
+  canvasBox.addEventListener('mousedown', e => { isDragging = true; prevX = e.clientX; prevY = e.clientY; });
   window.addEventListener('mouseup', () => { isDragging = false; });
   window.addEventListener('mousemove', e => {
     if (!isDragging) return;
@@ -289,8 +303,10 @@
     });
   }
   bindBtns('ganchito-btn-tipo',   'tipo');
+  bindBtns('ganchito-btn-patron', 'patron');
   bindBtns('ganchito-btn-tamano', 'tamano');
 
+  // Color principal
   const coloresWrap = document.getElementById('ganchito-colores');
   if (coloresWrap) {
     coloresWrap.addEventListener('click', e => {
@@ -303,8 +319,21 @@
     });
   }
 
+  // Color secundario
+  const colores2Wrap = document.getElementById('ganchito-colores-secundario');
+  if (colores2Wrap) {
+    colores2Wrap.addEventListener('click', e => {
+      const dot = e.target.closest('.ganchito-color-dot2');
+      if (!dot) return;
+      colores2Wrap.querySelectorAll('.ganchito-color-dot2').forEach(d => d.classList.remove('activo'));
+      dot.classList.add('activo');
+      estado.color2 = dot.dataset.color2;
+      buildMesa();
+    });
+  }
+
   /* ---------------------------------------------------------
-     LOOP DE RENDER (solo cuando needsRender = true → ahorra CPU)
+     LOOP DE RENDER
   --------------------------------------------------------- */
   function animate() {
     requestAnimationFrame(animate);

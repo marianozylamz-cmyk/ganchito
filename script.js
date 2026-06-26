@@ -194,3 +194,131 @@ if ("IntersectionObserver" in window) {
    --------------------------------------------------------- */
 const yearEl = document.getElementById("year");
 if (yearEl) yearEl.textContent = new Date().getFullYear();
+
+/* ---------------------------------------------------------
+   9) Gallery en cards (auto-rotate + dots)
+   --------------------------------------------------------- */
+document.querySelectorAll('[data-gallery]').forEach(gallery => {
+  const slides = gallery.querySelectorAll('.gallery-slide');
+  const card   = gallery.closest('.card');
+  const dots   = card ? card.querySelectorAll('.gdot') : [];
+  if (slides.length < 2) return;
+
+  let current = 0;
+  let timer;
+
+  function goTo(idx) {
+    slides[current].classList.remove('active');
+    if (dots[current]) dots[current].classList.remove('active');
+    current = (idx + slides.length) % slides.length;
+    slides[current].classList.add('active');
+    if (dots[current]) dots[current].classList.add('active');
+  }
+
+  function startTimer() {
+    timer = setInterval(() => goTo(current + 1), 2800);
+  }
+  function stopTimer() { clearInterval(timer); }
+
+  // Dots clickeables
+  dots.forEach((dot, i) => {
+    dot.addEventListener('click', () => { stopTimer(); goTo(i); startTimer(); });
+  });
+
+  // Pausa al hover
+  card.addEventListener('mouseenter', stopTimer);
+  card.addEventListener('mouseleave', startTimer);
+
+  startTimer();
+});
+
+/* ---------------------------------------------------------
+   10) Carrusel arrastrable con auto-scroll suave
+   --------------------------------------------------------- */
+(function () {
+  const wrap  = document.getElementById('carrusel-wrap');
+  const track = document.getElementById('carrusel-track');
+  if (!wrap || !track) return;
+
+  let isDragging = false;
+  let startX = 0;
+  let scrollLeft = 0;
+  let autoX = 0;
+  let dragOffset = 0;
+  let isDragInterrupted = false;
+  const SPEED = 0.6; // px por frame
+
+  function getMaxScroll() {
+    return track.scrollWidth / 2; // mitad porque duplicamos slides
+  }
+
+  function animate() {
+    if (!isDragging) {
+      autoX += SPEED;
+      if (autoX >= getMaxScroll()) autoX -= getMaxScroll();
+      track.style.transform = `translateX(${-(autoX + dragOffset)}px)`;
+    }
+    requestAnimationFrame(animate);
+  }
+
+  // Mouse
+  wrap.addEventListener('mousedown', e => {
+    isDragging = true;
+    startX = e.clientX;
+    scrollLeft = autoX;
+    wrap.style.cursor = 'grabbing';
+  });
+  window.addEventListener('mouseup', () => {
+    if (!isDragging) return;
+    isDragging = false;
+    wrap.style.cursor = 'grab';
+    autoX = scrollLeft + (startX - (startX)); // mantiene posición actual
+  });
+  window.addEventListener('mousemove', e => {
+    if (!isDragging) return;
+    const dx = e.clientX - startX;
+    autoX = scrollLeft - dx;
+    if (autoX < 0) autoX = 0;
+    if (autoX >= getMaxScroll()) autoX -= getMaxScroll();
+  });
+
+  // Touch
+  wrap.addEventListener('touchstart', e => {
+    isDragging = true;
+    startX = e.touches[0].clientX;
+    scrollLeft = autoX;
+  }, { passive: true });
+  window.addEventListener('touchend', () => { isDragging = false; });
+  window.addEventListener('touchmove', e => {
+    if (!isDragging) return;
+    const dx = e.touches[0].clientX - startX;
+    autoX = scrollLeft - dx;
+    if (autoX < 0) autoX = 0;
+    if (autoX >= getMaxScroll()) autoX -= getMaxScroll();
+  }, { passive: true });
+
+  animate();
+})();
+
+/* ---------------------------------------------------------
+   11) FAQ accordion
+   --------------------------------------------------------- */
+document.querySelectorAll('.faq-trigger').forEach(trigger => {
+  trigger.addEventListener('click', () => {
+    const item   = trigger.closest('.faq-item');
+    const body   = item.querySelector('.faq-body');
+    const isOpen = trigger.getAttribute('aria-expanded') === 'true';
+
+    // Cerrar todos
+    document.querySelectorAll('.faq-trigger').forEach(t => {
+      t.setAttribute('aria-expanded', 'false');
+      t.closest('.faq-item').querySelector('.faq-body').classList.remove('is-open');
+    });
+
+    // Abrir el clickeado si estaba cerrado
+    if (!isOpen) {
+      trigger.setAttribute('aria-expanded', 'true');
+      body.classList.add('is-open');
+    }
+  });
+});
