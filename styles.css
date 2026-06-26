@@ -1510,11 +1510,6 @@ p{ margin:0; }
 .wizard-mobile { display: none; }
 .configurador-desktop { display: grid; }
 
-@media (max-width: 760px) {
-  .wizard-mobile { display: block; margin-top: 36px; }
-  .configurador-desktop { display: none !important; }
-}
-
 .wizard-steps { position: relative; overflow: hidden; }
 
 .wizard-step {
