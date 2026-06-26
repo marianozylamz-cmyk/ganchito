@@ -5,6 +5,68 @@
    ========================================================= */
 
 /* ---------------------------------------------------------
+   0) CARGAR CONTENIDO GUARDADO POR EL ADMIN (localStorage)
+   --------------------------------------------------------- */
+(function applyAdminContent() {
+  const data = JSON.parse(localStorage.getItem('ganchito_content') || 'null');
+  if (!data) return;
+  function setText(selector, html) {
+    const el = typeof selector === 'string' ? document.querySelector(selector) : selector;
+    if (el && html) el.innerHTML = html;
+  }
+  document.addEventListener('DOMContentLoaded', () => {
+    if (data.heroTitle) setText('.hero-title', data.heroTitle);
+    if (data.heroSub)   setText('.hero-sub',   data.heroSub);
+    if (data.mesas) {
+      data.mesas.forEach((mesa, i) => {
+        const card = document.querySelectorAll('[data-product]')[i];
+        if (!card) return;
+        if (mesa.name)       { card.dataset.name = mesa.name;        setText(card.querySelector('.card-body h3'), mesa.name); }
+        if (mesa.desc)       { card.dataset.desc = mesa.desc;        setText(card.querySelector('.card-desc'), mesa.desc); }
+        if (mesa.price)      { card.dataset.price = mesa.price;      setText(card.querySelector('.price'), '$' + mesa.price); }
+        if (mesa.medidas)    card.dataset.medidas = mesa.medidas;
+        if (mesa.materiales) card.dataset.materiales = mesa.materiales;
+        if (mesa.entrega)    card.dataset.entrega = mesa.entrega;
+        if (mesa.fotos && mesa.fotos.length) {
+          const slides = card.querySelectorAll('.gallery-slide');
+          mesa.fotos.forEach((src, j) => { if (slides[j] && src) slides[j].innerHTML = `<img src="${src}" alt="Foto ${j+1}">`; });
+        }
+      });
+    }
+    if (data.oficioTitle) setText('.oficio .section-title', data.oficioTitle);
+    const ot = document.querySelectorAll('.oficio-text');
+    if (data.oficioText1 && ot[0]) setText(ot[0], data.oficioText1);
+    if (data.oficioText2 && ot[1]) setText(ot[1], data.oficioText2);
+    if (data.testimonios) {
+      data.testimonios.forEach((t, i) => {
+        const card = document.querySelectorAll('.testimonio-card')[i];
+        if (!card) return;
+        if (t.texto)  setText(card.querySelector('.testimonio-texto'), t.texto);
+        if (t.nombre) setText(card.querySelector('.testimonio-nombre'), t.nombre);
+        if (t.ciudad) setText(card.querySelector('.testimonio-ciudad'), t.ciudad);
+      });
+    }
+    if (data.faq) {
+      data.faq.forEach((item, i) => {
+        const el = document.querySelectorAll('.faq-item')[i];
+        if (!el) return;
+        if (item.pregunta) {
+          const trigger = el.querySelector('.faq-trigger');
+          if (trigger) { trigger.childNodes[0].textContent = item.pregunta + ' '; }
+        }
+        if (item.respuesta) setText(el.querySelector('.faq-body p'), item.respuesta);
+      });
+    }
+    if (data.tallerFotos) {
+      const slides = document.querySelectorAll('#carrusel-track .carrusel-slide:not([aria-hidden])');
+      data.tallerFotos.forEach((src, i) => {
+        if (slides[i] && src) slides[i].innerHTML = `<img src="${src}" alt="Foto taller ${i+1}" style="width:100%;height:100%;object-fit:cover;border-radius:14px;">`;
+      });
+    }
+  });
+})();
+
+/* ---------------------------------------------------------
    1) CONFIG — Lo único que hace falta tocar para producción
    --------------------------------------------------------- */
 const WHATSAPP_NUMBER = "5492280000000"; // TODO: reemplazar por el número real de Ganchito (formato 549 + código de área + número, sin espacios ni guiones)
