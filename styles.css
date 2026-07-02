@@ -1505,168 +1505,6 @@ p{ margin:0; }
 }
 
 /* =========================================================
-   WIZARD MOBILE
-   ========================================================= */
-.wizard-mobile { display: none; }
-.configurador-desktop { display: grid; }
-
-.wizard-steps { position: relative; overflow: hidden; }
-
-.wizard-step {
-  display: none;
-  flex-direction: column;
-  gap: 20px;
-  animation: wizardIn .35s ease;
-}
-.wizard-step.active { display: flex; }
-
-@keyframes wizardIn {
-  from { opacity: 0; transform: translateX(24px); }
-  to   { opacity: 1; transform: none; }
-}
-
-.wizard-step-label {
-  font-family: var(--font-display);
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: var(--ink);
-  text-align: center;
-}
-.wizard-step-sub {
-  font-family: var(--font-label);
-  font-size: 0.75rem;
-  letter-spacing: .1em;
-  text-transform: uppercase;
-  color: var(--saddle);
-  margin: 0;
-}
-
-.wizard-opciones {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-.wizard-opt {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  padding: 16px 18px;
-  border-radius: var(--radius-lg);
-  border: 2px solid var(--line);
-  background: var(--paper);
-  cursor: pointer;
-  transition: border-color .15s, background .15s, transform .15s;
-  text-align: left;
-}
-.wizard-opt:active { transform: scale(0.98); }
-.wizard-opt.activo {
-  border-color: var(--mustard);
-  background: #FFF8EE;
-}
-.wizard-opt-icon { font-size: 1.6rem; flex-shrink: 0; }
-.wizard-opt-nombre {
-  font-family: var(--font-display);
-  font-size: 1.05rem;
-  font-weight: 600;
-  color: var(--ink);
-  display: block;
-}
-.wizard-opt-desc {
-  font-size: 0.82rem;
-  color: var(--ink-soft);
-  display: block;
-  margin-top: 2px;
-}
-
-.wizard-colores {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 14px;
-}
-.wizard-color {
-  width: 40px; height: 40px;
-  border-radius: 50%;
-  border: 3px solid transparent;
-  cursor: pointer;
-  padding: 0;
-  transition: transform .15s, border-color .15s, box-shadow .15s;
-  box-shadow: 0 0 0 1.5px var(--line);
-}
-.wizard-color:active { transform: scale(0.92); }
-.wizard-color.activo {
-  border-color: var(--mustard);
-  box-shadow: 0 0 0 2.5px var(--ink);
-  transform: scale(1.18);
-}
-
-.wizard-next {
-  width: 100%;
-  padding: 16px;
-  font-size: 1rem;
-  border-radius: var(--radius-lg);
-  margin-top: 4px;
-}
-
-/* Resultado wizard */
-.wizard-result { gap: 16px; }
-.wizard-3d-wrap { width: 100%; }
-.wizard-3d-wrap .ganchito-canvas-box {
-  width: 100%;
-  height: 260px;
-  border-radius: var(--radius-lg);
-}
-.wizard-resumen-card {
-  background: var(--cream-deep);
-  border: 1px dashed var(--line);
-  border-radius: var(--radius-lg);
-  padding: 16px 18px;
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-}
-.wizard-resumen-texto {
-  font-family: var(--font-display);
-  font-size: 0.95rem;
-  font-weight: 600;
-  color: var(--ink);
-}
-.wizard-wsp-btn {
-  width: 100%;
-  justify-content: center;
-  padding: 14px;
-  border-radius: var(--radius-lg);
-  font-size: 0.95rem;
-}
-.wizard-reiniciar {
-  background: none;
-  border: none;
-  color: var(--saddle);
-  font-family: var(--font-label);
-  font-size: 0.85rem;
-  letter-spacing: .05em;
-  cursor: pointer;
-  text-align: center;
-  padding: 8px;
-  opacity: 0.7;
-}
-.wizard-reiniciar:hover { opacity: 1; }
-
-/* Progress dots wizard */
-.wizard-progress {
-  display: flex;
-  justify-content: center;
-  gap: 8px;
-  margin-top: 24px;
-}
-.wp {
-  width: 8px; height: 8px;
-  border-radius: 50%;
-  background: var(--line);
-  transition: background .25s, transform .25s;
-}
-.wp.active { background: var(--mustard); transform: scale(1.3); }
-
-/* =========================================================
    SECCIÓN PEDIR
    ========================================================= */
 .pedir-section {
@@ -1773,4 +1611,291 @@ p{ margin:0; }
   .footer-brand p { max-width: 100%; }
   .footer-col a, .footer-col p { text-align: center; }
   .footer-bottom p { text-align: center; }
+}
+/* Util genérica para ocultar sin pelear con display:flex/grid */
+.is-hidden { display: none !important; }
+
+/* ===========================================================
+   Botón "← Ver las 3 mesas" (desktop, flotante sobre el canvas)
+   =========================================================== */
+.ganchito-volver {
+  position: absolute;
+  top: 12px;
+  left: 14px;
+  background: rgba(20, 33, 62, 0.75);
+  color: var(--cream);
+  border: none;
+  border-radius: 100px;
+  padding: 8px 16px;
+  font-family: var(--font-label);
+  font-size: 0.8rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  backdrop-filter: blur(4px);
+  transition: background .15s ease, transform .15s ease;
+}
+.ganchito-volver:hover {
+  background: rgba(20, 33, 62, 0.92);
+  transform: translateY(-1px);
+}
+
+/* ===========================================================
+   Placeholder que se ve mientras no se eligió mesa (desktop)
+   =========================================================== */
+.ganchito-controles-wrap {
+  display: flex;
+  flex-direction: column;
+}
+.ganchito-placeholder {
+  padding: 2rem 1.4rem;
+  border-radius: var(--radius-lg);
+  border: 1px dashed var(--line);
+  background: var(--cream-deep);
+  display: flex;
+  align-items: center;
+  min-height: 300px;
+}
+.ganchito-placeholder p {
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  color: var(--ink-soft);
+  line-height: 1.5;
+}
+
+/* Cursor de "elegible" en el canvas mientras estás en el showroom */
+.ganchito-canvas-box { cursor: grab; }
+.ganchito-canvas-box:active { cursor: grabbing; }
+
+/* ---------------------------------------------------------
+   SECCIÓN INMERSIVA — el canvas ocupa toda la pantalla
+   --------------------------------------------------------- */
+.configurador-inmersivo {
+  position: relative;
+  width: 100%;
+  height: 92vh;
+  min-height: 640px;
+  max-height: 980px;
+  padding: 0;
+  overflow: hidden;
+  background: #14141f;
+}
+
+/* El canvas pasa a ser el fondo de toda la sección */
+.configurador-inmersivo #ganchito-canvas-box-desktop {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 0;
+  box-shadow: none;
+}
+.configurador-inmersivo #ganchito-canvas-box-desktop canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* Texto de intro flotando arriba, centrado */
+.configurador-overlay-top {
+  position: absolute;
+  top: 56px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 5;
+  width: 100%;
+  max-width: 640px;
+  padding: 0 24px;
+  text-align: center;
+  pointer-events: none;
+}
+.configurador-overlay-top .eyebrow { color: var(--mustard-light); }
+.configurador-overlay-top .section-title { color: var(--cream); text-shadow: 0 2px 24px rgba(0,0,0,0.35); }
+.configurador-overlay-top .section-sub { color: rgba(247,243,236,0.78); margin-left: auto; margin-right: auto; }
+
+/* Botón "volver" flotante */
+.configurador-inmersivo .ganchito-volver {
+  position: absolute;
+  top: 24px;
+  left: 24px;
+  z-index: 7;
+}
+
+/* Hint flotante abajo al centro */
+.configurador-inmersivo .ganchito-hint-inmersivo {
+  position: absolute;
+  bottom: 26px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 5;
+  font-size: 0.82rem;
+  color: rgba(255,255,255,0.55);
+  background: rgba(0,0,0,0.28);
+  padding: 7px 16px;
+  border-radius: 100px;
+  backdrop-filter: blur(3px);
+  pointer-events: none;
+}
+
+/* Placeholder flotante, abajo, mientras no eligió mesa */
+.configurador-inmersivo .ganchito-placeholder {
+  position: absolute;
+  bottom: 78px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 5;
+  min-height: 0;
+  background: rgba(0,0,0,0.28);
+  border: none;
+  backdrop-filter: blur(4px);
+  padding: 12px 22px;
+  border-radius: 100px;
+  pointer-events: none;
+  text-align: center;
+}
+.configurador-inmersivo .ganchito-placeholder p {
+  font-family: var(--font-label);
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: rgba(247,243,236,0.85);
+  line-height: 1.4;
+}
+
+/* Panel de personalización — flota a la derecha, tipo "glass panel" */
+.configurador-inmersivo .ganchito-controles {
+  position: absolute;
+  top: 50%;
+  right: 28px;
+  transform: translateY(-50%);
+  z-index: 6;
+  width: 320px;
+  max-height: 84%;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+  background: rgba(255, 253, 249, 0.94);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem 1.4rem;
+  box-shadow: 0 24px 60px -20px rgba(0,0,0,0.5);
+}
+.configurador-inmersivo .ganchito-controles.is-hidden { display: none; }
+
+/* Scrollbar discreta dentro del panel (webkit) */
+.configurador-inmersivo .ganchito-controles::-webkit-scrollbar { width: 6px; }
+.configurador-inmersivo .ganchito-controles::-webkit-scrollbar-thumb {
+  background: var(--line);
+  border-radius: 10px;
+}
+
+/* Responsive: en pantallas medianas el panel baja de ancho */
+@media (max-width: 1100px) {
+  .configurador-inmersivo .ganchito-controles { width: 280px; right: 18px; }
+}
+
+/* ===========================================================
+   MOBILE: el panel de personalización deja de ser un panel
+   flotante a la derecha y se convierte en una barra baja +
+   una tira de colores al costado — sutiles, para no tapar la
+   mesa que se está editando. Es el MISMO panel/ids que en
+   desktop (ganchito-controles), solo reordenado con CSS.
+   =========================================================== */
+@media (max-width: 760px) {
+  .configurador-inmersivo .ganchito-controles {
+    top: auto;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    transform: none;
+    width: 100%;
+    max-width: none;
+    max-height: none;
+    border-radius: 0;
+    padding: 10px 60px 10px 12px;
+    padding-bottom: calc(10px + env(safe-area-inset-bottom, 0px));
+    gap: 8px;
+    background: linear-gradient(180deg, rgba(20,15,10,0) 0%, rgba(20,15,10,.82) 26%, rgba(20,15,10,.95) 100%);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    box-shadow: none;
+  }
+
+  /* Etiquetas afuera — la barra queda más chica y "sutil" */
+  .configurador-inmersivo .ganchito-controles .ganchito-label { display: none; }
+
+  .configurador-inmersivo .ganchito-controles .ganchito-grupo { margin: 0; }
+
+  /* Tamaño de pieza no entra en la barra chica — queda en desktop */
+  .configurador-inmersivo .ganchito-controles .ganchito-grupo-tamano { display: none; }
+
+  /* Filas de opciones: scroll horizontal en vez de wrap */
+  .configurador-inmersivo .ganchito-controles .ganchito-btn-grupo {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 2px;
+  }
+  .configurador-inmersivo .ganchito-controles .ganchito-btn-grupo::-webkit-scrollbar { display: none; }
+  .configurador-inmersivo .ganchito-controles .ganchito-opt {
+    flex: 0 0 auto;
+    padding: 7px 13px;
+    font-size: 0.76rem;
+    background: rgba(255,253,249,.92);
+  }
+
+  /* El color secundario se guarda en desktop; en mobile solo el
+     principal (tira lateral) para no saturar una pantalla chica */
+  .configurador-inmersivo .ganchito-controles .ganchito-grupo-color2 {
+    display: none;
+  }
+
+  /* Tira de colores: se despega de la barra y flota al costado
+     (vertical, discreta) para no competir por el ancho de abajo */
+  .configurador-inmersivo .ganchito-controles .ganchito-colores-wrap {
+    display: none;
+  }
+  .configurador-inmersivo #ganchito-colores {
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 6;
+    gap: 7px;
+    background: rgba(20,15,10,.55);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    padding: 8px 6px;
+    border-radius: 100px;
+  }
+  .configurador-inmersivo #ganchito-colores .ganchito-color-dot {
+    width: 24px;
+    height: 24px;
+  }
+
+  /* Resumen de texto se oculta (va igual en el mensaje de WhatsApp);
+     solo queda el botón, finito, como cierre de la barra */
+  .configurador-inmersivo .ganchito-controles .ganchito-resumen-card {
+    padding: 0;
+    background: none;
+    border: none;
+    margin: 0;
+  }
+  .configurador-inmersivo .ganchito-controles .ganchito-resumen-label,
+  .configurador-inmersivo .ganchito-controles .ganchito-resumen-texto {
+    display: none;
+  }
+  .configurador-inmersivo .ganchito-controles .ganchito-resumen-card .btn {
+    width: 100%;
+    justify-content: center;
+    padding: 11px;
+    font-size: 0.85rem;
+  }
+
+  /* Scrollbar del panel (si igual llega a necesitar scroll vertical) */
+  .configurador-inmersivo .ganchito-controles::-webkit-scrollbar { width: 0; }
 }

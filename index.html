@@ -252,6 +252,7 @@
     </div>
   </section>
 
+
   <!-- Puente mesas → configurador -->
   <div class="story-bridge story-bridge-dark" data-bridge>
     <a href="#configurador" class="bridge-link">
@@ -288,190 +289,88 @@
   </div>
 
   <!-- ============ CONFIGURADOR 3D ============ -->
-  <section class="configurador-section" id="configurador">
-    <div class="container">
-      <p class="eyebrow center">Diseñá la tuya</p>
-      <h2 class="section-title center">Armá tu mesa<br>en 3D</h2>
-      <p class="section-sub center">
-        Elegí el modelo, el patrón de mosaico y los colores.
-      </p>
+  
+<section class="configurador-section configurador-inmersivo" id="configurador">
 
-      <!-- WIZARD MOBILE (oculto en desktop) -->
-      <div class="wizard-mobile" id="wizard-mobile">
-        <div class="wizard-steps">
-
-          <div class="wizard-step active" data-step="0">
-            <p class="wizard-step-label">¿Qué mesa querés?</p>
-            <div class="wizard-opciones">
-              <button class="wizard-opt activo" data-key="tipo" data-val="ratona-madera">
-                <span class="wizard-opt-icon">🪑</span>
-                <span class="wizard-opt-nombre">Ratona con patas</span>
-                <span class="wizard-opt-desc">Madera + mosaico</span>
-              </button>
-              <button class="wizard-opt" data-key="tipo" data-val="ratona-yeso">
-                <span class="wizard-opt-icon">⬜</span>
-                <span class="wizard-opt-nombre">Ratona de yeso</span>
-                <span class="wizard-opt-desc">Forma U, moderna</span>
-              </button>
-              <button class="wizard-opt" data-key="tipo" data-val="cubo">
-                <span class="wizard-opt-icon">🟫</span>
-                <span class="wizard-opt-nombre">Mesa cubo</span>
-                <span class="wizard-opt-desc">Mosaico total</span>
-              </button>
-            </div>
-            <button class="wizard-next btn btn-ink">Siguiente →</button>
-          </div>
-
-          <div class="wizard-step" data-step="1">
-            <p class="wizard-step-label">¿Qué colores te gustan?</p>
-            <p class="wizard-step-sub">Color principal</p>
-            <div class="wizard-colores" id="wizard-colores-1">
-              <button class="wizard-color activo" data-key="color" data-val="negro"     style="background:#1a1a1a" aria-label="Negro"></button>
-              <button class="wizard-color"        data-key="color" data-val="navy"      style="background:#14213E" aria-label="Navy"></button>
-              <button class="wizard-color"        data-key="color" data-val="mostaza"   style="background:#C2872E" aria-label="Mostaza"></button>
-              <button class="wizard-color"        data-key="color" data-val="rojo"      style="background:#C0392B" aria-label="Rojo"></button>
-              <button class="wizard-color"        data-key="color" data-val="oliva"     style="background:#5C6B4C" aria-label="Oliva"></button>
-              <button class="wizard-color"        data-key="color" data-val="terracota" style="background:#A0522D" aria-label="Terracota"></button>
-              <button class="wizard-color"        data-key="color" data-val="celeste"   style="background:#2980B9" aria-label="Celeste"></button>
-            </div>
-            <p class="wizard-step-sub" style="margin-top:16px">Color secundario</p>
-            <div class="wizard-colores" id="wizard-colores-2">
-              <button class="wizard-color activo" data-key="color2" data-val="crema"     style="background:#F7F3EC;border:1.5px solid #ccc" aria-label="Crema"></button>
-              <button class="wizard-color"        data-key="color2" data-val="negro"     style="background:#1a1a1a" aria-label="Negro"></button>
-              <button class="wizard-color"        data-key="color2" data-val="navy"      style="background:#14213E" aria-label="Navy"></button>
-              <button class="wizard-color"        data-key="color2" data-val="mostaza"   style="background:#C2872E" aria-label="Mostaza"></button>
-              <button class="wizard-color"        data-key="color2" data-val="rojo"      style="background:#C0392B" aria-label="Rojo"></button>
-              <button class="wizard-color"        data-key="color2" data-val="oliva"     style="background:#5C6B4C" aria-label="Oliva"></button>
-            </div>
-            <button class="wizard-next btn btn-ink">Siguiente →</button>
-          </div>
-
-          <div class="wizard-step" data-step="2">
-            <p class="wizard-step-label">¿Qué patrón?</p>
-            <div class="wizard-opciones">
-              <button class="wizard-opt activo" data-key="patron" data-val="damero">
-                <span class="wizard-opt-icon">▪️</span>
-                <span class="wizard-opt-nombre">Damero</span>
-                <span class="wizard-opt-desc">Clásico alternado</span>
-              </button>
-              <button class="wizard-opt" data-key="patron" data-val="guarda">
-                <span class="wizard-opt-icon">⬛</span>
-                <span class="wizard-opt-nombre">Guarda</span>
-                <span class="wizard-opt-desc">Borde con interior</span>
-              </button>
-              <button class="wizard-opt" data-key="patron" data-val="diagonal">
-                <span class="wizard-opt-icon">◆</span>
-                <span class="wizard-opt-nombre">Diagonal</span>
-                <span class="wizard-opt-desc">Cruz en diagonal</span>
-              </button>
-              <button class="wizard-opt" data-key="patron" data-val="uniforme">
-                <span class="wizard-opt-icon">⬜</span>
-                <span class="wizard-opt-nombre">Uniforme</span>
-                <span class="wizard-opt-desc">Un solo color</span>
-              </button>
-            </div>
-            <button class="wizard-next btn btn-ink">Ver mi mesa →</button>
-          </div>
-
-          <div class="wizard-step wizard-result" data-step="3">
-            <p class="wizard-step-label">Tu mesa 🎉</p>
-            <div class="wizard-3d-wrap">
-              <div class="ganchito-canvas-box" id="ganchito-canvas-box">
-                <canvas id="ganchito-canvas"></canvas>
-                <span class="ganchito-hint">arrastrá para rotar</span>
-              </div>
-            </div>
-            <div class="wizard-resumen-card">
-              <p class="wizard-resumen-texto" id="wizard-resumen-texto">—</p>
-              <a class="btn btn-mustard wizard-wsp-btn" id="wizard-wsp" href="#" target="_blank" rel="noopener">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
-                Pedir esta mesa
-              </a>
-            </div>
-            <button class="wizard-reiniciar" id="wizard-reiniciar">↺ Cambiar diseño</button>
-          </div>
-
-        </div>
-
-        <!-- Indicador de pasos -->
-        <div class="wizard-progress" id="wizard-progress">
-          <span class="wp active"></span>
-          <span class="wp"></span>
-          <span class="wp"></span>
-          <span class="wp"></span>
-        </div>
-
+  <!-- Stage 3D — ocupa toda la sección -->
+  <div class="ganchito-canvas-box" id="ganchito-canvas-box-desktop">
+    <canvas id="ganchito-canvas-desktop"></canvas>
+  </div>
+ 
+  <!-- Texto de intro, flotando arriba -->
+  <div class="configurador-overlay-top">
+    <p class="eyebrow center">Diseñá la tuya</p>
+    <h2 class="section-title center">Armá tu mesa<br>en 3D</h2>
+  </div>
+ 
+  <!-- Botón volver (aparece solo cuando ya elegiste mesa) -->
+  <button class="ganchito-volver" id="ganchito-volver" hidden>← Ver las 3 mesas</button>
+ 
+ 
+  <!-- Placeholder mientras no eligió mesa -->
+  <div class="ganchito-placeholder" id="ganchito-placeholder">
+    <p>Deslizá o arrastrá para mirar alrededor del taller<br>y tocá la mesa que más te guste.</p>
+  </div>
+ 
+  <!-- Panel de personalización — flota encima, a la derecha -->
+  <div class="ganchito-controles is-hidden" id="ganchito-controles">
+    <div class="ganchito-grupo">
+      <p class="ganchito-label">Tipo de mesa</p>
+      <div class="ganchito-btn-grupo" id="ganchito-btn-tipo">
+        <button class="ganchito-opt activo" data-val="ratona-madera">Ratona c/ patas</button>
+        <button class="ganchito-opt" data-val="ratona-yeso">Ratona de yeso (U)</button>
+        <button class="ganchito-opt" data-val="cubo">Cubo</button>
       </div>
-
-      <!-- CONFIGURADOR DESKTOP (oculto en mobile) -->
-      <div class="configurador-grid configurador-desktop" id="configurador-desktop">
-
-        <!-- Canvas 3D -->
-        <div class="ganchito-canvas-box" id="ganchito-canvas-box-desktop">
-          <canvas id="ganchito-canvas-desktop"></canvas>
-          <span class="ganchito-hint">arrastrá para rotar</span>
-        </div>
-
-        <!-- Controles -->
-        <div class="ganchito-controles">
-          <div class="ganchito-grupo">
-            <p class="ganchito-label">Tipo de mesa</p>
-            <div class="ganchito-btn-grupo" id="ganchito-btn-tipo">
-              <button class="ganchito-opt activo" data-val="ratona-madera">Ratona c/ patas</button>
-              <button class="ganchito-opt" data-val="ratona-yeso">Ratona de yeso (U)</button>
-              <button class="ganchito-opt" data-val="cubo">Cubo</button>
-            </div>
-          </div>
-          <div class="ganchito-grupo">
-            <p class="ganchito-label">Patrón de mosaico</p>
-            <div class="ganchito-btn-grupo" id="ganchito-btn-patron">
-              <button class="ganchito-opt activo" data-val="damero">Damero</button>
-              <button class="ganchito-opt" data-val="guarda">Guarda</button>
-              <button class="ganchito-opt" data-val="diagonal">Diagonal</button>
-              <button class="ganchito-opt" data-val="uniforme">Uniforme</button>
-            </div>
-          </div>
-          <div class="ganchito-grupo">
-            <p class="ganchito-label">Tamaño de pieza</p>
-            <div class="ganchito-btn-grupo" id="ganchito-btn-tamano">
-              <button class="ganchito-opt activo" data-val="chico">Chica</button>
-              <button class="ganchito-opt" data-val="grande">Grande</button>
-            </div>
-          </div>
-          <div class="ganchito-grupo">
-            <p class="ganchito-label">Color principal</p>
-            <div class="ganchito-colores-wrap" id="ganchito-colores">
-              <button class="ganchito-color-dot activo" data-color="negro"     aria-label="Negro"     style="background:#1a1a1a;"></button>
-              <button class="ganchito-color-dot"        data-color="navy"      aria-label="Navy"      style="background:#14213E;"></button>
-              <button class="ganchito-color-dot"        data-color="mostaza"   aria-label="Mostaza"   style="background:#C2872E;"></button>
-              <button class="ganchito-color-dot"        data-color="rojo"      aria-label="Rojo"      style="background:#C0392B;"></button>
-              <button class="ganchito-color-dot"        data-color="oliva"     aria-label="Oliva"     style="background:#6B7A5E;"></button>
-              <button class="ganchito-color-dot"        data-color="terracota" aria-label="Terracota" style="background:#A0522D;"></button>
-              <button class="ganchito-color-dot"        data-color="celeste"   aria-label="Celeste"   style="background:#2980B9;"></button>
-            </div>
-          </div>
-          <div class="ganchito-grupo">
-            <p class="ganchito-label">Color secundario</p>
-            <div class="ganchito-colores-wrap" id="ganchito-colores-secundario">
-              <button class="ganchito-color-dot2 activo" data-color2="crema"     aria-label="Crema"     style="background:#F7F3EC; border: 1.5px solid #DDD3BE;"></button>
-              <button class="ganchito-color-dot2"        data-color2="negro"     aria-label="Negro"     style="background:#1a1a1a;"></button>
-              <button class="ganchito-color-dot2"        data-color2="navy"      aria-label="Navy"      style="background:#14213E;"></button>
-              <button class="ganchito-color-dot2"        data-color2="mostaza"   aria-label="Mostaza"   style="background:#C2872E;"></button>
-              <button class="ganchito-color-dot2"        data-color2="rojo"      aria-label="Rojo"      style="background:#C0392B;"></button>
-              <button class="ganchito-color-dot2"        data-color2="oliva"     aria-label="Oliva"     style="background:#6B7A5E;"></button>
-              <button class="ganchito-color-dot2"        data-color2="terracota" aria-label="Terracota" style="background:#A0522D;"></button>
-            </div>
-          </div>
-          <div class="ganchito-resumen-card">
-            <p class="ganchito-resumen-label">Tu mesa:</p>
-            <p class="ganchito-resumen-texto" id="ganchito-resumen">Mesa ratona c/ patas · Damero · Negro + Crema</p>
-            <a class="btn btn-mustard" id="ganchito-wsp" href="#" target="_blank" rel="noopener">Pedir por WhatsApp</a>
-          </div>
-        </div>
-      </div>
-
     </div>
-  </section>
+    <div class="ganchito-grupo">
+      <p class="ganchito-label">Patrón de mosaico</p>
+      <div class="ganchito-btn-grupo" id="ganchito-btn-patron">
+        <button class="ganchito-opt activo" data-val="damero">Damero</button>
+        <button class="ganchito-opt" data-val="guarda">Guarda</button>
+        <button class="ganchito-opt" data-val="diagonal">Diagonal</button>
+        <button class="ganchito-opt" data-val="uniforme">Uniforme</button>
+      </div>
+    </div>
+    <div class="ganchito-grupo ganchito-grupo-tamano">
+      <p class="ganchito-label">Tamaño de pieza</p>
+      <div class="ganchito-btn-grupo" id="ganchito-btn-tamano">
+        <button class="ganchito-opt activo" data-val="chico">Chica</button>
+        <button class="ganchito-opt" data-val="grande">Grande</button>
+      </div>
+    </div>
+    <div class="ganchito-grupo">
+      <p class="ganchito-label">Color principal</p>
+      <div class="ganchito-colores-wrap" id="ganchito-colores">
+        <button class="ganchito-color-dot activo" data-color="negro"     aria-label="Negro"     style="background:#1a1a1a;"></button>
+        <button class="ganchito-color-dot"        data-color="navy"      aria-label="Navy"      style="background:#14213E;"></button>
+        <button class="ganchito-color-dot"        data-color="mostaza"   aria-label="Mostaza"   style="background:#C2872E;"></button>
+        <button class="ganchito-color-dot"        data-color="rojo"      aria-label="Rojo"      style="background:#C0392B;"></button>
+        <button class="ganchito-color-dot"        data-color="oliva"     aria-label="Oliva"     style="background:#6B7A5E;"></button>
+        <button class="ganchito-color-dot"        data-color="terracota" aria-label="Terracota" style="background:#A0522D;"></button>
+        <button class="ganchito-color-dot"        data-color="celeste"   aria-label="Celeste"   style="background:#2980B9;"></button>
+      </div>
+    </div>
+    <div class="ganchito-grupo ganchito-grupo-color2">
+      <p class="ganchito-label">Color secundario</p>
+      <div class="ganchito-colores-wrap" id="ganchito-colores-secundario">
+        <button class="ganchito-color-dot2 activo" data-color2="crema"     aria-label="Crema"     style="background:#F7F3EC; border: 1.5px solid #DDD3BE;"></button>
+        <button class="ganchito-color-dot2"        data-color2="negro"     aria-label="Negro"     style="background:#1a1a1a;"></button>
+        <button class="ganchito-color-dot2"        data-color2="navy"      aria-label="Navy"      style="background:#14213E;"></button>
+        <button class="ganchito-color-dot2"        data-color2="mostaza"   aria-label="Mostaza"   style="background:#C2872E;"></button>
+        <button class="ganchito-color-dot2"        data-color2="rojo"      aria-label="Rojo"      style="background:#C0392B;"></button>
+        <button class="ganchito-color-dot2"        data-color2="oliva"     aria-label="Oliva"     style="background:#6B7A5E;"></button>
+        <button class="ganchito-color-dot2"        data-color2="terracota" aria-label="Terracota" style="background:#A0522D;"></button>
+      </div>
+    </div>
+    <div class="ganchito-resumen-card">
+      <p class="ganchito-resumen-label">Tu mesa:</p>
+      <p class="ganchito-resumen-texto" id="ganchito-resumen">—</p>
+      <a class="btn btn-mustard" id="ganchito-wsp" href="#" target="_blank" rel="noopener">Pedir por WhatsApp</a>
+    </div>
+  </div>
+ 
+</section>
+ 
 
   <!-- Puente configurador → oficio -->
   <div class="story-bridge" data-bridge>
@@ -712,8 +611,14 @@
   </div>
 </footer>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
 <script src="script.js"></script>
+<script src="taller-interior.js"></script>
 <script src="ganchito-configurador.js"></script>
 <script src="admin.js"></script>
+<script src="mosaico-narrativo.js"></script>
+
 </body>
 </html>
