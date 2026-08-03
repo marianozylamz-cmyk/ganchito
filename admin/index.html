@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="es-AR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ganchito · Admin</title>
+<link rel="icon" type="image/png" href="../assets/images/logo-icono.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@500;600;700&family=Work+Sans:wght@400;500;600&family=Jost:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream: #F7F3EC;
+    --ink: #14213E;
+    --ink-soft: #2B3B63;
+    --mustard: #C2872E;
+    --mustard-light: #E3B45B;
+    --walnut: #2A1C13;
+    --saddle: #8B5A2B;
+    --line: #DDD3BE;
+    --paper: #FFFDF9;
+    --font-display: 'Zilla Slab', Georgia, serif;
+    --font-body: 'Work Sans', sans-serif;
+    --font-label: 'Jost', sans-serif;
+  }
+  *, *::before, *::after { box-sizing: border-box; }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    background: var(--ink);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-body);
+  }
+  .login-box {
+    background: var(--paper);
+    border-radius: 16px;
+    padding: 48px 44px;
+    width: 100%;
+    max-width: 380px;
+    box-shadow: 0 32px 64px -20px rgba(0,0,0,0.5);
+    text-align: center;
+  }
+  .login-logo {
+    width: 48px;
+    margin: 0 auto 20px;
+    display: block;
+    opacity: .85;
+  }
+  .login-box h1 {
+    font-family: var(--font-display);
+    font-size: 1.6rem;
+    color: var(--ink);
+    margin: 0 0 6px;
+  }
+  .login-box p {
+    color: var(--saddle);
+    font-size: 0.88rem;
+    margin: 0 0 32px;
+    font-family: var(--font-label);
+    letter-spacing: 0.04em;
+  }
+  .login-field {
+    width: 100%;
+    padding: 13px 16px;
+    border: 1.5px solid var(--line);
+    border-radius: 8px;
+    font-family: var(--font-body);
+    font-size: 1rem;
+    color: var(--ink);
+    background: var(--cream);
+    outline: none;
+    transition: border-color .15s;
+    margin-bottom: 14px;
+    display: block;
+  }
+  .login-field:focus { border-color: var(--mustard); }
+  .login-btn {
+    width: 100%;
+    padding: 14px;
+    background: var(--mustard);
+    color: var(--walnut);
+    border: none;
+    border-radius: 8px;
+    font-family: var(--font-label);
+    font-weight: 600;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: background .15s, transform .15s;
+    letter-spacing: 0.02em;
+  }
+  .login-btn:hover { background: var(--mustard-light); transform: translateY(-1px); }
+  .login-error {
+    display: none;
+    margin-top: 14px;
+    color: #C0392B;
+    font-size: 0.85rem;
+    font-family: var(--font-label);
+  }
+  .login-error.visible { display: block; }
+  .back-link {
+    display: block;
+    margin-top: 22px;
+    font-size: 0.82rem;
+    color: var(--saddle);
+    font-family: var(--font-label);
+    text-decoration: none;
+    opacity: .7;
+    transition: opacity .15s;
+  }
+  .back-link:hover { opacity: 1; }
+</style>
+</head>
+<body>
+<div class="login-box">
+  <img src="../assets/images/logo-icono.png" alt="Ganchito" class="login-logo">
+  <h1>Panel de edición</h1>
+  <p>Ganchito · Acceso privado</p>
+  <input type="password" class="login-field" id="login-pass" placeholder="Contraseña" autocomplete="current-password">
+  <button class="login-btn" id="login-btn">Entrar</button>
+  <p class="login-error" id="login-error">Contraseña incorrecta.</p>
+  <a href="../index.html" class="back-link">← Volver al sitio</a>
+</div>
+
+<script>
+  // Contraseña — cambiala acá antes de entregar al cliente
+  const ADMIN_PASS = "ganchito2024";
+
+  // Si ya está logueado, ir directo a la página con el editor activo
+  if (sessionStorage.getItem('ganchito_admin') === 'true') {
+    window.location.href = '../index.html?admin=1';
+  }
+
+  document.getElementById('login-btn').addEventListener('click', login);
+  document.getElementById('login-pass').addEventListener('keydown', e => {
+    if (e.key === 'Enter') login();
+  });
+
+  function login() {
+    const val = document.getElementById('login-pass').value;
+    if (val === ADMIN_PASS) {
+      sessionStorage.setItem('ganchito_admin', 'true');
+      window.location.href = '../index.html?admin=1';
+    } else {
+      document.getElementById('login-error').classList.add('visible');
+      document.getElementById('login-pass').value = '';
+      document.getElementById('login-pass').focus();
+    }
+  }
+</script>
+</body>
+</html>

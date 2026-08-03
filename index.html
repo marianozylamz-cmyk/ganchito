@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="es-AR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ganchito · Muebles a medida en Olavarría</title>
+<meta name="description" content="Mesas y muebles de mosaico hechos a mano en Olavarría. Diseños personalizados, entrega y consultas directo por WhatsApp.">
+<link rel="icon" type="image/png" href="assets/images/logo-icono.png">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@500;600;700&family=Work+Sans:wght@400;500;600&family=Jost:wght@500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- Fondo vivo de mosaico — canvas que respira detrás de todo -->
+<canvas id="mosaic-bg-canvas" aria-hidden="true"></canvas>
+
+<!-- Story nav lateral (desktop) -->
+<nav class="story-nav" id="story-nav" aria-label="Progreso">
+  <button class="story-dot active" data-target="top"          aria-label="Inicio"><span>Inicio</span></button>
+  <button class="story-dot"        data-target="mesas"        aria-label="Las mesas"><span>Las mesas</span></button>
+  <button class="story-dot"        data-target="configurador" aria-label="Diseñá la tuya"><span>Diseñá la tuya</span></button>
+  <button class="story-dot"        data-target="oficio"       aria-label="El oficio"><span>El oficio</span></button>
+  <button class="story-dot"        data-target="pedir"        aria-label="Pedila"><span>Pedila</span></button>
+</nav>
+
+<!-- ============ HEADER ============ -->
+<header class="site-header" id="top">
+  <div class="container header-row">
+    <a href="#top" class="brand">
+      <img src="assets/images/logo-icono.png" alt="Ganchito" class="brand-mark">
+      <span class="brand-word">Ganchito</span>
+    </a>
+
+    <nav class="main-nav" id="main-nav">
+      <a href="#mesas">Mesas</a>
+      <a href="#configurador">Configurador 3D</a>
+      <a href="#oficio">Nuestro oficio</a>
+      <a href="#pedir">Contacto</a>
+    </nav>
+
+    <a class="btn btn-mustard btn-small header-cta" target="_blank" rel="noopener" id="header-whatsapp">
+      Hablar por WhatsApp
+    </a>
+
+    <button class="nav-toggle" id="nav-toggle" aria-expanded="false" aria-controls="main-nav" aria-label="Abrir menú">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<main>
+
+  <!-- ============ HERO — video full screen ============ -->
+  <section class="hero hero-video" id="hero-section">
+  <div class="hero-video-wrap">
+    <video
+      id="hero-vid"
+      class="hero-vid"
+      autoplay
+      muted
+      loop
+      playsinline
+      src="assets/video/IMG_8715.MOV"
+    ></video>
+    <div class="hero-vid-overlay"></div>
+  </div>
+
+    <!-- Contenido encima del video -->
+    <div class="hero-video-content">
+      <p class="eyebrow hero-eyebrow">Hecho a mano · Olavarría, Bs. As.</p>
+      <h1 class="hero-title hero-title-video">Muebles con<br>historia,<br>hechos a mano.</h1>
+      <p class="hero-sub hero-sub-video">
+        Mosaico armado pieza por pieza, madera maciza y el mismo cuidado
+        que le pondrías a una guitarra criolla.
+      </p>
+      <div class="hero-actions">
+        <a href="#mesas" class="btn btn-mustard">Ver las mesas</a>
+        <a href="#configurador" class="btn btn-outline-light">Diseñar en 3D</a>
+      </div>
+    </div>
+
+    <!-- Flecha scroll -->
+    <a href="#mesas" class="hero-scroll-arrow" aria-label="Ir a las mesas">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+    </a>
+
+  </section>
+
+  <!-- Puente hero → mesas -->
+  <div class="story-bridge" data-bridge>
+    <a href="#mesas" class="bridge-link">
+      <span class="bridge-text">Cuatro diseños. El mismo trabajo artesanal.</span>
+      <span class="bridge-arrow">↓</span>
+    </a>
+  </div>
+
+  <!-- ============ PRODUCTOS ============ -->
+  <section class="productos" id="mesas">
+    <div class="container">
+      <p class="eyebrow center">Colección</p>
+      <h2 class="section-title center">Mesas hechas<br>a mano</h2>
+      <p class="section-sub center">
+        Elegí el modelo que mejor se adapte a tu espacio. Cada mesa puede realizarse con distintos colores y combinaciones de mosaico.
+      </p>
+
+      <div class="cards-grid">
+
+        <!-- Card 1: Ratona · patas de madera -->
+        <article class="card" data-product
+          data-name="Mesa Ratona · Patas de madera"
+          data-price="100.000"
+          data-img="assets/images/PHOTO-2026-08-03-12-23-14.jpg"
+          data-desc="Mesa ratona artesanal con estructura de madera maciza y tablero revestido en mosaico cerámico. Un diseño clásico, cálido y personalizable."
+          data-medidas="60 × 40 × 40 cm (largo × ancho × alto)"
+          data-materiales="Madera maciza + mosaico cerámico"
+          data-entrega="A coordinar según producción del taller">
+          <div class="card-media card-media-multi">
+            <div class="card-gallery" data-gallery>
+              <div class="gallery-slide active">
+                <img src="assets/images/PHOTO-2026-08-03-12-23-14.jpg" alt="Mesa Ratona · Patas de madera — foto 1">
+              </div>
+            </div>
+          </div>
+          <div class="card-body">
+            <h3>Mesa Ratona · Patas de madera</h3>
+            <p class="card-desc">Mesa ratona artesanal con estructura de madera maciza y mosaico realizado a mano.</p>
+            <div class="card-foot">
+              <span class="price">$100.000</span>
+              <div class="card-actions">
+                <button class="btn btn-outline btn-small" data-action="ver-mas">Ver detalles</button>
+                <a href="#" class="btn btn-mustard btn-small" data-action="comprar" target="_blank" rel="noopener">Pedir</a>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- Card 2: Ratona · patas de metal -->
+        <article class="card" data-product
+          data-name="Mesa Ratona · Patas de metal"
+          data-price="100.000"
+          data-img="assets/images/PHOTO-2026-08-03-12-23-12.jpg"
+          data-desc="Mesa ratona con estructura metálica y tablero revestido en mosaico cerámico realizado a mano. Una combinación entre diseño contemporáneo y trabajo artesanal."
+          data-medidas="90 × 60 × 45 cm (largo × ancho × alto)"
+          data-materiales="Estructura metálica + mosaico cerámico"
+          data-entrega="A coordinar según producción del taller">
+          <div class="card-media card-media-multi">
+            <div class="card-gallery" data-gallery>
+              <div class="gallery-slide active">
+                <img src="assets/images/PHOTO-2026-08-03-12-23-12.jpg" alt="Mesa Ratona · Patas de metal — foto 1">
+              </div>
+              <div class="gallery-slide">
+                <img src="assets/images/mesa-ratona-c-metal.jpg" alt="Mesa Ratona · Patas de metal — foto 2">
+              </div>
+              <div class="gallery-slide">
+                <img src="assets/images/mesa-metal-2.jpg" alt="Mesa Ratona · Patas de metal — foto 3">
+              </div>
+            </div>
+            <button class="gallery-arrow gallery-arrow-prev" aria-label="Foto anterior">&#8249;</button>
+            <button class="gallery-arrow gallery-arrow-next" aria-label="Foto siguiente">&#8250;</button>
+            <div class="gallery-dots" aria-hidden="true">
+              <span class="gdot active"></span>
+              <span class="gdot"></span>
+              <span class="gdot"></span>
+            </div>
+          </div>
+          <div class="card-body">
+            <h3>Mesa Ratona · Patas de metal</h3>
+            <p class="card-desc">Una versión moderna con estructura metálica y tablero artesanal de mosaico.</p>
+            <div class="card-foot">
+              <span class="price">$100.000</span>
+              <div class="card-actions">
+                <button class="btn btn-outline btn-small" data-action="ver-mas">Ver detalles</button>
+                <a href="#" class="btn btn-mustard btn-small" data-action="comprar" target="_blank" rel="noopener">Pedir</a>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- Card 3: Mesa Cubo -->
+        <article class="card" data-product
+          data-name="Mesa Cubo"
+          data-price="100.000"
+          data-img="assets/images/PHOTO-2026-08-03-12-30-22.jpg"
+          data-desc="Cubo completamente revestido en mosaico cerámico. Puede utilizarse como mesa lateral, apoyo o pieza decorativa."
+          data-medidas="30 × 30 × 40 cm (largo × ancho × alto)"
+          data-materiales="Base de yeso + mosaico cerámico"
+          data-entrega="A coordinar según producción del taller">
+          <div class="card-media card-media-multi">
+            <div class="card-gallery" data-gallery>
+              <div class="gallery-slide active">
+                <img src="assets/images/PHOTO-2026-08-03-12-30-22.jpg" alt="Mesa Cubo — foto 1">
+              </div>
+              <div class="gallery-slide">
+                <img src="assets/images/IMG_9990.JPEG" alt="Mesa Cubo — foto 2">
+              </div>
+            </div>
+            <button class="gallery-arrow gallery-arrow-prev" aria-label="Foto anterior">&#8249;</button>
+            <button class="gallery-arrow gallery-arrow-next" aria-label="Foto siguiente">&#8250;</button>
+            <div class="gallery-dots" aria-hidden="true">
+              <span class="gdot active"></span>
+              <span class="gdot"></span>
+            </div>
+          </div>
+          <div class="card-body">
+            <h3>Mesa Cubo</h3>
+            <p class="card-desc">Una pieza escultórica que funciona como mesa lateral o elemento decorativo.</p>
+            <div class="card-foot">
+              <span class="price">$100.000</span>
+              <div class="card-actions">
+                <button class="btn btn-outline btn-small" data-action="ver-mas">Ver detalles</button>
+                <a href="#" class="btn btn-mustard btn-small" data-action="comprar" target="_blank" rel="noopener">Pedir</a>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- Card 4: Mesa Monolítica -->
+        <article class="card" data-product
+          data-name="Mesa Monolítica"
+          data-price="100.000"
+          data-img="assets/images/mesa-rustica-amarilla.jpg"
+          data-desc="Mesa monolítica realizada en yeso con base cementicia y revestimiento de mosaico cerámico artesanal."
+          data-medidas="70 × 40 × 42 cm (largo × ancho × alto)"
+          data-materiales="Yeso + cemento + mosaico cerámico"
+          data-entrega="A coordinar según producción del taller">
+          <div class="card-media card-media-multi">
+            <div class="card-gallery" data-gallery>
+              <div class="gallery-slide active">
+                <img src="assets/images/mesa-rustica-amarilla.jpg" alt="Mesa Monolítica — foto 1">
+              </div>
+            </div>
+          </div>
+          <div class="card-body">
+            <h3>Mesa Monolítica</h3>
+            <p class="card-desc">Una pieza sólida de líneas simples y presencia escultórica.</p>
+            <div class="card-foot">
+              <span class="price">$100.000</span>
+              <div class="card-actions">
+                <button class="btn btn-outline btn-small" data-action="ver-mas">Ver detalles</button>
+                <a href="#" class="btn btn-mustard btn-small" data-action="comprar" target="_blank" rel="noopener">Pedir</a>
+              </div>
+            </div>
+          </div>
+        </article>
+
+      </div>
+    </div>
+  </section>
+
+
+  <!-- Puente mesas → configurador -->
+  <div class="story-bridge story-bridge-dark" data-bridge>
+    <a href="#configurador" class="bridge-link">
+      <span class="bridge-text">¿Y si la armás exactamente como la querés?</span>
+      <span class="bridge-arrow">↓</span>
+    </a>
+  </div>
+
+  <!-- ============ MODAL PRODUCTO ============ -->
+  <div class="modal-overlay" id="modal-overlay" hidden>
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+      <button class="modal-close" id="modal-close" aria-label="Cerrar">✕</button>
+      <div class="modal-grid">
+        <div class="modal-media" id="modal-media"></div>
+        <div class="modal-content">
+          <p class="eyebrow">Ganchito · Mesa</p>
+          <h3 id="modal-title">Nombre de la mesa</h3>
+          <p id="modal-desc" class="modal-desc"></p>
+          <ul class="modal-specs">
+            <li><span>Medidas</span><strong id="modal-medidas"></strong></li>
+            <li><span>Materiales</span><strong id="modal-materiales"></strong></li>
+            <li><span>Entrega</span><strong id="modal-entrega"></strong></li>
+          </ul>
+          <div class="modal-foot">
+            <span class="price price-lg" id="modal-price"></span>
+            <a href="#" class="btn btn-mustard" id="modal-comprar" target="_blank" rel="noopener">Pedir por WhatsApp</a>
+          </div>
+          <p class="modal-alt">
+            ¿Preferís consultar antes? <a href="#" id="modal-whatsapp-alt" target="_blank" rel="noopener">Escribinos por WhatsApp</a>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ CONFIGURADOR 3D ============ -->
+  
+<section class="configurador-section configurador-inmersivo" id="configurador">
+
+  <!-- Stage 3D — ocupa toda la sección -->
+  <div class="ganchito-canvas-box" id="ganchito-canvas-box-desktop">
+    <canvas id="ganchito-canvas-desktop"></canvas>
+  </div>
+ 
+  <!-- Texto de intro, flotando arriba -->
+  <div class="configurador-overlay-top">
+    <p class="eyebrow center">Diseñá la tuya</p>
+    <h2 class="section-title center">Armá tu mesa<br>en 3D</h2>
+  </div>
+ 
+  <!-- Botón volver (aparece solo cuando ya elegiste mesa) -->
+  <button class="ganchito-volver" id="ganchito-volver" hidden>← Ver las 3 mesas</button>
+ 
+ 
+  <!-- Placeholder mientras no eligió mesa -->
+  <div class="ganchito-placeholder" id="ganchito-placeholder">
+    <p>Deslizá o arrastrá para mirar alrededor del taller<br>y tocá la mesa que más te guste.</p>
+  </div>
+ 
+  <!-- Panel de personalización — flota encima, a la derecha -->
+  <div class="ganchito-controles is-hidden" id="ganchito-controles">
+    <div class="ganchito-grupo">
+      <p class="ganchito-label">Tipo de mesa</p>
+      <div class="ganchito-btn-grupo" id="ganchito-btn-tipo">
+        <button class="ganchito-opt activo" data-val="ratona">Ratona</button>
+        <button class="ganchito-opt" data-val="cubo">Cubo</button>
+        <button class="ganchito-opt" data-val="monolitica">Monolítica</button>
+      </div>
+    </div>
+    <div class="ganchito-grupo" id="ganchito-grupo-patas">
+      <p class="ganchito-label">Tipo de patas</p>
+      <div class="ganchito-btn-grupo" id="ganchito-btn-patas">
+        <button class="ganchito-opt activo" data-val="madera">Madera</button>
+        <button class="ganchito-opt" data-val="metal">Metal</button>
+      </div>
+    </div>
+    <div class="ganchito-grupo">
+      <p class="ganchito-label">Patrón de mosaico</p>
+      <div class="ganchito-btn-grupo" id="ganchito-btn-patron">
+        <button class="ganchito-opt activo" data-val="damero">Damero</button>
+        <button class="ganchito-opt" data-val="guarda">Guarda</button>
+        <button class="ganchito-opt" data-val="diagonal">Diagonal</button>
+        <button class="ganchito-opt" data-val="uniforme">Uniforme</button>
+      </div>
+    </div>
+    <div class="ganchito-grupo ganchito-grupo-tamano">
+      <p class="ganchito-label">Tamaño de pieza</p>
+      <div class="ganchito-btn-grupo" id="ganchito-btn-tamano">
+        <button class="ganchito-opt activo" data-val="chico">Chica</button>
+        <button class="ganchito-opt" data-val="grande">Grande</button>
+      </div>
+    </div>
+    <div class="ganchito-grupo">
+      <p class="ganchito-label">Color principal</p>
+      <div class="ganchito-colores-wrap" id="ganchito-colores">
+        <button class="ganchito-color-dot activo" data-color="negro"     aria-label="Negro"     style="background:#1a1a1a;"></button>
+        <button class="ganchito-color-dot"        data-color="navy"      aria-label="Navy"      style="background:#14213E;"></button>
+        <button class="ganchito-color-dot"        data-color="mostaza"   aria-label="Mostaza"   style="background:#C2872E;"></button>
+        <button class="ganchito-color-dot"        data-color="rojo"      aria-label="Rojo"      style="background:#C0392B;"></button>
+        <button class="ganchito-color-dot"        data-color="oliva"     aria-label="Oliva"     style="background:#6B7A5E;"></button>
+        <button class="ganchito-color-dot"        data-color="terracota" aria-label="Terracota" style="background:#A0522D;"></button>
+        <button class="ganchito-color-dot"        data-color="celeste"   aria-label="Celeste"   style="background:#2980B9;"></button>
+      </div>
+    </div>
+    <div class="ganchito-grupo ganchito-grupo-color2">
+      <p class="ganchito-label">Color secundario</p>
+      <div class="ganchito-colores-wrap" id="ganchito-colores-secundario">
+        <button class="ganchito-color-dot2 activo" data-color2="crema"     aria-label="Crema"     style="background:#F7F3EC; border: 1.5px solid #DDD3BE;"></button>
+        <button class="ganchito-color-dot2"        data-color2="negro"     aria-label="Negro"     style="background:#1a1a1a;"></button>
+        <button class="ganchito-color-dot2"        data-color2="navy"      aria-label="Navy"      style="background:#14213E;"></button>
+        <button class="ganchito-color-dot2"        data-color2="mostaza"   aria-label="Mostaza"   style="background:#C2872E;"></button>
+        <button class="ganchito-color-dot2"        data-color2="rojo"      aria-label="Rojo"      style="background:#C0392B;"></button>
+        <button class="ganchito-color-dot2"        data-color2="oliva"     aria-label="Oliva"     style="background:#6B7A5E;"></button>
+        <button class="ganchito-color-dot2"        data-color2="terracota" aria-label="Terracota" style="background:#A0522D;"></button>
+        <button class="ganchito-color-dot2"        data-color2="celeste"   aria-label="Celeste"   style="background:#2980B9;"></button>
+      </div>
+    </div>
+    <div class="ganchito-resumen-card">
+      <p class="ganchito-resumen-label">Tu mesa:</p>
+      <p class="ganchito-resumen-texto" id="ganchito-resumen">—</p>
+      <a class="btn btn-mustard" id="ganchito-wsp" href="#" target="_blank" rel="noopener">Pedir por WhatsApp</a>
+    </div>
+  </div>
+ 
+</section>
+ 
+
+  <!-- Puente configurador → oficio -->
+  <div class="story-bridge" data-bridge>
+    <a href="#oficio" class="bridge-link">
+      <span class="bridge-text">¿Cómo se hace una mesa así?</span>
+      <span class="bridge-arrow">↓</span>
+    </a>
+  </div>
+
+  <!-- ============ NUESTRO OFICIO ============ -->
+  <section class="oficio" id="oficio">
+    <div class="container oficio-grid">
+      <div class="oficio-media">
+        <figure class="framed-photo framed-photo-alt">
+          <img src="assets/images/mesa-rustica-amarilla-detalle.jpg" alt="Detalle de mate, libreta y mosaico mostaza en el taller de Ganchito, Olavarría">
+        </figure>
+      </div>
+      <div class="oficio-copy">
+        <p class="eyebrow">Nuestro oficio</p>
+        <h2 class="section-title">Cada mesa sale del taller<br>como sale una guitarra<br>criolla: a mano, pieza<br>por pieza.</h2>
+        <p class="oficio-text">
+          No hay dos mosaicos iguales. Cortamos, ordenamos y fijamos cada
+          pieza a mano sobre una base de madera maciza, igual que se afina
+          y se cuida un instrumento criollo: con tiempo y respeto por el
+          material.
+        </p>
+        <p class="oficio-text">
+          Trabajamos en Olavarría y hacemos envíos a la zona — la cobertura
+          exacta y el costo se coordinan por WhatsApp según dónde estés.
+        </p>
+        <ul class="oficio-list">
+          <li>Diseños personalizados a pedido</li>
+          <li>Madera maciza tratada para uso diario</li>
+          <li>Producción y entrega coordinadas por WhatsApp</li>
+        </ul>
+        <a href="#mesas" class="btn btn-ink">Ver la colección</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ CARRUSEL TALLER ============ -->
+  <section class="taller-section">
+    <div class="container">
+      <p class="eyebrow center">El proceso</p>
+      <h2 class="section-title center">Del taller a tu casa</h2>
+      <p class="section-sub center">Cada pieza pasa por nuestras manos antes de llegar a la tuya.</p>
+    </div>
+    <div class="carrusel-wrap" id="carrusel-wrap">
+      <div class="carrusel-track" id="carrusel-track">
+        <div class="carrusel-slide">
+          <div class="taller-placeholder"><span>Foto taller 1<br><small>ej: cortando mosaico</small></span></div>
+        </div>
+        <div class="carrusel-slide">
+          <div class="taller-placeholder"><span>Foto taller 2<br><small>ej: armando el diseño</small></span></div>
+        </div>
+        <div class="carrusel-slide">
+          <div class="taller-placeholder"><span>Foto taller 3<br><small>ej: aplicando junta</small></span></div>
+        </div>
+        <div class="carrusel-slide">
+          <div class="taller-placeholder"><span>Foto taller 4<br><small>ej: mesa terminada</small></span></div>
+        </div>
+        <div class="carrusel-slide">
+          <div class="taller-placeholder"><span>Foto taller 5<br><small>ej: detalle de pieza</small></span></div>
+        </div>
+        <!-- duplicadas para loop infinito -->
+        <div class="carrusel-slide" aria-hidden="true">
+          <div class="taller-placeholder"><span>Foto taller 1<br><small>ej: cortando mosaico</small></span></div>
+        </div>
+        <div class="carrusel-slide" aria-hidden="true">
+          <div class="taller-placeholder"><span>Foto taller 2<br><small>ej: armando el diseño</small></span></div>
+        </div>
+        <div class="carrusel-slide" aria-hidden="true">
+          <div class="taller-placeholder"><span>Foto taller 3<br><small>ej: aplicando junta</small></span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ TESTIMONIOS ============ -->
+  <section class="testimonios-section" id="testimonios">
+    <div class="container">
+      <p class="eyebrow center">Lo que dicen</p>
+      <h2 class="section-title center">Mesas que ya<br>están en casa</h2>
+      <div class="testimonios-grid">
+
+        <article class="testimonio-card">
+          <div class="testimonio-stars" aria-label="5 estrellas">★★★★★</div>
+          <p class="testimonio-texto">"Pedí la mesa ratona con mosaico negro para el living y quedó increíble. El trabajo a mano se nota en cada detalle. Muy contenta con la compra."</p>
+          <footer class="testimonio-footer">
+            <span class="testimonio-nombre">Luciana M.</span>
+            <span class="testimonio-ciudad">Olavarría</span>
+          </footer>
+        </article>
+
+        <article class="testimonio-card">
+          <div class="testimonio-stars" aria-label="5 estrellas">★★★★★</div>
+          <p class="testimonio-texto">"Me armaron el diseño personalizado con los colores de mi cocina. La comunicación por WhatsApp fue súper fluida y los tiempos se cumplieron."</p>
+          <footer class="testimonio-footer">
+            <span class="testimonio-nombre">Martín R.</span>
+            <span class="testimonio-ciudad">Tandil</span>
+          </footer>
+        </article>
+
+        <article class="testimonio-card">
+          <div class="testimonio-stars" aria-label="5 estrellas">★★★★★</div>
+          <p class="testimonio-texto">"Compré el cubo de mosaico mostaza para usar como mesa de luz y es una obra de arte. Cada visita me pregunta dónde lo compré."</p>
+          <footer class="testimonio-footer">
+            <span class="testimonio-nombre">Sofía G.</span>
+            <span class="testimonio-ciudad">Azul</span>
+          </footer>
+        </article>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FAQ ============ -->
+  <section class="faq-section">
+    <div class="container">
+      <p class="eyebrow center">Preguntas frecuentes</p>
+      <h2 class="section-title center">Todo lo que<br>necesitás saber</h2>
+      <div class="faq-list" id="faq-list">
+
+        <div class="faq-item">
+          <button class="faq-trigger" aria-expanded="false">
+            ¿Cómo funciona el proceso de compra?
+            <span class="faq-icon" aria-hidden="true"></span>
+          </button>
+          <div class="faq-body">
+            <p>Todo se coordina por WhatsApp. Nos escribís con el modelo y colores que te gustan (podés usar el configurador 3D para mostrarnos tu idea), acordamos los detalles y el pago, y arrancamos con la producción.</p>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-trigger" aria-expanded="false">
+            ¿Cuánto tarda en estar lista una mesa?
+            <span class="faq-icon" aria-hidden="true"></span>
+          </button>
+          <div class="faq-body">
+            <p>El tiempo varía según la carga del taller y la complejidad del diseño. En general entre 1 y 3 semanas. Al momento de confirmar el pedido te damos una fecha estimada.</p>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-trigger" aria-expanded="false">
+            ¿Hacen envíos? ¿A qué zonas?
+            <span class="faq-icon" aria-hidden="true"></span>
+          </button>
+          <div class="faq-body">
+            <p>Sí. Trabajamos en Olavarría y coordinamos envíos a la zona (Tandil, Azul, Bahía Blanca y alrededores). El costo y la logística se arreglan por WhatsApp según tu ubicación.</p>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-trigger" aria-expanded="false">
+            ¿Puedo pedir un diseño que no está en la web?
+            <span class="faq-icon" aria-hidden="true"></span>
+          </button>
+          <div class="faq-body">
+            <p>Totalmente. Hacemos diseños personalizados: elegís los colores, el patrón y el estilo, o nos mandás una referencia y lo adaptamos. Es parte de lo que más nos gusta hacer.</p>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-trigger" aria-expanded="false">
+            ¿Cómo se abona?
+            <span class="faq-icon" aria-hidden="true"></span>
+          </button>
+          <div class="faq-body">
+            <p>Se coordina por WhatsApp. Generalmente se hace una seña para reservar el lugar en el taller y el saldo al retirar o antes del envío. Aceptamos transferencia bancaria y efectivo.</p>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-trigger" aria-expanded="false">
+            ¿Las mesas son aptas para uso exterior?
+            <span class="faq-icon" aria-hidden="true"></span>
+          </button>
+          <div class="faq-body">
+            <p>El mosaico cerámico es resistente a la humedad, pero la madera de las patas requiere cuidado si se expone al sol o la lluvia directa. Para uso en terraza o galería cubierta va perfecto; para exterior directo conviene consultarnos.</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- ============ SECCIÓN PEDIR ============ -->
+<section class="pedir-section" id="pedir">
+  <div class="pedir-mosaic-bg" aria-hidden="true"></div>
+  <div class="container pedir-inner">
+    <p class="eyebrow pedir-eyebrow">Ya la imaginaste.</p>
+    <h2 class="pedir-title" id="pedir-title">Ahora pedila.</h2>
+    <p class="pedir-sub" id="pedir-sub">
+      Escribinos por WhatsApp. En menos de 24 horas te contestamos con precio, tiempo y todo lo que necesitás saber.
+    </p>
+    <div class="pedir-config-resumen" id="pedir-config-resumen" hidden>
+      <div class="pedir-config-label">Tu diseño:</div>
+      <div class="pedir-config-texto" id="pedir-config-texto">—</div>
+    </div>
+    <a class="btn btn-pedir" id="pedir-wsp" href="#" target="_blank" rel="noopener">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+      Escribir a Ganchito
+    </a>
+    <p class="pedir-hint">Sin formulario. Sin esperas. Directo al taller.</p>
+  </div>
+</section>
+
+<!-- ============ FOOTER / CONTACTO ============ -->
+<footer class="site-footer" id="contacto">
+  <div class="mosaic-strip mosaic-strip-dark" aria-hidden="true">
+    <div class="mosaic-strip-track"></div>
+  </div>
+
+  <div class="container footer-grid">
+    <div class="footer-brand">
+      <img src="assets/images/logo-icono.png" alt="Ganchito" class="footer-mark">
+      <p>Renová tu casa con diseño único y personalizado.<br>Hecho en Olavarría, Buenos Aires.</p>
+    </div>
+
+    <div class="footer-col">
+      <h4>Contacto</h4>
+      <a href="#" id="footer-whatsapp" target="_blank" rel="noopener">WhatsApp</a>
+      <a href="https://www.instagram.com/ganchito.olav/" target="_blank" rel="noopener">Instagram @ganchito.olav</a>
+    </div>
+
+    <div class="footer-col">
+      <h4>Ubicación</h4>
+      <p>Olavarría, Buenos Aires, Argentina</p>
+      <p>Envíos a coordinar por zona</p>
+    </div>
+  </div>
+
+  <div class="container footer-bottom">
+    <p>© <span id="year"></span> Ganchito. Prototipo de landing page — todos los textos y precios son de ejemplo.</p>
+  </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
+<script src="script.js"></script>
+<script src="taller-interior.js"></script>
+<script src="ganchito-configurador.js"></script>
+<script src="admin.js"></script>
+<script src="mosaico-narrativo.js"></script>
+
+</body>
+</html>
