@@ -38,10 +38,10 @@
   // ratona de 60×40×40).
   const CM = 1 / 25;
   const MEDIDAS_CM = {
-    'ratona-madera': { w: 60, d: 40, h: 40 },
-    'ratona-metal':  { w: 90, d: 60, h: 45 },
-    'cubo':          { w: 30, d: 30, h: 40 },
-    'monolitica':    { w: 70, d: 40, h: 42 },
+    'ratona-madera': { w: 40, d: 300, h: 30 },
+    'ratona-metal':  { w: 60, d: 45, h: 30 },
+    'cubo':          { w: 25, d: 25, h: 30 },
+    'monolitica':    { w: 50, d: 30, h: 35 },
   };
   function dimsFor(tipo) {
     const m = MEDIDAS_CM[tipo] || MEDIDAS_CM['ratona-madera'];
