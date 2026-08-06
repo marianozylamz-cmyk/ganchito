@@ -230,7 +230,8 @@ p{ margin:0; }
   margin-top: 22px;
   max-width: 460px;
   font-size: 1.08rem;
-  color: var(--ink-soft);
+  color: #fff;
+  font-weight: 700;
 }
 .hero-actions{
   margin-top: 34px;
@@ -610,12 +611,6 @@ p{ margin:0; }
   pointer-events: none;
   font-family: var(--font-label);
   letter-spacing: 0.06em;
-}
-
-.ganchito-controles {
-  display: flex;
-  flex-direction: column;
-  gap: 1.2rem;
 }
 
 .ganchito-grupo.is-hidden { display: none; }
@@ -1903,6 +1898,581 @@ p{ margin:0; }
   .configurador-inmersivo .ganchito-controles::-webkit-scrollbar { width: 4px; }
   .configurador-inmersivo .ganchito-controles::-webkit-scrollbar-thumb {
     background: rgba(247,243,236,0.25);
+    border-radius: 10px;
+  }
+}
+/* =========================================================
+   CONFIGURADOR 3D — layout vertical definitivo
+   ========================================================= */
+
+.configurador-inmersivo {
+  position: relative;
+  width: 100%;
+  height: auto;
+  min-height: 0;
+  max-height: none;
+  padding: 88px 24px 110px;
+  overflow: visible;
+  background: var(--cream);
+}
+
+/* Título fuera del canvas */
+.configurador-inmersivo .configurador-overlay-top {
+  position: relative;
+  inset: auto;
+  left: auto;
+  top: auto;
+  transform: none;
+  z-index: 2;
+  width: 100%;
+  max-width: 720px;
+  margin: 0 auto 34px;
+  padding: 0;
+  pointer-events: auto;
+  text-align: center;
+}
+
+.configurador-inmersivo .configurador-overlay-top .eyebrow {
+  color: var(--saddle);
+}
+
+.configurador-inmersivo .configurador-overlay-top .section-title {
+  color: var(--ink);
+  text-shadow: none;
+}
+
+/* Escena independiente, sin controles encima */
+.configurador-inmersivo .ganchito-stage {
+  position: relative;
+  width: min(1180px, 100%);
+  height: 430px;
+  margin: 0 auto;
+  overflow: hidden;
+  border-radius: var(--radius-lg);
+  background: #1a1a2e;
+  box-shadow: var(--shadow);
+}
+
+/* Canvas ancho y bajo */
+.configurador-inmersivo #ganchito-canvas-box-desktop {
+  position: relative;
+  inset: auto;
+  width: 100%;
+  height: 100%;
+  border-radius: 0;
+  box-shadow: none;
+  background: #1a1a2e;
+  cursor: grab;
+  touch-action: none;
+}
+
+.configurador-inmersivo #ganchito-canvas-box-desktop:active {
+  cursor: grabbing;
+}
+
+.configurador-inmersivo #ganchito-canvas-box-desktop canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* El placeholder sigue disponible para el JS,
+   pero no tapa visualmente la escena */
+.configurador-inmersivo .ganchito-placeholder {
+  position: absolute;
+  left: 50%;
+  bottom: 24px;
+  transform: translateX(-50%);
+  z-index: 4;
+  min-height: 0;
+  width: max-content;
+  max-width: calc(100% - 32px);
+  padding: 9px 16px;
+  border: 0;
+  border-radius: 100px;
+  background: rgba(20, 20, 31, 0.72);
+  backdrop-filter: blur(6px);
+  pointer-events: none;
+  text-align: center;
+}
+
+.configurador-inmersivo .ganchito-placeholder p {
+  color: rgba(255, 255, 255, 0.86);
+  font-family: var(--font-label);
+  font-size: 0.78rem;
+  line-height: 1.35;
+}
+
+/* Botón volver dentro de la escena */
+.configurador-inmersivo .ganchito-volver {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  z-index: 7;
+}
+
+/* Indicador debajo del canvas */
+.ganchito-hint-configurador {
+  width: 100%;
+  margin: 16px auto 0;
+  color: var(--ink-soft);
+  font-family: var(--font-label);
+  font-size: 0.82rem;
+  letter-spacing: 0.04em;
+  text-align: center;
+}
+
+/* Editor centrado y angosto */
+.configurador-inmersivo .ganchito-controles {
+  position: relative;
+  inset: auto;
+  top: auto;
+  right: auto;
+  bottom: auto;
+  left: auto;
+  transform: none;
+
+  width: min(720px, 100%);
+  max-width: 720px;
+  max-height: none;
+  overflow: visible;
+  margin: 40px auto 0;
+  padding: 0;
+
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+
+  background: transparent;
+  border-radius: 0;
+  box-shadow: none;
+  backdrop-filter: none;
+}
+
+/* Cada grupo se convierte en una tarjeta/sección */
+.configurador-inmersivo .ganchito-controles > .ganchito-grupo,
+.configurador-inmersivo .ganchito-controles > .ganchito-resumen-card {
+  width: 100%;
+  margin: 0;
+  padding: 22px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+/* Primera sección con borde superior */
+.configurador-inmersivo .ganchito-controles > .ganchito-grupo:first-child {
+  border-top: 1px solid var(--line);
+}
+
+/* Etiquetas */
+.configurador-inmersivo .ganchito-controles .ganchito-label {
+  margin-bottom: 12px;
+  color: var(--saddle);
+  font-size: 0.76rem;
+}
+
+/* Botones */
+.configurador-inmersivo .ganchito-controles .ganchito-btn-grupo {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  overflow: visible;
+}
+
+.configurador-inmersivo .ganchito-controles .ganchito-opt {
+  flex: 0 0 auto;
+  min-height: 42px;
+  padding: 10px 18px;
+}
+
+/* Colores */
+.configurador-inmersivo .ganchito-controles .ganchito-colores-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 14px;
+  overflow: visible;
+}
+
+.configurador-inmersivo .ganchito-controles .ganchito-color-dot,
+.configurador-inmersivo .ganchito-controles .ganchito-color-dot2 {
+  width: 34px;
+  height: 34px;
+  flex: 0 0 auto;
+}
+
+/* Resumen */
+.configurador-inmersivo .ganchito-controles .ganchito-resumen-card {
+  margin-top: 0;
+  padding: 24px 0 0;
+  border-bottom: 0;
+  background: transparent;
+  border-radius: 0;
+  border-top: 0;
+}
+
+.configurador-inmersivo .ganchito-controles .ganchito-resumen-label {
+  margin-bottom: 8px;
+}
+
+.configurador-inmersivo .ganchito-controles .ganchito-resumen-texto {
+  margin-bottom: 16px;
+  font-size: 1.15rem;
+}
+
+/* WhatsApp */
+.configurador-inmersivo .ganchito-controles .ganchito-resumen-card .btn {
+  min-height: 48px;
+}
+
+/* =========================================================
+   MOBILE COMPACTO
+   Canvas y configurador visibles en la misma pantalla
+   ========================================================= */
+
+@media (max-width: 760px) {
+
+  .configurador-inmersivo {
+    height: 100svh;
+    min-height: 620px;
+    max-height: none;
+    overflow: hidden;
+    padding: 22px 14px 0;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Título más compacto */
+  .configurador-inmersivo .configurador-overlay-top {
+    flex: 0 0 auto;
+    margin: 0 auto 12px;
+  }
+
+  .configurador-inmersivo .configurador-overlay-top .eyebrow {
+    margin-bottom: 5px;
+    font-size: 0.68rem;
+  }
+
+  .configurador-inmersivo .configurador-overlay-top .section-title {
+    font-size: clamp(1.8rem, 8vw, 2.35rem);
+    line-height: 1.05;
+  }
+
+  /* Canvas: ocupa aproximadamente un tercio de la pantalla */
+  .configurador-inmersivo .ganchito-stage {
+    flex: 0 0 clamp(220px, 34svh, 300px);
+    width: 100%;
+    height: auto;
+    min-height: 220px;
+    max-height: 300px;
+    margin: 0;
+    border-radius: 12px;
+  }
+
+  .configurador-inmersivo #ganchito-canvas-box-desktop {
+    width: 100%;
+    height: 100%;
+  }
+
+  /* Indicador inmediatamente debajo del canvas */
+  .ganchito-hint-configurador {
+    flex: 0 0 auto;
+    margin: 8px auto 10px;
+    font-size: 0.7rem;
+    line-height: 1.2;
+  }
+
+  /* El configurador ocupa el espacio restante */
+  .configurador-inmersivo .ganchito-controles {
+    flex: 1 1 auto;
+    min-height: 0;
+    width: 100%;
+    max-width: none;
+    margin: 0;
+    padding: 0 4px 18px;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /*
+    Elimina el comportamiento de bottom sheet.
+    El panel queda debajo del canvas y no lo tapa.
+  */
+  .configurador-inmersivo .ganchito-controles::before {
+    display: none;
+  }
+
+  /* Secciones más compactas */
+  .configurador-inmersivo .ganchito-controles > .ganchito-grupo,
+  .configurador-inmersivo .ganchito-controles > .ganchito-resumen-card {
+    padding: 11px 0;
+  }
+
+  .configurador-inmersivo .ganchito-controles > .ganchito-grupo:first-child {
+    border-top: 1px solid var(--line);
+  }
+
+  .configurador-inmersivo .ganchito-controles .ganchito-label {
+    margin-bottom: 6px;
+    font-size: 0.67rem;
+    letter-spacing: 0.1em;
+  }
+
+  /* Botones pequeños pero cómodos */
+  .configurador-inmersivo .ganchito-controles .ganchito-btn-grupo {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 6px;
+    overflow-x: auto;
+    padding: 2px 2px 5px;
+    scrollbar-width: none;
+  }
+
+  .configurador-inmersivo .ganchito-controles .ganchito-btn-grupo::-webkit-scrollbar {
+    display: none;
+  }
+
+  .configurador-inmersivo .ganchito-controles .ganchito-opt {
+    flex: 0 0 auto;
+    min-height: 36px;
+    padding: 7px 12px;
+    font-size: 0.72rem;
+    border-radius: 5px;
+  }
+
+  /* Colores más juntos */
+  .configurador-inmersivo .ganchito-controles .ganchito-colores-wrap {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 10px;
+    overflow-x: auto;
+    padding: 3px 2px 6px;
+    scrollbar-width: none;
+  }
+
+  .configurador-inmersivo
+  .ganchito-controles
+  .ganchito-colores-wrap::-webkit-scrollbar {
+    display: none;
+  }
+
+  .configurador-inmersivo .ganchito-controles .ganchito-color-dot,
+  .configurador-inmersivo .ganchito-controles .ganchito-color-dot2 {
+    width: 30px;
+    height: 30px;
+    flex: 0 0 auto;
+  }
+
+  /* Resumen compacto */
+  .configurador-inmersivo .ganchito-controles .ganchito-resumen-card {
+    padding-top: 13px;
+    padding-bottom: 14px;
+  }
+
+  .configurador-inmersivo .ganchito-controles .ganchito-resumen-label {
+    margin-bottom: 3px;
+    font-size: 0.65rem;
+  }
+
+  .configurador-inmersivo .ganchito-controles .ganchito-resumen-texto {
+    margin-bottom: 8px;
+    font-size: 0.88rem;
+    line-height: 1.25;
+  }
+
+  .configurador-inmersivo
+  .ganchito-controles
+  .ganchito-resumen-card
+  .btn {
+    width: 100%;
+    min-height: 40px;
+    padding: 10px 14px;
+    font-size: 0.78rem;
+  }
+
+  /* Scrollbar interna muy discreta */
+  .configurador-inmersivo .ganchito-controles::-webkit-scrollbar {
+    width: 3px;
+  }
+
+  .configurador-inmersivo .ganchito-controles::-webkit-scrollbar-thumb {
+    background: rgba(20, 33, 62, 0.25);
+    border-radius: 10px;
+  }
+}/* =========================================================
+   DESKTOP — canvas full width + configurador visible abajo
+   ========================================================= */
+
+@media (min-width: 761px) {
+
+  .configurador-inmersivo {
+    width: 100%;
+    height: 100svh;
+    min-height: 700px;
+    max-height: none;
+    overflow: hidden;
+    padding: 28px 0 0;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Título */
+  .configurador-inmersivo .configurador-overlay-top {
+    flex: 0 0 auto;
+    width: 100%;
+    max-width: none;
+    margin: 0 auto 16px;
+    padding: 0 24px;
+  }
+
+  .configurador-inmersivo .configurador-overlay-top .eyebrow {
+    margin-bottom: 5px;
+    font-size: 0.72rem;
+  }
+
+  .configurador-inmersivo .configurador-overlay-top .section-title {
+    font-size: clamp(2rem, 3.5vw, 3rem);
+    line-height: 1;
+  }
+
+  /* Canvas realmente de borde a borde */
+  .configurador-inmersivo .ganchito-stage {
+    flex: 0 0 clamp(360px, 52svh, 570px);
+    width: 100%;
+    height: auto;
+    min-height: 360px;
+    max-height: 570px;
+    margin: 0;
+    border-radius: 0;
+    overflow: hidden;
+    background: #1a1a2e;
+    box-shadow: none;
+  }
+
+  .configurador-inmersivo #ganchito-canvas-box-desktop {
+    width: 100%;
+    height: 100%;
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  .configurador-inmersivo #ganchito-canvas-box-desktop canvas {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+
+  /* Indicador debajo del canvas */
+  .ganchito-hint-configurador {
+    flex: 0 0 auto;
+    margin: 8px auto 8px;
+    font-size: 0.76rem;
+  }
+
+  /* Configurador ocupa el resto de la pantalla */
+  .configurador-inmersivo .ganchito-controles {
+    flex: 1 1 auto;
+    min-height: 0;
+    width: min(1180px, calc(100% - 48px));
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 0 0 20px;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    align-content: start;
+    gap: 0 32px;
+
+    background: transparent;
+    box-shadow: none;
+    border-radius: 0;
+  }
+
+  /* Oculta la manija del antiguo bottom sheet */
+  .configurador-inmersivo .ganchito-controles::before {
+    display: none;
+  }
+
+  /* Cada control como bloque compacto */
+  .configurador-inmersivo .ganchito-controles > .ganchito-grupo,
+  .configurador-inmersivo .ganchito-controles > .ganchito-resumen-card {
+    width: 100%;
+    min-width: 0;
+    padding: 12px 0;
+    margin: 0;
+    border-top: 1px solid var(--line);
+    border-bottom: 0;
+  }
+
+  .configurador-inmersivo .ganchito-controles .ganchito-label {
+    margin-bottom: 8px;
+    font-size: 0.7rem;
+  }
+
+  /* Los botones pueden ocupar varias líneas */
+  .configurador-inmersivo .ganchito-controles .ganchito-btn-grupo {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    overflow: visible;
+  }
+
+  .configurador-inmersivo .ganchito-controles .ganchito-opt {
+    min-height: 36px;
+    padding: 7px 12px;
+    font-size: 0.75rem;
+  }
+
+  /* Colores */
+  .configurador-inmersivo .ganchito-controles .ganchito-colores-wrap {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    overflow: visible;
+  }
+
+  .configurador-inmersivo .ganchito-controles .ganchito-color-dot,
+  .configurador-inmersivo .ganchito-controles .ganchito-color-dot2 {
+    width: 30px;
+    height: 30px;
+  }
+
+  /* El resumen ocupa todo el ancho inferior */
+  .configurador-inmersivo .ganchito-controles > .ganchito-resumen-card {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: 150px 1fr auto;
+    align-items: center;
+    gap: 18px;
+    padding: 14px 0 18px;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .configurador-inmersivo .ganchito-controles .ganchito-resumen-label {
+    margin: 0;
+    font-size: 0.68rem;
+  }
+
+  .configurador-inmersivo .ganchito-controles .ganchito-resumen-texto {
+    margin: 0;
+    font-size: 0.95rem;
+  }
+
+  .configurador-inmersivo .ganchito-controles .ganchito-resumen-card .btn {
+    min-height: 40px;
+    padding: 9px 18px;
+    font-size: 0.78rem;
+  }
+
+  /* Scrollbar discreta */
+  .configurador-inmersivo .ganchito-controles::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  .configurador-inmersivo .ganchito-controles::-webkit-scrollbar-thumb {
+    background: rgba(20, 33, 62, 0.22);
     border-radius: 10px;
   }
 }
