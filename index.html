@@ -293,31 +293,22 @@
 
 <section class="configurador-section configurador-inmersivo" id="configurador">
 
- <!-- Stage 3D — .ganchito-stage es quien fija la altura compacta (ver CSS) -->
-  <div class="ganchito-stage">
-    <div class="ganchito-canvas-box" id="ganchito-canvas-box-desktop">
-      <canvas id="ganchito-canvas-desktop"></canvas>
-    </div>
-  </div>
-  <p class="ganchito-hint-configurador" id="ganchito-hint-desktop"></p>
-
-  <!-- Texto de intro, flotando arriba -->
   <div class="configurador-overlay-top">
     <p class="eyebrow center">Diseñá la tuya</p>
     <h2 class="section-title center">Armá tu mesa<br>en 3D</h2>
   </div>
- 
-  <!-- Botón volver (aparece solo cuando ya elegiste mesa) -->
-  <button class="ganchito-volver" id="ganchito-volver" hidden>← Ver las 3 mesas</button>
- 
- 
-  <!-- Placeholder mientras no eligió mesa -->
-  <div class="ganchito-placeholder" id="ganchito-placeholder">
-    <p>Deslizá o arrastrá para mirar alrededor del taller<br>y tocá la mesa que más te guste.</p>
+
+  <div class="ganchito-stage">
+    <div class="ganchito-canvas-box" id="ganchito-canvas-box-desktop">
+      <canvas id="ganchito-canvas-desktop"></canvas>
+      <button class="ganchito-volver" id="ganchito-volver" hidden>← Ver las 3 mesas</button>
+    </div>
   </div>
- 
-  <!-- Panel de personalización — flota encima, a la derecha -->
+
+  <p class="ganchito-hint-configurador" id="ganchito-hint-desktop"></p>
+
   <div class="ganchito-controles is-hidden" id="ganchito-controles">
+
     <div class="ganchito-grupo">
       <p class="ganchito-label">Tipo de mesa</p>
       <div class="ganchito-btn-grupo" id="ganchito-btn-tipo">
@@ -326,6 +317,7 @@
         <button class="ganchito-opt" data-val="monolitica">Monolítica</button>
       </div>
     </div>
+
     <div class="ganchito-grupo" id="ganchito-grupo-patas">
       <p class="ganchito-label">Tipo de patas</p>
       <div class="ganchito-btn-grupo" id="ganchito-btn-patas">
@@ -333,6 +325,7 @@
         <button class="ganchito-opt" data-val="metal">Metal</button>
       </div>
     </div>
+
     <div class="ganchito-grupo">
       <p class="ganchito-label">Patrón de mosaico</p>
       <div class="ganchito-btn-grupo" id="ganchito-btn-patron">
@@ -342,44 +335,50 @@
         <button class="ganchito-opt" data-val="uniforme">Uniforme</button>
       </div>
     </div>
-    <div class="ganchito-grupo ganchito-grupo-tamano">
+
+    <div class="ganchito-grupo">
       <p class="ganchito-label">Tamaño de pieza</p>
       <div class="ganchito-btn-grupo" id="ganchito-btn-tamano">
         <button class="ganchito-opt activo" data-val="chico">Chica</button>
         <button class="ganchito-opt" data-val="grande">Grande</button>
       </div>
     </div>
+
     <div class="ganchito-grupo">
       <p class="ganchito-label">Color principal</p>
       <div class="ganchito-colores-wrap" id="ganchito-colores">
-        <button class="ganchito-color-dot activo" data-color="negro"     aria-label="Negro"     style="background:#1a1a1a;"></button>
-        <button class="ganchito-color-dot"        data-color="navy"      aria-label="Navy"      style="background:#14213E;"></button>
-        <button class="ganchito-color-dot"        data-color="mostaza"   aria-label="Mostaza"   style="background:#C2872E;"></button>
-        <button class="ganchito-color-dot"        data-color="rojo"      aria-label="Rojo"      style="background:#C0392B;"></button>
-        <button class="ganchito-color-dot"        data-color="oliva"     aria-label="Oliva"     style="background:#6B7A5E;"></button>
-        <button class="ganchito-color-dot"        data-color="terracota" aria-label="Terracota" style="background:#A0522D;"></button>
-        <button class="ganchito-color-dot"        data-color="celeste"   aria-label="Celeste"   style="background:#2980B9;"></button>
+        <button class="ganchito-color-dot activo" data-color="negro" aria-label="Negro" style="background:#1a1a1a;"></button>
+        <button class="ganchito-color-dot" data-color="navy" aria-label="Navy" style="background:#14213E;"></button>
+        <button class="ganchito-color-dot" data-color="mostaza" aria-label="Mostaza" style="background:#C2872E;"></button>
+        <button class="ganchito-color-dot" data-color="rojo" aria-label="Rojo" style="background:#C0392B;"></button>
+        <button class="ganchito-color-dot" data-color="oliva" aria-label="Oliva" style="background:#6B7A5E;"></button>
+        <button class="ganchito-color-dot" data-color="terracota" aria-label="Terracota" style="background:#A0522D;"></button>
+        <button class="ganchito-color-dot" data-color="celeste" aria-label="Celeste" style="background:#2980B9;"></button>
       </div>
     </div>
-    <div class="ganchito-grupo ganchito-grupo-color2">
+
+    <div class="ganchito-grupo">
       <p class="ganchito-label">Color secundario</p>
       <div class="ganchito-colores-wrap" id="ganchito-colores-secundario">
-        <button class="ganchito-color-dot2 activo" data-color2="crema"     aria-label="Crema"     style="background:#F7F3EC; border: 1.5px solid #DDD3BE;"></button>
-        <button class="ganchito-color-dot2"        data-color2="negro"     aria-label="Negro"     style="background:#1a1a1a;"></button>
-        <button class="ganchito-color-dot2"        data-color2="navy"      aria-label="Navy"      style="background:#14213E;"></button>
-        <button class="ganchito-color-dot2"        data-color2="mostaza"   aria-label="Mostaza"   style="background:#C2872E;"></button>
-        <button class="ganchito-color-dot2"        data-color2="rojo"      aria-label="Rojo"      style="background:#C0392B;"></button>
-        <button class="ganchito-color-dot2"        data-color2="oliva"     aria-label="Oliva"     style="background:#6B7A5E;"></button>
-        <button class="ganchito-color-dot2"        data-color2="terracota" aria-label="Terracota" style="background:#A0522D;"></button>
-        <button class="ganchito-color-dot2"        data-color2="celeste"   aria-label="Celeste"   style="background:#2980B9;"></button>
+        <button class="ganchito-color-dot2 activo" data-color2="crema" aria-label="Crema" style="background:#F7F3EC; border: 1.5px solid #DDD3BE;"></button>
+        <button class="ganchito-color-dot2" data-color2="negro" aria-label="Negro" style="background:#1a1a1a;"></button>
+        <button class="ganchito-color-dot2" data-color2="navy" aria-label="Navy" style="background:#14213E;"></button>
+        <button class="ganchito-color-dot2" data-color2="mostaza" aria-label="Mostaza" style="background:#C2872E;"></button>
+        <button class="ganchito-color-dot2" data-color2="rojo" aria-label="Rojo" style="background:#C0392B;"></button>
+        <button class="ganchito-color-dot2" data-color2="oliva" aria-label="Oliva" style="background:#6B7A5E;"></button>
+        <button class="ganchito-color-dot2" data-color2="terracota" aria-label="Terracota" style="background:#A0522D;"></button>
+        <button class="ganchito-color-dot2" data-color2="celeste" aria-label="Celeste" style="background:#2980B9;"></button>
       </div>
     </div>
+
     <div class="ganchito-resumen-card">
       <p class="ganchito-resumen-label">Tu mesa:</p>
       <p class="ganchito-resumen-texto" id="ganchito-resumen">—</p>
       <a class="btn btn-mustard" id="ganchito-wsp" href="#" target="_blank" rel="noopener">Pedir por WhatsApp</a>
     </div>
+
   </div>
+
 </section>
 
   <!-- Puente configurador → oficio -->

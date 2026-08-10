@@ -300,7 +300,7 @@ const yearEl = document.getElementById("year");
 if (yearEl) yearEl.textContent = new Date().getFullYear();
 
 /* ---------------------------------------------------------
-   9) Gallery en cards (auto-rotate + dots + swipe)
+   9) Gallery en cards — 100% manual (sin autoplay)
    --------------------------------------------------------- */
 document.querySelectorAll('[data-gallery]').forEach(gallery => {
   const slides = gallery.querySelectorAll('.gallery-slide');
@@ -308,8 +308,7 @@ document.querySelectorAll('[data-gallery]').forEach(gallery => {
   const dots   = card ? card.querySelectorAll('.gdot') : [];
   if (slides.length < 2) return;
 
-  let current = 0;
-  let timer = null;
+  let current = 0; // arranca siempre en la primera foto del HTML
 
   function goTo(idx) {
     slides[current].classList.remove('active');
@@ -319,35 +318,21 @@ document.querySelectorAll('[data-gallery]').forEach(gallery => {
     if (dots[current]) dots[current].classList.add('active');
   }
 
-  function startTimer() {
-    if (timer) return; // ya hay uno corriendo, no dupliques
-    timer = setInterval(() => goTo(current + 1), 2800);
-  }
-  function stopTimer() {
-    clearInterval(timer);
-    timer = null;
-  }
-
   // Dots clickeables
   dots.forEach((dot, i) => {
-    dot.addEventListener('click', (e) => { e.stopPropagation(); stopTimer(); goTo(i); startTimer(); });
+    dot.addEventListener('click', (e) => { e.stopPropagation(); goTo(i); });
   });
 
   // Flechas prev/next
   const prevBtn = card ? card.querySelector('.gallery-arrow-prev') : null;
   const nextBtn = card ? card.querySelector('.gallery-arrow-next') : null;
-  if (prevBtn) prevBtn.addEventListener('click', (e) => { e.stopPropagation(); stopTimer(); goTo(current - 1); startTimer(); });
-  if (nextBtn) nextBtn.addEventListener('click', (e) => { e.stopPropagation(); stopTimer(); goTo(current + 1); startTimer(); });
-
-  // Pausa al hover (desktop)
-  card.addEventListener('mouseenter', stopTimer);
-  card.addEventListener('mouseleave', startTimer);
+  if (prevBtn) prevBtn.addEventListener('click', (e) => { e.stopPropagation(); goTo(current - 1); });
+  if (nextBtn) nextBtn.addEventListener('click', (e) => { e.stopPropagation(); goTo(current + 1); });
 
   // Swipe táctil (mobile)
   let touchStartX = 0;
   let touchStartY = 0;
   gallery.addEventListener('touchstart', (e) => {
-    stopTimer();
     touchStartX = e.touches[0].clientX;
     touchStartY = e.touches[0].clientY;
   }, { passive: true });
@@ -360,10 +345,7 @@ document.querySelectorAll('[data-gallery]').forEach(gallery => {
     if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)) {
       if (dx < 0) goTo(current + 1); else goTo(current - 1);
     }
-    startTimer();
   }, { passive: true });
-
-  startTimer();
 });
 
 /* ---------------------------------------------------------

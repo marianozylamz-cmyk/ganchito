@@ -575,65 +575,164 @@ p{ margin:0; }
 }
 
 /* =========================================================
-   CONFIGURADOR 3D
+   CONFIGURADOR 3D — INTEGRACIÓN
    ========================================================= */
+
 .configurador-section {
   padding: 90px 0 100px;
   background: var(--cream);
 }
 
-.configurador-grid {
-  margin-top: 52px;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 48px;
-  align-items: start;
+.configurador-inmersivo {
+  width: 100%;
+  height: auto;
+  min-height: auto;
+  overflow: visible;
+  padding: 28px 0 0;
+  display: flex;
+  flex-direction: column;
 }
 
-.ganchito-canvas-box {
+.configurador-inmersivo .configurador-overlay-top {
+  flex: 0 0 auto;
   width: 100%;
-  height: 380px;
+  max-width: none;
+  margin: 0 auto 20px;
+  padding: 0 24px;
+  text-align: center;
+}
+
+.configurador-inmersivo .configurador-overlay-top .eyebrow {
+  color: var(--saddle);
+  margin-bottom: 5px;
+}
+
+.configurador-inmersivo .configurador-overlay-top .section-title {
+  font-size: clamp(2rem, 3.5vw, 3rem);
+  line-height: 1;
+  color: var(--ink);
+}
+
+.configurador-inmersivo .ganchito-stage {
+  position: relative;
+  width: 100%;
+  height: auto;
+  margin: 0;
+  overflow: visible;
+  background: var(--cream);
+  box-shadow: none;
+  border-radius: 0;
+}
+
+.configurador-inmersivo #ganchito-canvas-box-desktop {
+  position: relative;
+  width: 100%;
+  height: 360px;
+  background: #1a1a2e;
   border-radius: var(--radius-lg);
   overflow: hidden;
-  background: #1a1a2e;
   cursor: grab;
-  position: relative;
   box-shadow: var(--shadow);
+  margin: 0 auto;
+  max-width: min(1180px, 100%);
 }
-.ganchito-canvas-box:active { cursor: grabbing; }
-.ganchito-canvas-box canvas { width: 100%; height: 100%; display: block; }
 
-.ganchito-hint {
+.configurador-inmersivo #ganchito-canvas-box-desktop:active {
+  cursor: grabbing;
+}
+
+.configurador-inmersivo #ganchito-canvas-box-desktop canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.ganchito-hint-configurador {
+  width: 100%;
+  margin: 16px auto 0;
+  color: var(--ink-soft);
+  font-family: var(--font-label);
+  font-size: 0.82rem;
+  letter-spacing: 0.04em;
+  text-align: center;
+  padding: 0 24px;
+}
+
+.configurador-inmersivo .ganchito-volver {
   position: absolute;
-  bottom: 10px;
-  right: 14px;
-  font-size: 0.72rem;
-  color: rgba(255,255,255,0.35);
-  pointer-events: none;
+  top: 12px;
+  left: 14px;
+  background: rgba(20, 33, 62, 0.75);
+  color: var(--cream);
+  border: none;
+  border-radius: 100px;
+  padding: 8px 16px;
   font-family: var(--font-label);
-  letter-spacing: 0.06em;
+  font-size: 0.8rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  backdrop-filter: blur(4px);
+  z-index: 10;
+  transition: background .15s ease, transform .15s ease;
 }
 
-.ganchito-grupo.is-hidden { display: none; }
+.configurador-inmersivo .ganchito-volver:hover {
+  background: rgba(20, 33, 62, 0.92);
+  transform: translateY(-1px);
+}
 
-.ganchito-label {
+.configurador-inmersivo .ganchito-placeholder {
+  display: none;
+}
+
+.configurador-inmersivo .ganchito-controles {
+  position: relative;
+  width: min(720px, 100%);
+  max-width: 720px;
+  margin: 40px auto 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  background: transparent;
+  overflow: visible;
+}
+
+.configurador-inmersivo .ganchito-controles.is-hidden {
+  display: none;
+}
+
+.configurador-inmersivo .ganchito-controles > .ganchito-grupo,
+.configurador-inmersivo .ganchito-controles > .ganchito-resumen-card {
+  width: 100%;
+  margin: 0;
+  padding: 22px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.configurador-inmersivo .ganchito-controles > .ganchito-grupo:first-child {
+  border-top: 1px solid var(--line);
+}
+
+.configurador-inmersivo .ganchito-controles .ganchito-label {
   font-family: var(--font-label);
-  font-size: 0.75rem;
+  font-size: 0.76rem;
   font-weight: 600;
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--saddle);
-  margin: 0 0 10px;
+  margin: 0 0 12px;
 }
 
-.ganchito-btn-grupo {
+.configurador-inmersivo .ganchito-controles .ganchito-btn-grupo {
   display: flex;
   gap: 8px;
   flex-wrap: wrap;
 }
 
-.ganchito-opt {
-  padding: 9px 16px;
+.configurador-inmersivo .ganchito-controles .ganchito-opt {
+  padding: 10px 18px;
   border-radius: var(--radius);
   border: 1.5px solid var(--line);
   background: var(--paper);
@@ -644,25 +743,28 @@ p{ margin:0; }
   cursor: pointer;
   transition: all .15s ease;
 }
-.ganchito-opt:hover {
+
+.configurador-inmersivo .ganchito-controles .ganchito-opt:hover {
   background: var(--cream-deep);
   border-color: var(--saddle);
 }
-.ganchito-opt.activo {
+
+.configurador-inmersivo .ganchito-controles .ganchito-opt.activo {
   border: 2px solid var(--mustard);
   color: var(--walnut-soft);
   background: #FFF8EE;
   font-weight: 600;
 }
 
-.ganchito-colores-wrap {
+.configurador-inmersivo .ganchito-controles .ganchito-colores-wrap {
   display: flex;
   gap: 10px;
   flex-wrap: wrap;
   align-items: center;
 }
 
-.ganchito-color-dot {
+.configurador-inmersivo .ganchito-controles .ganchito-color-dot,
+.configurador-inmersivo .ganchito-controles .ganchito-color-dot2 {
   width: 30px;
   height: 30px;
   border-radius: 50%;
@@ -672,21 +774,26 @@ p{ margin:0; }
   transition: transform .15s ease, border-color .15s ease, box-shadow .15s ease;
   box-shadow: 0 0 0 1.5px var(--line);
 }
-.ganchito-color-dot:hover { transform: scale(1.1); }
-.ganchito-color-dot.activo {
+
+.configurador-inmersivo .ganchito-controles .ganchito-color-dot:hover,
+.configurador-inmersivo .ganchito-controles .ganchito-color-dot2:hover {
+  transform: scale(1.1);
+}
+
+.configurador-inmersivo .ganchito-controles .ganchito-color-dot.activo,
+.configurador-inmersivo .ganchito-controles .ganchito-color-dot2.activo {
   border-color: var(--mustard);
   box-shadow: 0 0 0 2px var(--ink);
   transform: scale(1.15);
 }
 
-.ganchito-resumen-card {
-  margin-top: 0.5rem;
-  padding: 1rem 1.2rem;
-  background: var(--cream-deep);
-  border-radius: var(--radius-lg);
-  border: 1px dashed var(--line);
+.configurador-inmersivo .ganchito-controles .ganchito-resumen-card {
+  padding: 16px 0 0;
+  background: transparent;
+  border: none;
 }
-.ganchito-resumen-label {
+
+.configurador-inmersivo .ganchito-controles .ganchito-resumen-label {
   font-family: var(--font-label);
   font-size: 0.75rem;
   letter-spacing: 0.1em;
@@ -694,12 +801,19 @@ p{ margin:0; }
   color: var(--saddle);
   margin-bottom: 6px;
 }
-.ganchito-resumen-texto {
+
+.configurador-inmersivo .ganchito-controles .ganchito-resumen-texto {
   font-family: var(--font-display);
   font-size: 1rem;
   font-weight: 600;
   color: var(--ink);
   margin-bottom: 14px;
+}
+
+.configurador-inmersivo .ganchito-controles .ganchito-resumen-card .btn {
+  width: 100%;
+  padding: 12px 20px;
+  font-size: 0.88rem;
 }
 
 @media (max-width: 860px) {
@@ -1649,65 +1763,67 @@ p{ margin:0; }
    CONFIGURADOR 3D — layout vertical definitivo
    ========================================================= */
 
-.configurador-inmersivo {
-  position: relative;
-  width: 100%;
-  height: auto;
-  min-height: 0;
-  max-height: none;
-  padding: 88px 24px 110px;
-  overflow: visible;
+/* =========================================================
+   CONFIGURADOR 3D — INTEGRACIÓN
+   ========================================================= */
+
+.configurador-section {
+  padding: 90px 0 100px;
   background: var(--cream);
 }
 
-/* Título fuera del canvas */
-.configurador-inmersivo .configurador-overlay-top {
-  position: relative;
-  inset: auto;
-  left: auto;
-  top: auto;
-  transform: none;
-  z-index: 2;
+.configurador-inmersivo {
   width: 100%;
-  max-width: 720px;
-  margin: 0 auto 34px;
-  padding: 0;
-  pointer-events: auto;
+  height: auto;
+  min-height: auto;
+  overflow: visible;
+  padding: 28px 0 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.configurador-inmersivo .configurador-overlay-top {
+  flex: 0 0 auto;
+  width: 100%;
+  max-width: none;
+  margin: 0 auto 20px;
+  padding: 0 24px;
   text-align: center;
 }
 
 .configurador-inmersivo .configurador-overlay-top .eyebrow {
   color: var(--saddle);
+  margin-bottom: 5px;
 }
 
 .configurador-inmersivo .configurador-overlay-top .section-title {
+  font-size: clamp(2rem, 3.5vw, 3rem);
+  line-height: 1;
   color: var(--ink);
-  text-shadow: none;
 }
 
-/* Escena independiente, sin controles encima */
 .configurador-inmersivo .ganchito-stage {
   position: relative;
-  width: min(1180px, 100%);
-  height: 430px;
-  margin: 0 auto;
-  overflow: hidden;
-  border-radius: var(--radius-lg);
-  background: #1a1a2e;
-  box-shadow: var(--shadow);
+  width: 100%;
+  height: auto;
+  margin: 0;
+  overflow: visible;
+  background: var(--cream);
+  box-shadow: none;
+  border-radius: 0;
 }
 
-/* Canvas ancho y bajo */
 .configurador-inmersivo #ganchito-canvas-box-desktop {
   position: relative;
-  inset: auto;
   width: 100%;
-  height: 100%;
-  border-radius: 0;
-  box-shadow: none;
+  height: 360px;
   background: #1a1a2e;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
   cursor: grab;
-  touch-action: pan-y;
+  box-shadow: var(--shadow);
+  margin: 0 auto;
+  max-width: min(1180px, 100%);
 }
 
 .configurador-inmersivo #ganchito-canvas-box-desktop:active {
@@ -1720,42 +1836,6 @@ p{ margin:0; }
   height: 100%;
 }
 
-/* El placeholder sigue disponible para el JS,
-   pero no tapa visualmente la escena */
-.configurador-inmersivo .ganchito-placeholder {
-  position: absolute;
-  left: 50%;
-  bottom: 24px;
-  transform: translateX(-50%);
-  z-index: 4;
-  min-height: 0;
-  width: max-content;
-  max-width: calc(100% - 32px);
-  padding: 9px 16px;
-  border: 0;
-  border-radius: 100px;
-  background: rgba(20, 20, 31, 0.72);
-  backdrop-filter: blur(6px);
-  pointer-events: none;
-  text-align: center;
-}
-
-.configurador-inmersivo .ganchito-placeholder p {
-  color: rgba(255, 255, 255, 0.86);
-  font-family: var(--font-label);
-  font-size: 0.78rem;
-  line-height: 1.35;
-}
-
-/* Botón volver dentro de la escena */
-.configurador-inmersivo .ganchito-volver {
-  position: absolute;
-  top: 16px;
-  left: 16px;
-  z-index: 7;
-}
-
-/* Indicador debajo del canvas */
 .ganchito-hint-configurador {
   width: 100%;
   margin: 16px auto 0;
@@ -1764,36 +1844,54 @@ p{ margin:0; }
   font-size: 0.82rem;
   letter-spacing: 0.04em;
   text-align: center;
+  padding: 0 24px;
 }
 
-/* Editor centrado y angosto */
+.configurador-inmersivo .ganchito-volver {
+  position: absolute;
+  top: 12px;
+  left: 14px;
+  background: rgba(20, 33, 62, 0.75);
+  color: var(--cream);
+  border: none;
+  border-radius: 100px;
+  padding: 8px 16px;
+  font-family: var(--font-label);
+  font-size: 0.8rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  backdrop-filter: blur(4px);
+  z-index: 10;
+  transition: background .15s ease, transform .15s ease;
+}
+
+.configurador-inmersivo .ganchito-volver:hover {
+  background: rgba(20, 33, 62, 0.92);
+  transform: translateY(-1px);
+}
+
+.configurador-inmersivo .ganchito-placeholder {
+  display: none;
+}
+
 .configurador-inmersivo .ganchito-controles {
   position: relative;
-  inset: auto;
-  top: auto;
-  right: auto;
-  bottom: auto;
-  left: auto;
-  transform: none;
-
   width: min(720px, 100%);
   max-width: 720px;
-  max-height: none;
-  overflow: visible;
   margin: 40px auto 0;
   padding: 0;
-
   display: flex;
   flex-direction: column;
   gap: 0;
-
   background: transparent;
-  border-radius: 0;
-  box-shadow: none;
-  backdrop-filter: none;
+  overflow: visible;
 }
 
-/* Cada grupo se convierte en una tarjeta/sección */
+.configurador-inmersivo .ganchito-controles.is-hidden {
+  display: none;
+}
+
 .configurador-inmersivo .ganchito-controles > .ganchito-grupo,
 .configurador-inmersivo .ganchito-controles > .ganchito-resumen-card {
   width: 100%;
@@ -1802,70 +1900,221 @@ p{ margin:0; }
   border-bottom: 1px solid var(--line);
 }
 
-/* Primera sección con borde superior */
 .configurador-inmersivo .ganchito-controles > .ganchito-grupo:first-child {
   border-top: 1px solid var(--line);
 }
 
-/* Etiquetas */
 .configurador-inmersivo .ganchito-controles .ganchito-label {
-  margin-bottom: 12px;
-  color: var(--saddle);
+  font-family: var(--font-label);
   font-size: 0.76rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--saddle);
+  margin: 0 0 12px;
 }
 
-/* Botones */
 .configurador-inmersivo .ganchito-controles .ganchito-btn-grupo {
   display: flex;
-  flex-wrap: wrap;
   gap: 8px;
-  overflow: visible;
+  flex-wrap: wrap;
 }
 
 .configurador-inmersivo .ganchito-controles .ganchito-opt {
-  flex: 0 0 auto;
-  min-height: 42px;
   padding: 10px 18px;
+  border-radius: var(--radius);
+  border: 1.5px solid var(--line);
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-label);
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all .15s ease;
 }
 
-/* Colores */
+.configurador-inmersivo .ganchito-controles .ganchito-opt:hover {
+  background: var(--cream-deep);
+  border-color: var(--saddle);
+}
+
+.configurador-inmersivo .ganchito-controles .ganchito-opt.activo {
+  border: 2px solid var(--mustard);
+  color: var(--walnut-soft);
+  background: #FFF8EE;
+  font-weight: 600;
+}
+
 .configurador-inmersivo .ganchito-controles .ganchito-colores-wrap {
   display: flex;
+  gap: 10px;
   flex-wrap: wrap;
   align-items: center;
-  gap: 14px;
-  overflow: visible;
 }
 
 .configurador-inmersivo .ganchito-controles .ganchito-color-dot,
 .configurador-inmersivo .ganchito-controles .ganchito-color-dot2 {
-  width: 34px;
-  height: 34px;
-  flex: 0 0 auto;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: 2.5px solid transparent;
+  cursor: pointer;
+  padding: 0;
+  transition: transform .15s ease, border-color .15s ease, box-shadow .15s ease;
+  box-shadow: 0 0 0 1.5px var(--line);
 }
 
-/* Resumen */
+.configurador-inmersivo .ganchito-controles .ganchito-color-dot:hover,
+.configurador-inmersivo .ganchito-controles .ganchito-color-dot2:hover {
+  transform: scale(1.1);
+}
+
+.configurador-inmersivo .ganchito-controles .ganchito-color-dot.activo,
+.configurador-inmersivo .ganchito-controles .ganchito-color-dot2.activo {
+  border-color: var(--mustard);
+  box-shadow: 0 0 0 2px var(--ink);
+  transform: scale(1.15);
+}
+
 .configurador-inmersivo .ganchito-controles .ganchito-resumen-card {
-  margin-top: 0;
-  padding: 24px 0 0;
-  border-bottom: 0;
+  padding: 16px 0 0;
   background: transparent;
-  border-radius: 0;
-  border-top: 0;
+  border: none;
 }
 
 .configurador-inmersivo .ganchito-controles .ganchito-resumen-label {
-  margin-bottom: 8px;
+  font-family: var(--font-label);
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--saddle);
+  margin-bottom: 6px;
 }
 
 .configurador-inmersivo .ganchito-controles .ganchito-resumen-texto {
-  margin-bottom: 16px;
-  font-size: 1.15rem;
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--ink);
+  margin-bottom: 14px;
 }
 
-/* WhatsApp */
 .configurador-inmersivo .ganchito-controles .ganchito-resumen-card .btn {
-  min-height: 48px;
+  width: 100%;
+  padding: 12px 20px;
+  font-size: 0.88rem;
+}
+
+@media (min-width: 761px) {
+  .configurador-inmersivo {
+    height: auto;
+    padding: 28px 0 0;
+  }
+
+  .configurador-inmersivo.overview-mode {
+    height: auto;
+    overflow: visible;
+    padding-bottom: 90px;
+  }
+
+  .configurador-inmersivo #ganchito-canvas-box-desktop {
+    height: 400px;
+    width: 100%;
+    max-width: none;
+    border-radius: 0;
+    margin: 0;
+    box-shadow: none;
+  }
+
+  .ganchito-hint-configurador {
+    margin: 12px 0 0;
+    padding: 0 24px;
+  }
+
+  .configurador-inmersivo .ganchito-controles {
+    width: min(1180px, 100%);
+    max-width: 1180px;
+    margin: 28px auto 0;
+    padding: 0 24px;
+  }
+}
+
+@media (max-width: 760px) {
+  .configurador-inmersivo {
+    height: 100svh;
+    min-height: 600px;
+    overflow: hidden;
+    padding: 16px 12px 0;
+  }
+
+  .configurador-inmersivo .configurador-overlay-top {
+    margin: 0 auto 10px;
+    padding: 0;
+  }
+
+  .configurador-inmersivo .configurador-overlay-top .eyebrow {
+    font-size: 0.65rem;
+  }
+
+  .configurador-inmersivo .configurador-overlay-top .section-title {
+    font-size: clamp(1.6rem, 6vw, 2.2rem);
+  }
+
+  .configurador-inmersivo #ganchito-canvas-box-desktop {
+    height: 260px;
+    border-radius: 12px;
+  }
+
+  .ganchito-hint-configurador {
+    margin: 8px 0 0;
+    font-size: 0.74rem;
+    padding: 0 12px;
+  }
+
+  .configurador-inmersivo .ganchito-controles {
+    width: 100%;
+    max-width: none;
+    margin: 12px 0 0;
+    padding: 0 12px;
+    flex: 1 1 auto;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .configurador-inmersivo .ganchito-controles > .ganchito-grupo,
+  .configurador-inmersivo .ganchito-controles > .ganchito-resumen-card {
+    padding: 14px 0;
+  }
+
+  .configurador-inmersivo .ganchito-controles .ganchito-label {
+    font-size: 0.68rem;
+    margin-bottom: 8px;
+  }
+
+  .configurador-inmersivo .ganchito-controles .ganchito-opt {
+    padding: 8px 12px;
+    font-size: 0.75rem;
+  }
+
+  .configurador-inmersivo .ganchito-controles .ganchito-color-dot,
+  .configurador-inmersivo .ganchito-controles .ganchito-color-dot2 {
+    width: 28px;
+    height: 28px;
+  }
+
+  .configurador-inmersivo .ganchito-controles .ganchito-resumen-label {
+    font-size: 0.63rem;
+  }
+
+  .configurador-inmersivo .ganchito-controles .ganchito-resumen-texto {
+    font-size: 0.9rem;
+  }
+
+  .configurador-inmersivo .ganchito-controles .ganchito-resumen-card .btn {
+    min-height: 36px;
+    padding: 8px 12px;
+    font-size: 0.75rem;
+  }
 }
 
 /* =========================================================
@@ -1874,186 +2123,92 @@ p{ margin:0; }
    ========================================================= */
 
 @media (max-width: 760px) {
-
   .configurador-inmersivo {
     height: 100svh;
-    min-height: 620px;
-    max-height: none;
+    min-height: 600px;
     overflow: hidden;
-    padding: 22px 14px 0;
-    display: flex;
-    flex-direction: column;
+    padding: 16px 12px 0;
   }
 
-  /* Título más compacto */
   .configurador-inmersivo .configurador-overlay-top {
-    flex: 0 0 auto;
-    margin: 0 auto 12px;
+    margin: 0 auto 10px;
+    padding: 0;
   }
 
   .configurador-inmersivo .configurador-overlay-top .eyebrow {
-    margin-bottom: 5px;
-    font-size: 0.68rem;
+    font-size: 0.65rem;
   }
 
   .configurador-inmersivo .configurador-overlay-top .section-title {
-    font-size: clamp(1.8rem, 8vw, 2.35rem);
-    line-height: 1.05;
-  }
-
-  /* Canvas: ocupa aproximadamente un tercio de la pantalla */
-  .configurador-inmersivo .ganchito-stage {
-    flex: 0 0 clamp(220px, 34svh, 300px);
-    width: 100%;
-    height: auto;
-    min-height: 220px;
-    max-height: 300px;
-    margin: 0;
-    border-radius: 12px;
+    font-size: clamp(1.6rem, 6vw, 2.2rem);
   }
 
   .configurador-inmersivo #ganchito-canvas-box-desktop {
-    width: 100%;
-    height: 100%;
+    height: 260px;
+    border-radius: 12px;
   }
 
-  /* Indicador inmediatamente debajo del canvas */
   .ganchito-hint-configurador {
-    flex: 0 0 auto;
-    margin: 8px auto 10px;
-    font-size: 0.7rem;
-    line-height: 1.2;
+    margin: 8px 0 0;
+    font-size: 0.74rem;
+    padding: 0 12px;
   }
 
-  /* El configurador ocupa el espacio restante */
   .configurador-inmersivo .ganchito-controles {
-    flex: 1 1 auto;
-    min-height: 0;
     width: 100%;
     max-width: none;
-    margin: 0;
-    padding: 0 4px 18px;
+    margin: 12px 0 0;
+    padding: 0 12px;
+    flex: 1 1 auto;
     overflow-y: auto;
-    overscroll-behavior: contain;
     -webkit-overflow-scrolling: touch;
   }
 
-  /*
-    Elimina el comportamiento de bottom sheet.
-    El panel queda debajo del canvas y no lo tapa.
-  */
-  .configurador-inmersivo .ganchito-controles::before {
-    display: none;
-  }
-
-  /* Secciones más compactas */
   .configurador-inmersivo .ganchito-controles > .ganchito-grupo,
   .configurador-inmersivo .ganchito-controles > .ganchito-resumen-card {
-    padding: 11px 0;
-  }
-
-  .configurador-inmersivo .ganchito-controles > .ganchito-grupo:first-child {
-    border-top: 1px solid var(--line);
+    padding: 14px 0;
   }
 
   .configurador-inmersivo .ganchito-controles .ganchito-label {
-    margin-bottom: 6px;
-    font-size: 0.67rem;
-    letter-spacing: 0.1em;
-  }
-
-  /* Botones pequeños pero cómodos */
-  .configurador-inmersivo .ganchito-controles .ganchito-btn-grupo {
-    display: flex;
-    flex-wrap: nowrap;
-    gap: 6px;
-    overflow-x: auto;
-    padding: 2px 2px 5px;
-    scrollbar-width: none;
-  }
-
-  .configurador-inmersivo .ganchito-controles .ganchito-btn-grupo::-webkit-scrollbar {
-    display: none;
+    font-size: 0.68rem;
+    margin-bottom: 8px;
   }
 
   .configurador-inmersivo .ganchito-controles .ganchito-opt {
-    flex: 0 0 auto;
-    min-height: 36px;
-    padding: 7px 12px;
-    font-size: 0.72rem;
-    border-radius: 5px;
-  }
-
-  /* Colores más juntos */
-  .configurador-inmersivo .ganchito-controles .ganchito-colores-wrap {
-    display: flex;
-    flex-wrap: nowrap;
-    gap: 10px;
-    overflow-x: auto;
-    padding: 3px 2px 6px;
-    scrollbar-width: none;
-  }
-
-  .configurador-inmersivo
-  .ganchito-controles
-  .ganchito-colores-wrap::-webkit-scrollbar {
-    display: none;
+    padding: 8px 12px;
+    font-size: 0.75rem;
   }
 
   .configurador-inmersivo .ganchito-controles .ganchito-color-dot,
   .configurador-inmersivo .ganchito-controles .ganchito-color-dot2 {
-    width: 30px;
-    height: 30px;
-    flex: 0 0 auto;
-  }
-
-  /* Resumen compacto */
-  .configurador-inmersivo .ganchito-controles .ganchito-resumen-card {
-    padding-top: 13px;
-    padding-bottom: 14px;
+    width: 28px;
+    height: 28px;
   }
 
   .configurador-inmersivo .ganchito-controles .ganchito-resumen-label {
-    margin-bottom: 3px;
-    font-size: 0.65rem;
+    font-size: 0.63rem;
   }
 
   .configurador-inmersivo .ganchito-controles .ganchito-resumen-texto {
-    margin-bottom: 8px;
-    font-size: 0.88rem;
-    line-height: 1.25;
+    font-size: 0.9rem;
   }
 
-  .configurador-inmersivo
-  .ganchito-controles
-  .ganchito-resumen-card
-  .btn {
-    width: 100%;
-    min-height: 40px;
-    padding: 10px 14px;
-    font-size: 0.78rem;
+  .configurador-inmersivo .ganchito-controles .ganchito-resumen-card .btn {
+    min-height: 36px;
+    padding: 8px 12px;
+    font-size: 0.75rem;
   }
-
-  /* Scrollbar interna muy discreta */
-  .configurador-inmersivo .ganchito-controles::-webkit-scrollbar {
-    width: 3px;
-  }
-
-  .configurador-inmersivo .ganchito-controles::-webkit-scrollbar-thumb {
-    background: rgba(20, 33, 62, 0.25);
-    border-radius: 10px;
-  }
-}/* =========================================================
+}
+/* =========================================================
    DESKTOP — canvas full width + configurador visible abajo
    ========================================================= */
 
 @media (min-width: 761px) {
 
-  .configurador-inmersivo {
+    .configurador-inmersivo {
     width: 100%;
     height: 100svh;
     min-height: 700px;
-    max-height: none;
     overflow: hidden;
     padding: 28px 0 0;
     display: flex;
@@ -2105,6 +2260,13 @@ p{ margin:0; }
     height: 100%;
     display: block;
   }
+  /* AGREGA ESTO AL FINAL DEL BLOQUE @media */
+  .configurador-inmersivo.overview-mode {
+    height: auto;
+    min-height: auto;
+    overflow: visible;
+    padding-bottom: 90px;
+  }
 
   /* Indicador debajo del canvas */
   .ganchito-hint-configurador {
@@ -2144,14 +2306,14 @@ p{ margin:0; }
   .configurador-inmersivo .ganchito-controles > .ganchito-resumen-card {
     width: 100%;
     min-width: 0;
-    padding: 12px 0;
+    padding: 8px 0;
     margin: 0;
     border-top: 1px solid var(--line);
     border-bottom: 0;
   }
 
   .configurador-inmersivo .ganchito-controles .ganchito-label {
-    margin-bottom: 8px;
+    margin-bottom: 5px;
     font-size: 0.7rem;
   }
 
@@ -2164,7 +2326,7 @@ p{ margin:0; }
   }
 
   .configurador-inmersivo .ganchito-controles .ganchito-opt {
-    min-height: 36px;
+    min-height: 32px;
     padding: 7px 12px;
     font-size: 0.75rem;
   }
@@ -2173,14 +2335,14 @@ p{ margin:0; }
   .configurador-inmersivo .ganchito-controles .ganchito-colores-wrap {
     display: flex;
     flex-wrap: wrap;
-    gap: 10px;
+    gap: 8px;
     overflow: visible;
   }
 
   .configurador-inmersivo .ganchito-controles .ganchito-color-dot,
   .configurador-inmersivo .ganchito-controles .ganchito-color-dot2 {
-    width: 30px;
-    height: 30px;
+    width: 28px;
+    height: 28px;
   }
 
   /* El resumen ocupa todo el ancho inferior */
@@ -2189,25 +2351,25 @@ p{ margin:0; }
     display: grid;
     grid-template-columns: 150px 1fr auto;
     align-items: center;
-    gap: 18px;
-    padding: 14px 0 18px;
+    gap: 12px;
+    padding: 10px 0 14px;
     border-bottom: 1px solid var(--line);
   }
 
   .configurador-inmersivo .ganchito-controles .ganchito-resumen-label {
     margin: 0;
-    font-size: 0.68rem;
+    font-size: 0.65rem;
   }
 
   .configurador-inmersivo .ganchito-controles .ganchito-resumen-texto {
     margin: 0;
-    font-size: 0.95rem;
+    font-size: 0.88rem;
   }
 
   .configurador-inmersivo .ganchito-controles .ganchito-resumen-card .btn {
-    min-height: 40px;
-    padding: 9px 18px;
-    font-size: 0.78rem;
+    min-height: 36px;
+    padding: 7px 14px;
+    font-size: 0.72rem;
   }
 
   /* Scrollbar discreta */

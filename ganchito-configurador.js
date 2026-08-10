@@ -2,21 +2,10 @@
    GANCHITO — configurador 3D de mesa (v3: taller + abanico)
    Requiere Three.js r128 y taller-interior.js cargados antes
    de este script (en ese orden).
-
-   Cambios vs v2:
-   - El fondo ya no es un piso plano suelto: ahora se arma el
-     interior del taller (paredes de ladrillo, piso, vigas,
-     lámparas) vía window.GanchitoTaller.build(scene).
-   - Las 3 mesas del showroom ya no están en línea recta: están
-     en abanico (izquierda y derecha más atrás y rotadas hacia
-     el centro), como si las tuvieras alrededor al entrar.
    ========================================================= */
 
 (function () {
 
-  /* ---------------------------------------------------------
-     PALETAS DE COLOR
-  --------------------------------------------------------- */
   const COLORES = {
     negro:     { hex: '#1a1a1a', label: 'Negro' },
     navy:      { hex: '#14213E', label: 'Navy' },
@@ -32,11 +21,8 @@
     ? WHATSAPP_NUMBER
     : '5492284354090';
 
-  // Escala real: 1 unidad Three.js = 25 cm. Se aplica a todos los
-  // modelos para que las proporciones entre mesas sean coherentes
-  // (ej: el cubo de 30×30×40 no puede verse más grande que la
-  // ratona de 60×40×40).
-  const CM = 1 / 25;
+  const CM = 1 / 20;
+
   const MEDIDAS_CM = {
     'ratona-madera': { w: 40, d: 30, h: 30 },
     'ratona-metal':  { w: 60, d: 45, h: 30 },
@@ -48,8 +34,6 @@
     return { w: m.w * CM, d: m.d * CM, h: m.h * CM };
   }
 
-  // La mesa ratona no es un modelo aparte: es "ratona" + tipo de
-  // patas (madera | metal). Cubo y monolítica no tienen patas.
   function tipoActual() {
     return estadoBase() === 'ratona' ? ('ratona-' + estado.patas) : estadoBase();
   }
@@ -60,12 +44,6 @@
     return 'Mesa monolítica';
   }
 
-  // Preset de cada mesa: ahora están MUY separadas angularmente
-  // (izquierda ~46°, centro 0°, derecha ~46°) respecto del punto
-  // donde "parás" a mirar. La idea es que al entrar veas la mesa
-  // del centro de frente, y tengas que girar (arrastrar/deslizar)
-  // para "caminar la mirada" hacia la de la izquierda o la derecha
-  // — como en un videojuego, no como una vidriera con las 3 juntas.
   const SHOWROOM_PRESETS = {
     'ratona':     { x: -5.2, z: 0.6,  giro:  0.55, color: 'negro',     color2: 'crema', patron: 'damero',   grande: false, patas: 'madera' },
     'monolitica': { x:  0,   z: -1.2, giro:  0,     color: 'mostaza',  color2: 'crema', patron: 'guarda',   grande: false },
@@ -73,21 +51,17 @@
   };
 
   let estado = {
-    base:    'ratona',  // 'ratona' | 'cubo' | 'monolitica'
-    patas:   'madera',  // 'madera' | 'metal' — solo aplica si base === 'ratona'
+    base:    'ratona',
+    patas:   'madera',
     patron:  'damero',
     tamano:  'chico',
     color:   'negro',
     color2:  'crema',
   };
 
-  // 'overview' | 'showroom' | 'animando' | 'focus'
   let mode = 'overview';
   let needsRender = true;
 
-  /* ---------------------------------------------------------
-     GENERADOR DE TEXTURA según patrón (mosaico de la mesa)
-  --------------------------------------------------------- */
   function makeMosaicTexture(colorKey, color2Key, patron, grande) {
     const c1 = COLORES[colorKey]  ? COLORES[colorKey].hex  : '#1a1a1a';
     const c2 = COLORES[color2Key] ? COLORES[color2Key].hex : '#F7F3EC';
@@ -149,9 +123,6 @@
     return new THREE.CanvasTexture(c);
   }
 
-  /* ---------------------------------------------------------
-     SETUP THREE.JS
-  --------------------------------------------------------- */
   const isMobile = window.matchMedia('(max-width: 760px)').matches;
   const canvasBoxId = 'ganchito-canvas-box-desktop';
   const canvasElId  = 'ganchito-canvas-desktop';
@@ -164,44 +135,32 @@
     return;
   }
 
-canvasBox.style.touchAction = 'pan-y';
+  canvasBox.style.touchAction = 'pan-y';
 
   const renderer = new THREE.WebGLRenderer({ canvas: canvasEl, antialias: true });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
-  // ---------------------------------------------------------
-  // MODELO DE CÁMARA: "parado, girando la mirada" — la cámara
-  // NO orbita ni las mesas rotan con el drag. Es un punto fijo
-  // (STAND) desde donde mirás, y lo que cambia con el drag/swipe
-  // es hacia dónde mirás (camYaw), como girar la cabeza. Cada
-  // mesa está a ~46° de la mirada de frente, así que para verla
-  // centrada tenés que "girar" — no aparecen las 3 juntas.
-  // ---------------------------------------------------------
   const STAND_Y = 2.5;
   const STAND_Z = 5.6;
   const LOOK_Y = 0.85;
   const LOOK_FORWARD = 6.5;
-  const CAM_YAW_MIN = -1.05, CAM_YAW_MAX = 1.05; // ~ ±60°, alcanza para centrar cada estación con margen
+  const CAM_YAW_MIN = -1.05, CAM_YAW_MAX = 1.05;
   let camYaw = 0;
 
   const OVERVIEW_CAM_POS = new THREE.Vector3(0, STAND_Y + 1.7, STAND_Z + 3.6);
   const OVERVIEW_LOOKAT  = new THREE.Vector3(0, LOOK_Y, STAND_Z - LOOK_FORWARD);
   const SHOWROOM_CAM_POS = new THREE.Vector3(0, STAND_Y, STAND_Z);
   const SHOWROOM_LOOKAT  = new THREE.Vector3(0, LOOK_Y, STAND_Z - LOOK_FORWARD);
-const FOCUS_CAM_POS    = new THREE.Vector3(4.4, 3.8, 4.4);
-  const FOCUS_LOOKAT     = new THREE.Vector3(0, 0.55, 0);
+  const FOCUS_CAM_POS    = new THREE.Vector3(3.8, 3.2, 3.8);
+  const FOCUS_LOOKAT     = new THREE.Vector3(0, 0.50, 0);
 
-  // Arranca en OVERVIEW: un poco más lejos/alto y con más niebla,
-  // como si recién estuvieras entrando al taller. El fly-in hacia
-  // SHOWROOM se dispara solo cuando la sección entra en pantalla
-  // (ver IntersectionObserver más abajo), nunca antes.
   const OVERVIEW_FOG_NEAR = 5, OVERVIEW_FOG_FAR = 15;
   const SHOWROOM_FOG_NEAR = 10, SHOWROOM_FOG_FAR = 26;
 
   const scene = new THREE.Scene();
-  scene.background = new THREE.Color(0x18130f); // cálido, oscuro — ambiente de taller
+  scene.background = new THREE.Color(0x18130f);
   scene.fog = new THREE.Fog(0x18130f, OVERVIEW_FOG_NEAR, OVERVIEW_FOG_FAR);
 
   const camera = new THREE.PerspectiveCamera(isMobile ? 52 : 42, 1, 0.1, 100);
@@ -211,7 +170,6 @@ const FOCUS_CAM_POS    = new THREE.Vector3(4.4, 3.8, 4.4);
   camLookAt.copy(OVERVIEW_LOOKAT);
   camera.lookAt(camLookAt);
 
-  // Luces — cálidas, tipo taller con lámparas de obra
   scene.add(new THREE.AmbientLight(0xfff2df, 0.42));
   const dirLight = new THREE.DirectionalLight(0xffe9c8, 0.55);
   dirLight.position.set(4, 8, 4);
@@ -223,23 +181,17 @@ const FOCUS_CAM_POS    = new THREE.Vector3(4.4, 3.8, 4.4);
   fillLight.position.set(-4, 3, -3);
   scene.add(fillLight);
 
-  // Interior del taller (paredes, piso, vigas, lámparas)
   if (window.GanchitoTaller) {
     window.GanchitoTaller.build(scene);
   }
 
-  // Grupo de la mesa controlable (modo focus)
   const mesaGroup = new THREE.Group();
   mesaGroup.visible = false;
   scene.add(mesaGroup);
 
-  // Grupo del showroom (las 3 mesas en abanico)
   const showroomGroup = new THREE.Group();
   scene.add(showroomGroup);
 
-  /* ---------------------------------------------------------
-     HELPER: dispone y limpia un THREE.Group
-  --------------------------------------------------------- */
   function limpiarGrupo(group) {
     while (group.children.length) {
       const obj = group.children[0];
@@ -255,10 +207,6 @@ const FOCUS_CAM_POS    = new THREE.Vector3(4.4, 3.8, 4.4);
     }
   }
 
-  /* ---------------------------------------------------------
-     HELPER: crea una varilla (cilindro) entre dos puntos —
-     usado para las patas metálicas tipo "hairpin"
-  --------------------------------------------------------- */
   function legRod(p1, p2, radius, mat) {
     const dir = new THREE.Vector3().subVectors(p2, p1);
     const len = dir.length();
@@ -271,10 +219,6 @@ const FOCUS_CAM_POS    = new THREE.Vector3(4.4, 3.8, 4.4);
     return mesh;
   }
 
-  /* ---------------------------------------------------------
-     CONSTRUYE LA GEOMETRÍA DE UNA MESA DENTRO DE UN GRUPO DADO
-     Todas las mesas respetan la escala real (ver dimsFor arriba).
-  --------------------------------------------------------- */
   function buildMesaInto(group, tipo, colorKey, color2Key, patron, grande) {
     limpiarGrupo(group);
 
@@ -305,8 +249,6 @@ const FOCUS_CAM_POS    = new THREE.Vector3(4.4, 3.8, 4.4);
       });
 
     } else if (tipo === 'ratona-metal') {
-      // Tapa fina de mosaico sobre estructura de patas metálicas
-      // tipo "hairpin" — finas, negras/grafito, diseño moderno.
       const topThick = 0.07;
       const top = new THREE.Mesh(new THREE.BoxGeometry(w, topThick, d), allM);
       top.position.y = h - topThick / 2; top.castShadow = true; group.add(top);
@@ -322,7 +264,6 @@ const FOCUS_CAM_POS    = new THREE.Vector3(4.4, 3.8, 4.4);
         group.add(legRod(cima, pieA, radius, metalMat));
         group.add(legRod(cima, pieB, radius, metalMat));
       });
-      // Travesaños finos que estabilizan cada par de patas (adelante/atrás)
       [-insetZ, insetZ].forEach(z => {
         const bar = new THREE.Mesh(new THREE.BoxGeometry(insetX * 2 * 0.92, 0.02, 0.02), metalMat);
         bar.position.set(0, legH * 0.32, z);
@@ -353,22 +294,18 @@ const FOCUS_CAM_POS    = new THREE.Vector3(4.4, 3.8, 4.4);
       });
 
     } else {
-      // cubo
       const mesh = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), allM);
       mesh.position.y = h / 2; mesh.castShadow = true; group.add(mesh);
     }
   }
 
-  /* ---------------------------------------------------------
-     SHOWROOM: arma las 3 mesas en abanico, mirando al centro
-  --------------------------------------------------------- */
   function buildShowroom() {
     limpiarGrupo(showroomGroup);
     Object.keys(SHOWROOM_PRESETS).forEach(base => {
       const preset = SHOWROOM_PRESETS[base];
       const buildTipo = base === 'ratona' ? ('ratona-' + (preset.patas || 'madera')) : base;
       const sub = new THREE.Group();
-      sub.userData.tipo = base; // guarda el tipo BASE (ratona/cubo/monolitica)
+      sub.userData.tipo = base;
       buildMesaInto(sub, buildTipo, preset.color, preset.color2, preset.patron, preset.grande);
       sub.position.set(preset.x, 0, preset.z);
       sub.rotation.y = preset.giro;
@@ -377,18 +314,12 @@ const FOCUS_CAM_POS    = new THREE.Vector3(4.4, 3.8, 4.4);
     needsRender = true;
   }
 
-  /* ---------------------------------------------------------
-     MESA CONTROLABLE (modo focus) — usa `estado`, siempre al origen
-  --------------------------------------------------------- */
   function buildMesa() {
     buildMesaInto(mesaGroup, tipoActual(), estado.color, estado.color2, estado.patron, estado.tamano === 'grande');
     needsRender = true;
     actualizarResumen();
   }
 
-  /* ---------------------------------------------------------
-     RESUMEN Y WHATSAPP
-  --------------------------------------------------------- */
   function actualizarResumen() {
     const c1 = COLORES[estado.color]  ? COLORES[estado.color].label  : estado.color;
     const c2 = COLORES[estado.color2] ? COLORES[estado.color2].label : estado.color2;
@@ -405,14 +336,11 @@ const FOCUS_CAM_POS    = new THREE.Vector3(4.4, 3.8, 4.4);
     const wspEl = document.getElementById('ganchito-wsp');
     if (wspEl) wspEl.href = whatsappUrl;
 
-    // Única fuente de verdad = `estado`. Avisamos al resto de la página
-    // (sección "Pedir", o cualquier otra que quiera escuchar) sin que
-    // tengan que espiar el DOM.
     document.dispatchEvent(new CustomEvent('ganchito:update', {
       detail: { texto: txt, whatsappUrl }
     }));
   }
-  
+
   function syncTipoButtons(base) {
     const grupo = document.getElementById('ganchito-btn-tipo');
     if (grupo) {
@@ -436,9 +364,6 @@ const FOCUS_CAM_POS    = new THREE.Vector3(4.4, 3.8, 4.4);
     if (grupoPatas) grupoPatas.classList.toggle('is-hidden', base !== 'ratona');
   }
 
-  /* ---------------------------------------------------------
-     ANIMACIÓN DE CÁMARA (vuelo entre showroom y foco)
-  --------------------------------------------------------- */
   function easeInOutQuad(t) { return t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2; }
 
   function animateCamera(toPos, toLook, duration, onDone, toFog) {
@@ -467,9 +392,6 @@ const FOCUS_CAM_POS    = new THREE.Vector3(4.4, 3.8, 4.4);
     requestAnimationFrame(step);
   }
 
-  /* ---------------------------------------------------------
-     SELECCIÓN DE MESA (click/tap en el showroom)
-  --------------------------------------------------------- */
   function seleccionarMesa(base) {
     if (mode !== 'showroom') return;
     mode = 'animando';
@@ -506,13 +428,6 @@ const FOCUS_CAM_POS    = new THREE.Vector3(4.4, 3.8, 4.4);
     });
   }
 
-  /* ---------------------------------------------------------
-     ENTRADA AL TALLER (OVERVIEW → SHOWROOM)
-     Se dispara una sola vez, cuando la sección #configurador entra
-     en pantalla — no antes. Así el usuario primero "ve" el taller
-     de lejos (más niebla, cámara más alta) y después la cámara
-     entra sola al showroom. No usa scroll global, solo visibilidad.
-  --------------------------------------------------------- */
   let entradaHecha = false;
   function entrarAlShowroom() {
     if (entradaHecha || mode !== 'overview') return;
@@ -536,14 +451,9 @@ const FOCUS_CAM_POS    = new THREE.Vector3(4.4, 3.8, 4.4);
     }, { threshold: 0.35 });
     entradaObserver.observe(seccionConfigurador);
   } else {
-    // Sin soporte de IntersectionObserver, no dejamos al usuario
-    // trabado en overview: entramos igual.
     entrarAlShowroom();
   }
 
-  /* ---------------------------------------------------------
-     UI DESKTOP: mostrar/ocultar panel de controles + botón volver
-  --------------------------------------------------------- */
   const controlesEl = document.getElementById('ganchito-controles');
   const placeholderEl = document.getElementById('ganchito-placeholder');
   const volverBtn = document.getElementById('ganchito-volver');
@@ -558,6 +468,9 @@ const FOCUS_CAM_POS    = new THREE.Vector3(4.4, 3.8, 4.4);
   function setControlesVisible(visible) {
     if (controlesEl) controlesEl.classList.toggle('is-hidden', !visible);
     if (placeholderEl) placeholderEl.classList.toggle('is-hidden', visible);
+    
+    const section = document.getElementById('configurador');
+    if (section) section.classList.toggle('overview-mode', !visible);
   }
 
   function onEnterFocus() {
@@ -572,9 +485,6 @@ const FOCUS_CAM_POS    = new THREE.Vector3(4.4, 3.8, 4.4);
 
   if (volverBtn) volverBtn.addEventListener('click', volverAlShowroom);
 
-  /* ---------------------------------------------------------
-     DRAG PARA ROTAR + CLICK/TAP PARA SELECCIONAR (Pointer Events)
-  --------------------------------------------------------- */
   let isPointerDown = false, downX = 0, downY = 0, lastX = 0, lastY = 0, moved = false;
   let rotY = 0, rotX = 0;
 
@@ -602,8 +512,6 @@ const FOCUS_CAM_POS    = new THREE.Vector3(4.4, 3.8, 4.4);
     if (Math.abs(e.clientX - downX) > 6 || Math.abs(e.clientY - downY) > 6) moved = true;
     const dx = e.clientX - lastX, dy = e.clientY - lastY;
     if (mode === 'showroom' || mode === 'overview') {
-      // Girar la mirada (no orbitar ni mover la posición) — como
-      // girar la cabeza parado en un punto fijo del taller.
       camYaw -= dx * 0.006;
       camYaw = Math.max(CAM_YAW_MIN, Math.min(CAM_YAW_MAX, camYaw));
     } else if (mode === 'focus') {
@@ -621,9 +529,6 @@ const FOCUS_CAM_POS    = new THREE.Vector3(4.4, 3.8, 4.4);
     if (!moved && mode === 'showroom') pickAt(e.clientX, e.clientY);
   });
 
-  /* ---------------------------------------------------------
-     RESIZE
-  --------------------------------------------------------- */
   function resize() {
     const w = canvasBox.clientWidth, h = canvasBox.clientHeight;
     if (!w || !h) return;
@@ -634,9 +539,6 @@ const FOCUS_CAM_POS    = new THREE.Vector3(4.4, 3.8, 4.4);
   }
   new ResizeObserver(resize).observe(canvasBox);
 
-  /* ---------------------------------------------------------
-     CONTROLES UI (panel desktop de foco)
-  --------------------------------------------------------- */
   function bindBtns(id, key, onChange) {
     const container = document.getElementById(id);
     if (!container) return;
@@ -680,9 +582,6 @@ const FOCUS_CAM_POS    = new THREE.Vector3(4.4, 3.8, 4.4);
     });
   }
 
-  /* ---------------------------------------------------------
-     LOOP DE RENDER
-  --------------------------------------------------------- */
   function animate() {
     requestAnimationFrame(animate);
     if (mode === 'showroom') {
@@ -701,9 +600,6 @@ const FOCUS_CAM_POS    = new THREE.Vector3(4.4, 3.8, 4.4);
     needsRender = false;
   }
 
-  /* ---------------------------------------------------------
-     INIT
-  --------------------------------------------------------- */
   setControlesVisible(false);
   setHint('');
   buildShowroom();
