@@ -316,13 +316,14 @@ p{ margin:0; }
 }
 
 .card-media{
-  aspect-ratio: 4/3;
+  aspect-ratio: 4/5;
   overflow:hidden;
   background: var(--cream-deep);
 }
 .card-media img{
   width:100%; height:100%;
   object-fit: cover;
+  object-position: center 25%;
   transition: transform .5s ease;
 }
 .card:hover .card-media img{ transform: scale(1.05); }
@@ -715,7 +716,7 @@ p{ margin:0; }
    ========================================================= */
 .card-media-multi {
   position: relative;
-  aspect-ratio: 4/3;
+  aspect-ratio: 4/5;
   overflow: hidden;
   background: var(--cream-deep);
 }
@@ -734,6 +735,7 @@ p{ margin:0; }
 .gallery-slide img {
   width: 100%; height: 100%;
   object-fit: cover;
+  object-position: center 25%;
   display: block;
 }
 .photo-placeholder {
@@ -790,38 +792,7 @@ p{ margin:0; }
 .taller-section .section-title { margin-top: 12px; }
 .taller-section .section-sub { margin-bottom: 0; }
 
-.carrusel-wrap {
-  margin-top: 44px;
-  overflow: hidden;
-  cursor: grab;
-  user-select: none;
-  padding-bottom: 60px;
-}
-.carrusel-wrap:active { cursor: grabbing; }
 
-.carrusel-track {
-  display: flex;
-  gap: 20px;
-  width: max-content;
-  will-change: transform;
-}
-.carrusel-track.is-animating {
-  transition: transform 0.4s ease;
-}
-
-.carrusel-slide {
-  width: 320px;
-  height: 240px;
-  flex-shrink: 0;
-  border-radius: var(--radius-lg);
-  overflow: hidden;
-}
-.carrusel-slide img {
-  width: 100%; height: 100%;
-  object-fit: cover;
-  display: block;
-  pointer-events: none;
-}
 .taller-placeholder {
   width: 100%; height: 100%;
   display: flex;
@@ -932,7 +903,7 @@ p{ margin:0; }
   width: 100%;
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-start;
   gap: 16px;
   padding: 22px 4px;
   background: none;
@@ -944,6 +915,15 @@ p{ margin:0; }
   color: var(--ink);
   cursor: pointer;
   transition: color .15s ease;
+}
+.faq-question {
+  flex: 1;
+  min-width: 0;
+  padding-top: 1px;
+  line-height: 1.4;
+}
+.faq-icon {
+  margin-top: 2px; /* alinea el círculo con la primera línea del texto */
 }
 .faq-trigger:hover { color: var(--mustard); }
 .faq-trigger[aria-expanded="true"] { color: var(--saddle); }
@@ -1664,243 +1644,7 @@ p{ margin:0; }
 .ganchito-canvas-box { cursor: grab; }
 .ganchito-canvas-box:active { cursor: grabbing; }
 
-/* ---------------------------------------------------------
-   SECCIÓN INMERSIVA — el canvas ocupa toda la pantalla
-   --------------------------------------------------------- */
-.configurador-inmersivo {
-  position: relative;
-  width: 100%;
-  height: 92vh;
-  min-height: 640px;
-  max-height: 980px;
-  padding: 0;
-  overflow: hidden;
-  background: #14141f;
-}
 
-/* El canvas pasa a ser el fondo de toda la sección */
-.configurador-inmersivo #ganchito-canvas-box-desktop {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  border-radius: 0;
-  box-shadow: none;
-}
-.configurador-inmersivo #ganchito-canvas-box-desktop canvas {
-  width: 100%;
-  height: 100%;
-  display: block;
-}
-
-/* Texto de intro flotando arriba, centrado */
-.configurador-overlay-top {
-  position: absolute;
-  top: 56px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 5;
-  width: 100%;
-  max-width: 640px;
-  padding: 0 24px;
-  text-align: center;
-  pointer-events: none;
-}
-.configurador-overlay-top .eyebrow { color: var(--mustard-light); }
-.configurador-overlay-top .section-title { color: var(--cream); text-shadow: 0 2px 24px rgba(0,0,0,0.35); }
-.configurador-overlay-top .section-sub { color: rgba(247,243,236,0.78); margin-left: auto; margin-right: auto; }
-
-/* Botón "volver" flotante */
-.configurador-inmersivo .ganchito-volver {
-  position: absolute;
-  top: 24px;
-  left: 24px;
-  z-index: 7;
-}
-
-/* Hint flotante abajo al centro */
-.configurador-inmersivo .ganchito-hint-inmersivo {
-  position: absolute;
-  bottom: 26px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 5;
-  font-size: 0.82rem;
-  color: rgba(255,255,255,0.55);
-  background: rgba(0,0,0,0.28);
-  padding: 7px 16px;
-  border-radius: 100px;
-  backdrop-filter: blur(3px);
-  pointer-events: none;
-}
-
-/* Placeholder flotante, abajo, mientras no eligió mesa */
-.configurador-inmersivo .ganchito-placeholder {
-  position: absolute;
-  bottom: 78px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 5;
-  min-height: 0;
-  background: rgba(0,0,0,0.28);
-  border: none;
-  backdrop-filter: blur(4px);
-  padding: 12px 22px;
-  border-radius: 100px;
-  pointer-events: none;
-  text-align: center;
-}
-.configurador-inmersivo .ganchito-placeholder p {
-  font-family: var(--font-label);
-  font-size: 0.85rem;
-  font-weight: 500;
-  color: rgba(247,243,236,0.85);
-  line-height: 1.4;
-}
-
-/* Panel de personalización — flota a la derecha, tipo "glass panel" */
-.configurador-inmersivo .ganchito-controles {
-  position: absolute;
-  top: 50%;
-  right: 28px;
-  transform: translateY(-50%);
-  z-index: 6;
-  width: 320px;
-  max-height: 84%;
-  overflow-y: auto;
-  display: flex;
-  flex-direction: column;
-  gap: 1.1rem;
-  background: rgba(255, 253, 249, 0.94);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-  border-radius: var(--radius-lg);
-  padding: 1.5rem 1.4rem;
-  box-shadow: 0 24px 60px -20px rgba(0,0,0,0.5);
-}
-.configurador-inmersivo .ganchito-controles.is-hidden { display: none; }
-
-/* Scrollbar discreta dentro del panel (webkit) */
-.configurador-inmersivo .ganchito-controles::-webkit-scrollbar { width: 6px; }
-.configurador-inmersivo .ganchito-controles::-webkit-scrollbar-thumb {
-  background: var(--line);
-  border-radius: 10px;
-}
-
-/* Responsive: en pantallas medianas el panel baja de ancho */
-@media (max-width: 1100px) {
-  .configurador-inmersivo .ganchito-controles { width: 280px; right: 18px; }
-}
-
-/* ===========================================================
-   MOBILE: bottom sheet completo. Es el MISMO panel/ids que en
-   desktop (#ganchito-controles), solo reordenado con CSS — se
-   muestran TODAS las opciones (patas, patrón, tamaño, los dos
-   colores) en una hoja que sube desde abajo y scrollea si hace
-   falta, en vez de esconder controles.
-   =========================================================== */
-@media (max-width: 760px) {
-  .configurador-inmersivo .ganchito-controles {
-    top: auto;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    transform: none;
-    width: 100%;
-    max-width: none;
-    max-height: 54vh;
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
-    border-radius: 20px 20px 0 0;
-    padding: 14px 16px calc(14px + env(safe-area-inset-bottom, 0px));
-    gap: 14px;
-    background: rgba(20, 15, 10, 0.96);
-    backdrop-filter: blur(14px);
-    -webkit-backdrop-filter: blur(14px);
-    box-shadow: 0 -12px 32px -12px rgba(0,0,0,0.55);
-  }
-
-  /* Manija visual arriba de la hoja, indica que se puede scrollear */
-  .configurador-inmersivo .ganchito-controles::before {
-    content: "";
-    display: block;
-    width: 40px;
-    height: 4px;
-    border-radius: 4px;
-    background: rgba(247,243,236,0.3);
-    margin: 0 auto 2px;
-  }
-
-  /* Etiquetas visibles pero discretas, sobre fondo oscuro */
-  .configurador-inmersivo .ganchito-controles .ganchito-label {
-    display: block;
-    color: rgba(247,243,236,0.65);
-    margin-bottom: 8px;
-  }
-
-  .configurador-inmersivo .ganchito-controles .ganchito-grupo { margin: 0; }
-
-  /* Filas de opciones: scroll horizontal, targets grandes para el dedo */
-  .configurador-inmersivo .ganchito-controles .ganchito-btn-grupo {
-    flex-wrap: nowrap;
-    overflow-x: auto;
-    scrollbar-width: none;
-    -webkit-overflow-scrolling: touch;
-    padding-bottom: 2px;
-  }
-  .configurador-inmersivo .ganchito-controles .ganchito-btn-grupo::-webkit-scrollbar { display: none; }
-  .configurador-inmersivo .ganchito-controles .ganchito-opt {
-    flex: 0 0 auto;
-    padding: 10px 16px;
-    min-height: 40px;
-    font-size: 0.82rem;
-    background: rgba(255,253,249,.92);
-  }
-
-  /* Los dos selectores de color: fila horizontal con scroll,
-     dots más grandes para tocar cómodo con el dedo */
-  .configurador-inmersivo .ganchito-controles .ganchito-colores-wrap {
-    display: flex;
-    flex-wrap: nowrap;
-    overflow-x: auto;
-    scrollbar-width: none;
-    -webkit-overflow-scrolling: touch;
-    gap: 12px;
-    padding-bottom: 2px;
-  }
-  .configurador-inmersivo .ganchito-controles .ganchito-colores-wrap::-webkit-scrollbar { display: none; }
-  .configurador-inmersivo .ganchito-controles .ganchito-color-dot,
-  .configurador-inmersivo .ganchito-controles .ganchito-color-dot2 {
-    width: 34px;
-    height: 34px;
-    flex: 0 0 auto;
-  }
-
-  /* Resumen: texto compacto de una línea + botón grande de WhatsApp */
-  .configurador-inmersivo .ganchito-controles .ganchito-resumen-card {
-    padding: 10px 12px;
-    margin-top: 0;
-  }
-  .configurador-inmersivo .ganchito-controles .ganchito-resumen-label { display: none; }
-  .configurador-inmersivo .ganchito-controles .ganchito-resumen-texto {
-    font-size: 0.82rem;
-    margin-bottom: 10px;
-    white-space: normal;
-  }
-  .configurador-inmersivo .ganchito-controles .ganchito-resumen-card .btn {
-    width: 100%;
-    justify-content: center;
-    padding: 13px;
-    font-size: 0.88rem;
-  }
-
-  /* Scrollbar discreta del panel */
-  .configurador-inmersivo .ganchito-controles::-webkit-scrollbar { width: 4px; }
-  .configurador-inmersivo .ganchito-controles::-webkit-scrollbar-thumb {
-    background: rgba(247,243,236,0.25);
-    border-radius: 10px;
-  }
-}
 /* =========================================================
    CONFIGURADOR 3D — layout vertical definitivo
    ========================================================= */
@@ -1963,7 +1707,7 @@ p{ margin:0; }
   box-shadow: none;
   background: #1a1a2e;
   cursor: grab;
-  touch-action: none;
+  touch-action: pan-y;
 }
 
 .configurador-inmersivo #ganchito-canvas-box-desktop:active {
@@ -2474,5 +2218,206 @@ p{ margin:0; }
   .configurador-inmersivo .ganchito-controles::-webkit-scrollbar-thumb {
     background: rgba(20, 33, 62, 0.22);
     border-radius: 10px;
+  }
+}
+/* =========================================================
+   MODAL — galería de fotos (Bloque 2)
+   ========================================================= */
+.modal-media{
+  background: var(--cream-deep);
+  min-height: 260px;
+  display: flex;
+  flex-direction: column;
+}
+.modal-gallery-main{
+  position: relative;
+  flex: 1;
+  min-height: 260px;
+  overflow: hidden;
+}
+.modal-gallery-slide{
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity .35s ease;
+}
+.modal-gallery-slide.active{ opacity: 1; }
+.modal-gallery-slide img{
+  width: 100%; height: 100%;
+  object-fit: cover;
+  object-position: center 25%;
+  display: block;
+}
+.modal-gallery-arrow{
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 3;
+  width: 38px; height: 38px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(20,33,62,0.55);
+  color: #fff;
+  font-size: 1.3rem;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background .15s ease;
+}
+.modal-gallery-arrow:hover{ background: rgba(20,33,62,0.85); }
+.modal-gallery-arrow-prev{ left: 10px; }
+.modal-gallery-arrow-next{ right: 10px; }
+
+.modal-gallery-dots{
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 3;
+  display: flex;
+  gap: 6px;
+}
+.modal-gallery-dots .gdot{
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.5);
+  cursor: pointer;
+  transition: background .2s ease, transform .2s ease;
+}
+.modal-gallery-dots .gdot.active{
+  background: var(--mustard);
+  transform: scale(1.3);
+}
+
+.modal-gallery-thumbs{
+  display: flex;
+  gap: 8px;
+  padding: 10px;
+  background: var(--paper);
+  overflow-x: auto;
+}
+.modal-gallery-thumb{
+  flex: 0 0 auto;
+  width: 56px; height: 56px;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 2px solid transparent;
+  padding: 0;
+  cursor: pointer;
+  opacity: 0.6;
+  transition: opacity .15s ease, border-color .15s ease;
+}
+.modal-gallery-thumb img{ width: 100%; height: 100%; object-fit: cover; display: block; }
+.modal-gallery-thumb.active{ opacity: 1; border-color: var(--mustard); }
+
+@media (max-width: 640px) {
+  .modal-gallery-main{ min-height: 220px; }
+  .modal-gallery-arrow{ width: 34px; height: 34px; font-size: 1.1rem; }
+}
+/* =========================================================
+   ACCORDION GALLERY — El proceso (Bloque 6)
+   ========================================================= */
+.accordion-gallery {
+  margin-top: 44px;
+  padding: 0 24px 90px;
+  max-width: 1180px;
+  margin-left: auto;
+  margin-right: auto;
+  display: flex;
+  gap: 8px;
+  height: 420px;
+}
+
+.accordion-panel {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+  border: none;
+  border-radius: var(--radius-lg);
+  background-size: cover;
+  background-position: center;
+  cursor: pointer;
+  overflow: hidden;
+  transition: flex-grow .5s cubic-bezier(.22,.68,0,1.01);
+  padding: 0;
+}
+
+.accordion-panel::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(0deg, rgba(20,20,25,0.75) 0%, rgba(20,20,25,0.15) 45%, rgba(20,20,25,0.05) 100%);
+  transition: opacity .35s ease;
+  opacity: 0.55;
+}
+
+.accordion-panel.is-active,
+.accordion-panel:hover,
+.accordion-panel:focus-visible {
+  flex-grow: 4;
+}
+.accordion-panel.is-active::after,
+.accordion-panel:hover::after,
+.accordion-panel:focus-visible::after {
+  opacity: 0.9;
+}
+
+.accordion-panel-label {
+  position: absolute;
+  left: 18px;
+  bottom: 16px;
+  z-index: 2;
+  color: var(--cream);
+  font-family: var(--font-label);
+  font-size: 0.82rem;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity .3s ease .05s, transform .3s ease .05s;
+}
+.accordion-panel.is-active .accordion-panel-label,
+.accordion-panel:hover .accordion-panel-label,
+.accordion-panel:focus-visible .accordion-panel-label {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.accordion-panel:focus-visible {
+  outline: 2px solid var(--mustard);
+  outline-offset: 2px;
+}
+
+@media (max-width: 760px) {
+  .accordion-gallery {
+    flex-direction: column;
+    height: auto;
+    padding: 0 16px 60px;
+    gap: 10px;
+  }
+  .accordion-panel {
+    height: 68px;
+    flex: none;
+    transition: height .4s ease;
+  }
+  .accordion-panel.is-active {
+    height: 240px;
+  }
+  .accordion-panel:hover,
+  .accordion-panel:focus-visible {
+    /* En mobile no hay hover real; solo manda .is-active (tap) */
+    height: 68px;
+  }
+  .accordion-panel.is-active:hover,
+  .accordion-panel.is-active:focus-visible {
+    height: 240px;
+  }
+  .accordion-panel-label {
+    opacity: 1;
+    transform: none;
+    font-size: 0.78rem;
   }
 }

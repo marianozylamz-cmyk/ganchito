@@ -293,10 +293,13 @@
 
 <section class="configurador-section configurador-inmersivo" id="configurador">
 
-  <!-- Stage 3D — ocupa toda la sección -->
-  <div class="ganchito-canvas-box" id="ganchito-canvas-box-desktop">
-    <canvas id="ganchito-canvas-desktop"></canvas>
+ <!-- Stage 3D — .ganchito-stage es quien fija la altura compacta (ver CSS) -->
+  <div class="ganchito-stage">
+    <div class="ganchito-canvas-box" id="ganchito-canvas-box-desktop">
+      <canvas id="ganchito-canvas-desktop"></canvas>
+    </div>
   </div>
+  <p class="ganchito-hint-configurador" id="ganchito-hint-desktop"></p>
 
   <!-- Texto de intro, flotando arriba -->
   <div class="configurador-overlay-top">
@@ -418,56 +421,43 @@
     </div>
   </section>
 
-  <!-- ============ CARRUSEL TALLER ============ -->
-<section class="taller-section">
-  <div class="container">
-    <p class="eyebrow center">El proceso</p>
-    <h2 class="section-title center">Del taller a tu casa</h2>
-    <p class="section-sub center">
-      Cada pieza pasa por nuestras manos antes de llegar a la tuya.
-    </p>
-  </div>
+ <!-- ============ ACCORDION GALLERY — EL PROCESO ============ -->
+  <section class="taller-section">
+    <div class="container">
+      <p class="eyebrow center">El proceso</p>
+      <h2 class="section-title center">Del taller a tu casa</h2>
+      <p class="section-sub center">
+        Cada pieza pasa por nuestras manos antes de llegar a la tuya.
+      </p>
+    </div>
 
-  <div class="carrusel-wrap" id="carrusel-wrap">
-    <div class="carrusel-track" id="carrusel-track">
+    <div class="accordion-gallery" id="accordion-gallery">
+      <button class="accordion-panel is-active" data-index="0" aria-expanded="true"
+        style="background-image:url('assets/images/WhatsApp Image 2026-08-04 at 14.42.40 (1).jpeg')">
+        <span class="accordion-panel-label">Selección del material</span>
+      </button>
 
-      <div class="carrusel-slide">
-        <img src="assets/images/WhatsApp Image 2026-08-04 at 14.42.40 (1).jpeg" alt="Proceso de fabricación Ganchito">
-      </div>
+      <button class="accordion-panel" data-index="1" aria-expanded="false"
+        style="background-image:url('assets/images/WhatsApp Image 2026-08-04 at 14.42.40 (2).jpeg')">
+        <span class="accordion-panel-label">Corte pieza por pieza</span>
+      </button>
 
-      <div class="carrusel-slide">
-        <img src="assets/images/WhatsApp Image 2026-08-04 at 14.42.40 (2).jpeg" alt="Proceso de fabricación Ganchito">
-      </div>
+      <button class="accordion-panel" data-index="2" aria-expanded="false"
+        style="background-image:url('assets/images/WhatsApp Image 2026-08-04 at 14.42.40.jpeg')">
+        <span class="accordion-panel-label">Armado del mosaico</span>
+      </button>
 
-      <div class="carrusel-slide">
-        <img src="assets/images/WhatsApp Image 2026-08-04 at 14.42.40.jpeg" alt="Proceso de fabricación Ganchito">
-      </div>
+      <button class="accordion-panel" data-index="3" aria-expanded="false"
+        style="background-image:url('assets/images/WhatsApp Image 2026-08-04 at 14.42.41 (1).jpeg')">
+        <span class="accordion-panel-label">Terminación a mano</span>
+      </button>
 
-      <div class="carrusel-slide">
-        <img src="assets/images/WhatsApp Image 2026-08-04 at 14.42.41 (1).jpeg" alt="Proceso de fabricación Ganchito">
-      </div>
-
-      <div class="carrusel-slide">
-        <img src="assets/images/WhatsApp Image 2026-08-04 at 14.42.41.jpeg" alt="Proceso de fabricación Ganchito">
-      </div>
-
-      <!-- Duplicadas para loop infinito -->
-
-      <div class="carrusel-slide" aria-hidden="true">
-        <img src="assets/images/WhatsApp Image 2026-08-04 at 14.42.40 (1).jpeg" alt="">
-      </div>
-
-      <div class="carrusel-slide" aria-hidden="true">
-        <img src="assets/images/WhatsApp Image 2026-08-04 at 14.42.40 (2).jpeg" alt="">
-      </div>
-
-      <div class="carrusel-slide" aria-hidden="true">
-        <img src="assets/images/WhatsApp Image 2026-08-04 at 14.42.40.jpeg" alt="">
-      </div>
-
-    </div>`
-  </div>
-</section>
+      <button class="accordion-panel" data-index="4" aria-expanded="false"
+        style="background-image:url('assets/images/WhatsApp Image 2026-08-04 at 14.42.41.jpeg')">
+        <span class="accordion-panel-label">Lista para entregar</span>
+      </button>
+    </div>
+  </section>
 
   <!-- ============ TESTIMONIOS ============ -->
   <section class="testimonios-section" id="testimonios">
@@ -515,8 +505,8 @@
       <div class="faq-list" id="faq-list">
 
         <div class="faq-item">
-          <button class="faq-trigger" aria-expanded="false">
-            ¿Cómo funciona el proceso de compra?
+         <button class="faq-trigger" aria-expanded="false">
+            <span class="faq-question">¿Cómo funciona el proceso de compra?</span>
             <span class="faq-icon" aria-hidden="true"></span>
           </button>
           <div class="faq-body">
@@ -631,8 +621,7 @@
   </div>
 </footer>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
 
 <script src="script.js"></script>
 <script src="taller-interior.js"></script>

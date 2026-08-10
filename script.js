@@ -133,32 +133,115 @@ const modalComprar = document.getElementById("modal-comprar");
 
 let lastFocusedEl = null;
 
+let modalGalleryTimer = null;
+
+function buildModalGallery(card, name){
+  modalMedia.innerHTML = "";
+  if (modalGalleryTimer) { clearInterval(modalGalleryTimer); modalGalleryTimer = null; }
+
+  const galleryEl = card.querySelector('[data-gallery]');
+  const imgs = galleryEl ? Array.from(galleryEl.querySelectorAll('img')).map(img => img.src) : [];
+
+  // Fallback: si por algún motivo no hay data-gallery, usamos data-img
+  const sources = imgs.length ? imgs : (card.dataset.img ? [card.dataset.img] : []);
+  if (!sources.length) return;
+
+  const main = document.createElement('div');
+  main.className = 'modal-gallery-main';
+
+  let current = 0;
+  const slideEls = sources.map((src, i) => {
+    const slide = document.createElement('div');
+    slide.className = 'modal-gallery-slide' + (i === 0 ? ' active' : '');
+    const img = document.createElement('img');
+    img.src = src;
+    img.alt = `${name} — foto ${i + 1}`;
+    slide.appendChild(img);
+    main.appendChild(slide);
+    return slide;
+  });
+
+  modalMedia.appendChild(main);
+
+  if (sources.length < 2) return; // 1 sola foto: sin flechas/dots/thumbs
+
+  const dotsWrap = document.createElement('div');
+  dotsWrap.className = 'modal-gallery-dots';
+  const dotEls = sources.map((_, i) => {
+    const dot = document.createElement('span');
+    dot.className = 'gdot' + (i === 0 ? ' active' : '');
+    dotsWrap.appendChild(dot);
+    return dot;
+  });
+  main.appendChild(dotsWrap);
+
+  const prevBtn = document.createElement('button');
+  prevBtn.className = 'modal-gallery-arrow modal-gallery-arrow-prev';
+  prevBtn.setAttribute('aria-label', 'Foto anterior');
+  prevBtn.innerHTML = '&#8249;';
+  const nextBtn = document.createElement('button');
+  nextBtn.className = 'modal-gallery-arrow modal-gallery-arrow-next';
+  nextBtn.setAttribute('aria-label', 'Foto siguiente');
+  nextBtn.innerHTML = '&#8250;';
+  main.appendChild(prevBtn);
+  main.appendChild(nextBtn);
+
+  const thumbsWrap = document.createElement('div');
+  thumbsWrap.className = 'modal-gallery-thumbs';
+  const thumbEls = sources.map((src, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'modal-gallery-thumb' + (i === 0 ? ' active' : '');
+    btn.setAttribute('aria-label', `Ver foto ${i + 1}`);
+    const img = document.createElement('img');
+    img.src = src;
+    img.alt = '';
+    btn.appendChild(img);
+    thumbsWrap.appendChild(btn);
+    return btn;
+  });
+  modalMedia.appendChild(thumbsWrap);
+
+  function goTo(idx){
+    slideEls[current].classList.remove('active');
+    dotEls[current].classList.remove('active');
+    thumbEls[current].classList.remove('active');
+    current = (idx + sources.length) % sources.length;
+    slideEls[current].classList.add('active');
+    dotEls[current].classList.add('active');
+    thumbEls[current].classList.add('active');
+  }
+
+  prevBtn.addEventListener('click', () => goTo(current - 1));
+  nextBtn.addEventListener('click', () => goTo(current + 1));
+  dotEls.forEach((dot, i) => dot.addEventListener('click', () => goTo(i)));
+  thumbEls.forEach((thumb, i) => thumb.addEventListener('click', () => goTo(i)));
+
+  // Swipe táctil sobre la imagen grande
+  let touchStartX = 0, touchStartY = 0;
+  main.addEventListener('touchstart', (e) => {
+    touchStartX = e.touches[0].clientX;
+    touchStartY = e.touches[0].clientY;
+  }, { passive: true });
+  main.addEventListener('touchend', (e) => {
+    const dx = e.changedTouches[0].clientX - touchStartX;
+    const dy = e.changedTouches[0].clientY - touchStartY;
+    if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)) {
+      if (dx < 0) goTo(current + 1); else goTo(current - 1);
+    }
+  }, { passive: true });
+}
+
 function openModal(card){
-  const { name, price, img, desc, medidas, materiales, entrega } = card.dataset;
+  const { name, price, desc, medidas, materiales, entrega } = card.dataset;
 
   modalTitle.textContent = name;
   modalDesc.textContent = desc;
   modalMedidas.textContent = medidas;
   modalMateriales.textContent = materiales;
   modalEntrega.textContent = entrega;
-  // Tomamos el precio ya formateado que se ve en la card (ej "$100.000" o "Desde $100.000")
   modalPrice.textContent = card.querySelector(".price").textContent;
 
-  // Imagen real, o clon del mosaico interactivo si es la mesa personalizada
-  modalMedia.innerHTML = "";
-  if (img) {
-    const image = document.createElement("img");
-    image.src = img;
-    image.alt = name;
-    modalMedia.appendChild(image);
-  } else {
-    const swatch = document.getElementById("mosaic-swatch");
-    if (swatch) {
-      const clone = swatch.cloneNode(true);
-      clone.removeAttribute("id"); // evita IDs duplicados dentro del modal
-      modalMedia.appendChild(clone);
-    }
-  }
+  buildModalGallery(card, name);
 
   const message = `Hola Ganchito! 👋 Quiero comprar la "${name}" ($${price}). ¿Está disponible?`;
   modalComprar.href = buildWhatsAppLink(message);
@@ -168,7 +251,6 @@ function openModal(card){
   document.body.style.overflow = "hidden";
   modalClose.focus();
 }
-
 function closeModal(){
   modalOverlay.hidden = true;
   document.body.style.overflow = "";
@@ -188,47 +270,7 @@ document.addEventListener("keydown", (e) => {
   if (e.key === "Escape" && !modalOverlay.hidden) closeModal();
 });
 
-/* ---------------------------------------------------------
-   6) Mosaico interactivo de la mesa personalizada
-   --------------------------------------------------------- */
-const mosaicSwatch = document.getElementById("mosaic-swatch");
-const paletteButtons = document.querySelectorAll(".swatch-dot");
 
-const PALETTES = {
-  navy:    ["#14213E", "#2B3B63", "#F7F3EC"],
-  mostaza: ["#C2872E", "#E3B45B", "#F7F3EC"],
-  nogal:   ["#4A3424", "#8B5A2B", "#F7F3EC"],
-  oliva:   ["#5C6B4C", "#8A9A78", "#F7F3EC"],
-};
-
-function buildMosaic(paletteKey){
-  if (!mosaicSwatch) return;
-  const colors = PALETTES[paletteKey] || PALETTES.mostaza;
-  mosaicSwatch.innerHTML = "";
-  for (let i = 0; i < 25; i++){
-    const tile = document.createElement("div");
-    tile.className = "tile";
-    // Patrón simple tipo guarda: alterna colores según posición
-    const col = i % 5;
-    const row = Math.floor(i / 5);
-    const isBorder = col === 0 || col === 4 || row === 0 || row === 4;
-    tile.style.backgroundColor = isBorder ? colors[0] : colors[(row + col) % 2 === 0 ? 1 : 2];
-    mosaicSwatch.appendChild(tile);
-  }
-}
-
-paletteButtons.forEach(btn => {
-  btn.addEventListener("click", () => {
-    paletteButtons.forEach(b => b.setAttribute("aria-pressed", "false"));
-    btn.setAttribute("aria-pressed", "true");
-    buildMosaic(btn.dataset.palette);
-  });
-});
-
-// Estado inicial del mosaico
-buildMosaic("mostaza");
-const defaultPaletteBtn = document.querySelector('[data-palette="mostaza"]');
-if (defaultPaletteBtn) defaultPaletteBtn.setAttribute("aria-pressed", "true");
 
 /* ---------------------------------------------------------
    7) Animación simple al hacer scroll (reveal)
@@ -258,7 +300,7 @@ const yearEl = document.getElementById("year");
 if (yearEl) yearEl.textContent = new Date().getFullYear();
 
 /* ---------------------------------------------------------
-   9) Gallery en cards (auto-rotate + dots)
+   9) Gallery en cards (auto-rotate + dots + swipe)
    --------------------------------------------------------- */
 document.querySelectorAll('[data-gallery]').forEach(gallery => {
   const slides = gallery.querySelectorAll('.gallery-slide');
@@ -267,7 +309,7 @@ document.querySelectorAll('[data-gallery]').forEach(gallery => {
   if (slides.length < 2) return;
 
   let current = 0;
-  let timer;
+  let timer = null;
 
   function goTo(idx) {
     slides[current].classList.remove('active');
@@ -278,13 +320,17 @@ document.querySelectorAll('[data-gallery]').forEach(gallery => {
   }
 
   function startTimer() {
+    if (timer) return; // ya hay uno corriendo, no dupliques
     timer = setInterval(() => goTo(current + 1), 2800);
   }
-  function stopTimer() { clearInterval(timer); }
+  function stopTimer() {
+    clearInterval(timer);
+    timer = null;
+  }
 
   // Dots clickeables
   dots.forEach((dot, i) => {
-    dot.addEventListener('click', () => { stopTimer(); goTo(i); startTimer(); });
+    dot.addEventListener('click', (e) => { e.stopPropagation(); stopTimer(); goTo(i); startTimer(); });
   });
 
   // Flechas prev/next
@@ -293,79 +339,73 @@ document.querySelectorAll('[data-gallery]').forEach(gallery => {
   if (prevBtn) prevBtn.addEventListener('click', (e) => { e.stopPropagation(); stopTimer(); goTo(current - 1); startTimer(); });
   if (nextBtn) nextBtn.addEventListener('click', (e) => { e.stopPropagation(); stopTimer(); goTo(current + 1); startTimer(); });
 
-  // Pausa al hover
+  // Pausa al hover (desktop)
   card.addEventListener('mouseenter', stopTimer);
   card.addEventListener('mouseleave', startTimer);
+
+  // Swipe táctil (mobile)
+  let touchStartX = 0;
+  let touchStartY = 0;
+  gallery.addEventListener('touchstart', (e) => {
+    stopTimer();
+    touchStartX = e.touches[0].clientX;
+    touchStartY = e.touches[0].clientY;
+  }, { passive: true });
+
+  gallery.addEventListener('touchend', (e) => {
+    const dx = e.changedTouches[0].clientX - touchStartX;
+    const dy = e.changedTouches[0].clientY - touchStartY;
+    // Solo reacciona si el swipe fue mayormente horizontal,
+    // para no interferir con el scroll vertical de la página.
+    if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)) {
+      if (dx < 0) goTo(current + 1); else goTo(current - 1);
+    }
+    startTimer();
+  }, { passive: true });
 
   startTimer();
 });
 
 /* ---------------------------------------------------------
-   10) Carrusel arrastrable con auto-scroll suave
+   10) Accordion Gallery — "El proceso"
+   Desktop: hover/foco expande el panel. Mobile: tap alterna
+   cuál panel está abierto (acordeón clásico, uno a la vez).
    --------------------------------------------------------- */
 (function () {
-  const wrap  = document.getElementById('carrusel-wrap');
-  const track = document.getElementById('carrusel-track');
-  if (!wrap || !track) return;
+  const gallery = document.getElementById('accordion-gallery');
+  if (!gallery) return;
+  const panels = Array.from(gallery.querySelectorAll('.accordion-panel'));
+  if (!panels.length) return;
 
-  let isDragging = false;
-  let startX = 0;
-  let scrollLeft = 0;
-  let autoX = 0;
-  let dragOffset = 0;
-  let isDragInterrupted = false;
-  const SPEED = 0.6; // px por frame
+  const isMobile = () => window.matchMedia('(max-width: 760px)').matches;
 
-  function getMaxScroll() {
-    return track.scrollWidth / 2; // mitad porque duplicamos slides
+  function setActive(panel) {
+    panels.forEach(p => {
+      const active = p === panel;
+      p.classList.toggle('is-active', active);
+      p.setAttribute('aria-expanded', String(active));
+    });
   }
 
-  function animate() {
-    if (!isDragging) {
-      autoX += SPEED;
-      if (autoX >= getMaxScroll()) autoX -= getMaxScroll();
-      track.style.transform = `translateX(${-(autoX + dragOffset)}px)`;
-    }
-    requestAnimationFrame(animate);
-  }
-
-  // Mouse
-  wrap.addEventListener('mousedown', e => {
-    isDragging = true;
-    startX = e.clientX;
-    scrollLeft = autoX;
-    wrap.style.cursor = 'grabbing';
-  });
-  window.addEventListener('mouseup', () => {
-    if (!isDragging) return;
-    isDragging = false;
-    wrap.style.cursor = 'grab';
-    autoX = scrollLeft + (startX - (startX)); // mantiene posición actual
-  });
-  window.addEventListener('mousemove', e => {
-    if (!isDragging) return;
-    const dx = e.clientX - startX;
-    autoX = scrollLeft - dx;
-    if (autoX < 0) autoX = 0;
-    if (autoX >= getMaxScroll()) autoX -= getMaxScroll();
+  panels.forEach(panel => {
+    // Desktop: hover ya lo resuelve el CSS (:hover). Foco por teclado
+    // también vía CSS (:focus-visible). El click/tap decide cuál
+    // queda "fija" como activa (útil sobre todo en mobile).
+    panel.addEventListener('click', () => {
+      if (isMobile()) {
+        // Toggle: si ya estaba abierta, no la cerramos (siempre debe
+        // quedar una visible), si no, la abrimos.
+        setActive(panel);
+      } else {
+        setActive(panel);
+      }
+    });
+    panel.addEventListener('focus', () => setActive(panel));
   });
 
-  // Touch
-  wrap.addEventListener('touchstart', e => {
-    isDragging = true;
-    startX = e.touches[0].clientX;
-    scrollLeft = autoX;
-  }, { passive: true });
-  window.addEventListener('touchend', () => { isDragging = false; });
-  window.addEventListener('touchmove', e => {
-    if (!isDragging) return;
-    const dx = e.touches[0].clientX - startX;
-    autoX = scrollLeft - dx;
-    if (autoX < 0) autoX = 0;
-    if (autoX >= getMaxScroll()) autoX -= getMaxScroll();
-  }, { passive: true });
-
-  animate();
+  // Estado inicial: la primera queda activa (ya viene con is-active
+  // en el HTML, esto solo asegura aria-expanded correcto).
+  setActive(panels[0]);
 })();
 
 /* ---------------------------------------------------------
@@ -423,7 +463,12 @@ document.querySelectorAll('.faq-trigger').forEach(trigger => {
     });
   });
 
-  window.addEventListener('scroll', updateDots, { passive: true });
+  let ticking = false;
+  window.addEventListener('scroll', () => {
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(() => { updateDots(); ticking = false; });
+  }, { passive: true });
   updateDots();
 })();
 
@@ -466,11 +511,23 @@ document.querySelectorAll('.faq-trigger').forEach(trigger => {
   const pedrirTitle = document.getElementById('pedir-title');
   const pedrirSub   = document.getElementById('pedir-sub');
 
-  function syncFromConfigurador() {
-    const resumenEl = document.getElementById('ganchito-resumen');
-    const wspEl     = document.getElementById('ganchito-wsp');
-    if (!resumenEl || !wspEl) return;
-    const texto = resumenEl.textContent.trim();
+  function syncFromConfigurador(detail) {
+    let texto, whatsappUrl;
+
+    if (detail) {
+      // Vino del evento 'ganchito:update' — es el camino normal.
+      texto = detail.texto;
+      whatsappUrl = detail.whatsappUrl;
+    } else {
+      // Fallback (ej. si la sección "Pedir" entra en pantalla antes de
+      // que el configurador dispare ningún evento): leemos el DOM una vez.
+      const resumenEl = document.getElementById('ganchito-resumen');
+      const wspEl     = document.getElementById('ganchito-wsp');
+      if (!resumenEl || !wspEl) return;
+      texto = resumenEl.textContent.trim();
+      whatsappUrl = wspEl.href;
+    }
+
     if (!texto || texto === '—') return;
 
     // Mostramos el resumen
@@ -483,18 +540,15 @@ document.querySelectorAll('.faq-trigger').forEach(trigger => {
     if (pedrirTitle)  pedrirTitle.textContent = 'Tu mesa está lista para pedir.';
     if (pedrirSub)    pedrirSub.textContent   = 'Ya la diseñaste. El siguiente paso es escribirnos y la ponemos en producción.';
 
-    // Copiamos el href del WSP del configurador
-    if (pedrirWsp && wspEl.href && wspEl.href !== '#') {
-      pedrirWsp.href = wspEl.href;
+    // Copiamos el link de WhatsApp del configurador
+    if (pedrirWsp && whatsappUrl && whatsappUrl !== '#') {
+      pedrirWsp.href = whatsappUrl;
     }
   }
 
-  // Escuchar cambios del configurador (lo dispara el script del config via MutationObserver)
-  const resumenTarget = document.getElementById('ganchito-resumen');
-  if (resumenTarget) {
-    const mo = new MutationObserver(syncFromConfigurador);
-    mo.observe(resumenTarget, { childList: true, characterData: true, subtree: true });
-  }
+  // El configurador es la fuente de verdad: escuchamos su evento en vez
+  // de vigilar el DOM con un MutationObserver.
+  document.addEventListener('ganchito:update', (e) => syncFromConfigurador(e.detail));
 
   // También al entrar a la sección
   window.addEventListener('scroll', function onScroll() {

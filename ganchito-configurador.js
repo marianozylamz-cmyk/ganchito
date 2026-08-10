@@ -164,7 +164,7 @@
     return;
   }
 
-  canvasBox.style.touchAction = 'none';
+canvasBox.style.touchAction = 'pan-y';
 
   const renderer = new THREE.WebGLRenderer({ canvas: canvasEl, antialias: true });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
@@ -401,10 +401,18 @@ const FOCUS_CAM_POS    = new THREE.Vector3(4.4, 3.8, 4.4);
     if (el) el.textContent = txt;
 
     const msg = encodeURIComponent(`Hola Ganchito! 👋 Me gustaría consultar sobre una "${txt}". ¿Está disponible y cuál es el precio?`);
+    const whatsappUrl = `https://wa.me/${WANUM}?text=${msg}`;
     const wspEl = document.getElementById('ganchito-wsp');
-    if (wspEl) wspEl.href = `https://wa.me/${WANUM}?text=${msg}`;
-  }
+    if (wspEl) wspEl.href = whatsappUrl;
 
+    // Única fuente de verdad = `estado`. Avisamos al resto de la página
+    // (sección "Pedir", o cualquier otra que quiera escuchar) sin que
+    // tengan que espiar el DOM.
+    document.dispatchEvent(new CustomEvent('ganchito:update', {
+      detail: { texto: txt, whatsappUrl }
+    }));
+  }
+  
   function syncTipoButtons(base) {
     const grupo = document.getElementById('ganchito-btn-tipo');
     if (grupo) {
