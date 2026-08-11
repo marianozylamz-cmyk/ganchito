@@ -3,7 +3,58 @@
    Todo vainilla JS, sin dependencias. Pensado para que sea
    fácil de leer y editar en VS Code.
    ========================================================= */
+// ==================== PAGE LOADER INIT ====================
+const initPageLoader = () => {
+    const MIN_SHOW_MS = 800;
+    const MAX_WAIT_MS = 3500;
+    
+    const loader = document.getElementById('mp-page-loader');
+    const body = document.body;
+    
+    if (!loader) return;
+    
+    // Agregar clase de "cargando" al body
+    body.classList.add('mp-loading');
+    
+    // Tiempo mínimo de espera
+    let minTimeReached = false;
+    setTimeout(() => {
+        minTimeReached = true;
+        // Si ya está listo, remover inmediatamente
+        if (window.mpLoaderReady) {
+            hidePageLoader();
+        }
+    }, MIN_SHOW_MS);
+    
+    // Timeout máximo de respaldo (3.5 seg)
+    window.mpLoaderTimeout = setTimeout(() => {
+        hidePageLoader();
+    }, MAX_WAIT_MS);
+    
+    // Función para ocultar el loader
+    window.hidePageLoader = () => {
+        if (!loader) return;
+        
+        clearTimeout(window.mpLoaderTimeout);
+        
+        loader.classList.add('mp-fade-out');
+        body.classList.remove('mp-loading');
+        
+        // Eliminar del DOM después de la animación
+        setTimeout(() => {
+            if (loader.parentNode) {
+                loader.parentNode.removeChild(loader);
+            }
+            window.mpLoaderReady = true;
+        }, 400);
+    };
+    
+    // Marcar como "ready" cuando el loader esté listo para ocultarse
+    window.mpLoaderReady = false;
+};
 
+// Inicializar el loader
+initPageLoader();
 /* ---------------------------------------------------------
    0) CARGAR CONTENIDO GUARDADO POR EL ADMIN (localStorage)
    --------------------------------------------------------- */
