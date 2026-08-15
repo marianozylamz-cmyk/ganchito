@@ -21,6 +21,8 @@
     ? WHATSAPP_NUMBER
     : '5492284354090';
 
+  const REDUCE_MOTION = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
   const CM = 1 / 20;
 
   const MEDIDAS_CM = {
@@ -329,7 +331,15 @@
     const txt = `${nombre} · ${patrones[estado.patron]} · ${c1} + ${c2} · ${tamanos[estado.tamano]}`;
 
     const el = document.getElementById('ganchito-resumen');
-    if (el) el.textContent = txt;
+    if (el) {
+      el.textContent = txt;
+      const card = el.closest('.ganchito-resumen-card');
+      if (card) {
+        card.classList.remove('is-updated');
+        void card.offsetWidth; // fuerza reflow para reiniciar la transición si hay cambios seguidos
+        card.classList.add('is-updated');
+      }
+    }
 
     const msg = encodeURIComponent(`Hola Ganchito! 👋 Me gustaría consultar sobre una "${txt}". ¿Está disponible y cuál es el precio?`);
     const whatsappUrl = `https://wa.me/${WANUM}?text=${msg}`;
@@ -345,7 +355,9 @@
     const grupo = document.getElementById('ganchito-btn-tipo');
     if (grupo) {
       grupo.querySelectorAll('.ganchito-opt').forEach(b => {
-        b.classList.toggle('activo', b.dataset.val === base);
+        const activo = b.dataset.val === base;
+        b.classList.toggle('activo', activo);
+        b.setAttribute('aria-pressed', String(activo));
       });
     }
     togglePatasGroup(base);
@@ -355,7 +367,9 @@
     const grupo = document.getElementById('ganchito-btn-patas');
     if (!grupo) return;
     grupo.querySelectorAll('.ganchito-opt').forEach(b => {
-      b.classList.toggle('activo', b.dataset.val === patas);
+      const activo = b.dataset.val === patas;
+      b.classList.toggle('activo', activo);
+      b.setAttribute('aria-pressed', String(activo));
     });
   }
 
@@ -370,10 +384,11 @@
     const fromPos = camera.position.clone();
     const fromLook = camLookAt.clone();
     const fromFogNear = scene.fog.near, fromFogFar = scene.fog.far;
+    const effectiveDuration = REDUCE_MOTION ? 1 : duration;
     const start = performance.now();
 
     function step(now) {
-      const t = Math.min((now - start) / duration, 1);
+      const t = Math.min((now - start) / effectiveDuration, 1);
       const e = easeInOutQuad(t);
       camera.position.lerpVectors(fromPos, toPos, e);
       camLookAt.lerpVectors(fromLook, toLook, e);
@@ -423,7 +438,7 @@
 
     animateCamera(SHOWROOM_CAM_POS, SHOWROOM_LOOKAT, 750, () => {
       mode = 'showroom';
-      setHint('Deslizá para mirar alrededor · tocá la mesa que te guste');
+      setHint('Girá para mirar alrededor · tocá la mesa que te guste');
       onEnterShowroom();
     });
   }
@@ -435,7 +450,7 @@
     mode = 'animando';
     animateCamera(SHOWROOM_CAM_POS, SHOWROOM_LOOKAT, 1800, () => {
       mode = 'showroom';
-      setHint('Deslizá para mirar alrededor · tocá la mesa que te guste');
+      setHint('Girá para mirar alrededor · tocá la mesa que te guste');
     }, [SHOWROOM_FOG_NEAR, SHOWROOM_FOG_FAR]);
   }
 
@@ -476,11 +491,13 @@
   function onEnterFocus() {
     setControlesVisible(true);
     setVolverVisible(true);
-    setHint('arrastrá para rotar');
+    setHint('Girá tu mesa con el dedo');
+    canvasBox.style.touchAction = 'none';
   }
   function onEnterShowroom() {
     setControlesVisible(false);
     setVolverVisible(false);
+    canvasBox.style.touchAction = 'pan-y';
   }
 
   if (volverBtn) volverBtn.addEventListener('click', volverAlShowroom);
@@ -503,10 +520,47 @@
     if (obj && obj.userData.tipo) seleccionarMesa(obj.userData.tipo);
   }
 
+  // Hover "tocable" en showroom (desktop): reutiliza el mismo raycaster de pickAt,
+  // no toca la lógica de selección (pickAt / pointerup) en absoluto.
+  let hoveredMesaGroup = null;
+  function clearHover() {
+    if (hoveredMesaGroup) {
+      hoveredMesaGroup.scale.setScalar(1);
+      hoveredMesaGroup = null;
+      needsRender = true;
+    }
+    canvasBox.classList.remove('is-pickable');
+  }
+  function updateHover(clientX, clientY) {
+    if (mode !== 'showroom') { clearHover(); return; }
+    const rect = canvasBox.getBoundingClientRect();
+    pointerNDC.x = ((clientX - rect.left) / rect.width) * 2 - 1;
+    pointerNDC.y = -((clientY - rect.top) / rect.height) * 2 + 1;
+    raycaster.setFromCamera(pointerNDC, camera);
+    const intersects = raycaster.intersectObjects(showroomGroup.children, true);
+    let target = null;
+    if (intersects.length) {
+      let obj = intersects[0].object;
+      while (obj && !obj.userData.tipo) obj = obj.parent;
+      if (obj && obj.userData.tipo) target = obj;
+    }
+    if (target !== hoveredMesaGroup) {
+      if (hoveredMesaGroup) hoveredMesaGroup.scale.setScalar(1);
+      if (target) target.scale.setScalar(1.03);
+      hoveredMesaGroup = target;
+      canvasBox.classList.toggle('is-pickable', !!target);
+      needsRender = true;
+    }
+  }
+
   canvasBox.addEventListener('pointerdown', e => {
     isPointerDown = true; moved = false;
     downX = lastX = e.clientX; downY = lastY = e.clientY;
   });
+  canvasBox.addEventListener('pointermove', e => {
+    if (!isPointerDown) updateHover(e.clientX, e.clientY);
+  });
+  canvasBox.addEventListener('pointerleave', clearHover);
   window.addEventListener('pointermove', e => {
     if (!isPointerDown) return;
     if (Math.abs(e.clientX - downX) > 6 || Math.abs(e.clientY - downY) > 6) moved = true;
@@ -545,8 +599,12 @@
     container.addEventListener('click', e => {
       const btn = e.target.closest('.ganchito-opt');
       if (!btn) return;
-      container.querySelectorAll('.ganchito-opt').forEach(b => b.classList.remove('activo'));
+      container.querySelectorAll('.ganchito-opt').forEach(b => {
+        b.classList.remove('activo');
+        b.setAttribute('aria-pressed', 'false');
+      });
       btn.classList.add('activo');
+      btn.setAttribute('aria-pressed', 'true');
       estado[key] = btn.dataset.val;
       if (onChange) onChange(btn.dataset.val);
       if (mode === 'focus') buildMesa();
@@ -563,8 +621,12 @@
     coloresWrap.addEventListener('click', e => {
       const dot = e.target.closest('.ganchito-color-dot');
       if (!dot) return;
-      coloresWrap.querySelectorAll('.ganchito-color-dot').forEach(d => d.classList.remove('activo'));
+      coloresWrap.querySelectorAll('.ganchito-color-dot').forEach(d => {
+        d.classList.remove('activo');
+        d.setAttribute('aria-pressed', 'false');
+      });
       dot.classList.add('activo');
+      dot.setAttribute('aria-pressed', 'true');
       estado.color = dot.dataset.color;
       if (mode === 'focus') buildMesa();
     });
@@ -575,8 +637,12 @@
     colores2Wrap.addEventListener('click', e => {
       const dot = e.target.closest('.ganchito-color-dot2');
       if (!dot) return;
-      colores2Wrap.querySelectorAll('.ganchito-color-dot2').forEach(d => d.classList.remove('activo'));
+      colores2Wrap.querySelectorAll('.ganchito-color-dot2').forEach(d => {
+        d.classList.remove('activo');
+        d.setAttribute('aria-pressed', 'false');
+      });
       dot.classList.add('activo');
+      dot.setAttribute('aria-pressed', 'true');
       estado.color2 = dot.dataset.color2;
       if (mode === 'focus') buildMesa();
     });

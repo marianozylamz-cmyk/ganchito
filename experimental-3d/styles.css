@@ -1,0 +1,739 @@
+/* =========================================================
+   GANCHITO — LABORATORIO 3D (prototipo aislado)
+   styles.css — mobile-first. Desktop es un @media aparte, nunca
+   la base. Paleta y tipografías: mismos tokens que styles.css de
+   producción (copiados a mano; esta hoja no depende de esa).
+
+   v2: la experiencia usa siempre el mismo fondo claro de Ganchito
+   (el mismo tono que "Colección") — no hay estudio oscuro.
+   ========================================================= */
+
+:root{
+  --cream:        #F7F3EC;
+  --cream-deep:   #EFE7D6;
+  --ink:          #14213E;
+  --walnut:       #2A1C13;
+  --walnut-soft:  #4A3424;
+  --saddle:       #8B5A2B;
+  --mustard:      #C2872E;
+  --mustard-light:#E3B45B;
+  --line:         #DDD3BE;
+
+  /* Color de identidad de ESTA mesa (cada página lo pisa desde su
+     HERO_CONFIG.accent) — si una página no lo define, cae en --saddle. */
+  --accent: var(--saddle);
+
+  /* Fondo de ESTA mesa (cada página lo pisa desde su HERO_CONFIG.bg1/bg2) —
+     por defecto el crema de siempre. */
+  --bg-1: var(--cream);
+  --bg-2: var(--cream-deep);
+}
+
+*, *::before, *::after{ box-sizing: border-box; }
+html{ scroll-behavior: smooth; }
+body{
+  margin: 0;
+  background: var(--bg-1);
+  color: var(--walnut);
+  font-family: var(--font-body);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+img{ max-width:100%; display:block; }
+a{ color: inherit; }
+button{ font-family: inherit; }
+
+@media (prefers-reduced-motion: reduce){
+  html{ scroll-behavior: auto; }
+  *, *::before, *::after{
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* =========================================================
+   Portada de apertura — pantalla completa, se disuelve para revelar
+   la mesa 3D debajo (ver hero-splash.js). Fondo azul deliberadamente
+   distinto del resto de la paleta cálida, como "telón" antes de entrar.
+   ========================================================= */
+.intro-splash{
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: var(--ink);
+  color: var(--cream);
+  text-align: center;
+  padding: 24px;
+}
+.intro-splash.is-hidden{ display: none; }
+.intro-splash-bubble{
+  position: absolute;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, rgba(247,243,236,0.16), rgba(247,243,236,0.02) 70%);
+  opacity: 0;
+  transform: scale(0.6);
+}
+.intro-splash-bubble-1{ width: 220px; height: 220px; top: 10%;  left: 8%; }
+.intro-splash-bubble-2{ width: 140px; height: 140px; bottom: 14%; right: 10%; }
+.intro-splash-bubble-3{ width: 90px;  height: 90px;  top: 60%;  left: 18%; }
+.intro-splash-eyebrow{
+  font-family: var(--font-label);
+  font-size: 0.72rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--mustard-light);
+  margin: 0 0 12px;
+}
+.intro-splash h1{
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: clamp(2.1rem, 9vw, 3.4rem);
+  line-height: 1.05;
+  margin: 0 0 14px;
+  max-width: 14ch;
+}
+.intro-splash p{
+  font-family: var(--font-label);
+  font-size: clamp(0.95rem, 3.6vw, 1.1rem);
+  letter-spacing: 0.03em;
+  margin: 0;
+  color: var(--cream);
+  opacity: 0.85;
+}
+/* El backdrop-filter del badge/rail, aunque van por debajo en z-index,
+   puede "filtrarse" por encima de la portada en algunos motores de
+   render por software — se apaga mientras la portada está visible. */
+body:has(.intro-splash:not(.is-hidden)) .lab-badge,
+body:has(.intro-splash:not(.is-hidden)) .color-rail{
+  backdrop-filter: none;
+}
+
+/* =========================================================
+   Badge de prototipo (para no confundirlo con el sitio real)
+   ========================================================= */
+.lab-badge{
+  position: fixed;
+  top: 12px;
+  left: 12px;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px 6px;
+  padding: 8px 14px;
+  min-height: 40px;
+  max-width: calc(100vw - 24px);
+  border-radius: 20px;
+  background: rgba(255, 253, 249, 0.82);
+  border: 1px solid var(--line);
+  backdrop-filter: blur(6px);
+  font-family: var(--font-label);
+  font-size: 0.7rem;
+  letter-spacing: 0.04em;
+  color: var(--walnut-soft);
+}
+.lab-badge strong{ color: var(--saddle); font-weight: 600; }
+.lab-badge a{ text-decoration: underline; color: var(--walnut-soft); }
+
+/* =========================================================
+   Canvas 3D — fixed, detrás de todo. El scroll SIEMPRE pasa de
+   largo por acá: nunca hay pin ni preventDefault.
+   ========================================================= */
+#hero3d-stage{
+  position: fixed;
+  inset: 0;
+  height: 100dvh;
+  z-index: 0;
+  /* Nada de fotos/personajes atrás: un túnel/cuarto vacío 100% de CSS,
+     derivado de --accent con color-mix — mitad agujero negro, mitad
+     "room with lights". 4 cuñas cónicas simulan las 4 paredes en fuga
+     hacia el centro, con una línea fina y brillante en cada arista (las
+     "4 líneas vectoriales") y un resplandor central tipo spotlight. La
+     mesa es 100% la protagonista: nada más compite por atención. */
+  background:
+    radial-gradient(ellipse 70% 58% at 50% 46%,
+      color-mix(in srgb, var(--accent) 55%, white) 0%,
+      color-mix(in srgb, var(--accent) 65%, white) 18%,
+      transparent 68%),
+    conic-gradient(from 0deg at 50% 50%,
+      color-mix(in srgb, var(--accent) 75%, black) 0deg 44deg,
+      color-mix(in srgb, var(--accent) 88%, white) 44deg 46deg,
+      color-mix(in srgb, var(--accent) 55%, black) 46deg 134deg,
+      color-mix(in srgb, var(--accent) 88%, white) 134deg 136deg,
+      color-mix(in srgb, var(--accent) 38%, black) 136deg 224deg,
+      color-mix(in srgb, var(--accent) 88%, white) 224deg 226deg,
+      color-mix(in srgb, var(--accent) 55%, black) 226deg 314deg,
+      color-mix(in srgb, var(--accent) 88%, white) 314deg 316deg,
+      color-mix(in srgb, var(--accent) 75%, black) 316deg 360deg
+    ),
+    color-mix(in srgb, var(--accent) 30%, black);
+}
+#hero3d-canvas{
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  display: block;
+  opacity: 0;
+  transition: opacity 1.1s ease;
+}
+body.hero3d-ready #hero3d-canvas{ opacity: 1; }
+
+/* =========================================================
+   Flechas de navegación entre mesas — sutiles, fijas abajo a los
+   costados (el borde derecho ya lo ocupa el rail de colores).
+   ========================================================= */
+.table-switcher{
+  position: fixed;
+  bottom: 18px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 6;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  transition: opacity .4s ease;
+}
+.switcher-arrow{
+  width: 42px;
+  height: 42px;
+  min-width: 42px;
+  min-height: 42px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 253, 249, 0.6);
+  border: 1px solid rgba(42, 28, 19, 0.14);
+  color: var(--walnut);
+  backdrop-filter: blur(4px);
+  transition: background .2s ease, transform .15s ease;
+}
+.switcher-arrow:active{ transform: scale(0.92); }
+.switcher-pill{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 10px 28px;
+  border-radius: 100px;
+  background: var(--accent);
+  color: var(--cream);
+  font-family: var(--font-label);
+  font-weight: 600;
+  font-size: 0.92rem;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  box-shadow: 0 8px 18px -8px rgba(20, 12, 6, 0.45);
+}
+
+/* =========================================================
+   Rail de colores — vertical, fijo a la derecha. Nunca se
+   superpone con la mesa: vive fuera del área central siempre.
+   ========================================================= */
+.color-rail{
+  position: fixed;
+  top: 50%;
+  right: 12px;
+  transform: translateY(-50%) translateX(10px);
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .5s ease, transform .5s ease;
+}
+.color-rail.is-visible{
+  opacity: 1;
+  transform: translateY(-50%) translateX(0);
+  pointer-events: auto;
+}
+.color-rail-label{
+  font-family: var(--font-label);
+  font-size: 0.6rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  /* Cream, no accent: el fondo ahora ES el accent (túnel), así que un
+     texto en accent se perdería contra él. */
+  color: var(--cream);
+  text-align: center;
+  max-width: 8ch;
+  margin: 0 0 12px;
+  text-shadow: 0 0 10px rgba(0,0,0,0.45), 0 0 4px rgba(0,0,0,0.45);
+}
+.color-rail .swatches{
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.swatch{
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 2px solid var(--cream);
+  box-shadow: 0 0 0 1.5px var(--line), 0 3px 8px -2px rgba(42,28,19,0.35);
+  cursor: pointer;
+  padding: 0;
+  transition: transform .15s ease, box-shadow .15s ease;
+}
+.swatch:active{ transform: scale(0.9); }
+.swatch.activo{
+  box-shadow: 0 0 0 2px var(--mustard), 0 3px 10px -2px rgba(42,28,19,0.4);
+  transform: scale(1.08);
+}
+
+/* =========================================================
+   Panel "Personalizar" — patrón, tamaño, color secundario y
+   resumen+WhatsApp del configurador real, consolidados en una sola
+   hoja que se abre a pedido. El hero queda tranquilo por defecto
+   (solo el rail de color principal) y completo cuando lo pedís.
+   ========================================================= */
+/* Círculo compacto, mismo lenguaje que .switcher-arrow, en la esquina
+   inferior derecha: la única zona fija libre de verdad en mobile (el
+   badge ocupa arriba —y a veces 2 líneas—, el rail de color el centro
+   derecho, el switcher el centro abajo). */
+.personalizar-toggle{
+  position: fixed;
+  bottom: 18px;
+  right: 12px;
+  z-index: 7;
+  width: 46px;
+  height: 46px;
+  min-width: 46px;
+  min-height: 46px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: var(--accent);
+  color: var(--cream);
+  box-shadow: 0 8px 18px -8px rgba(20, 12, 6, 0.45);
+  cursor: pointer;
+  transition: opacity .4s ease, transform .15s ease;
+}
+.personalizar-toggle:active{ transform: scale(0.92); }
+.personalizar-toggle svg{ flex: none; }
+
+@media (min-width: 761px){
+  .personalizar-toggle{ right: 32px; }
+}
+
+.personalizar-backdrop{
+  position: fixed;
+  inset: 0;
+  z-index: 9;
+  background: rgba(20, 12, 6, 0.38);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .35s ease;
+}
+.personalizar-backdrop.is-open{ opacity: 1; pointer-events: auto; }
+
+.personalizar-sheet{
+  position: fixed;
+  left: 0; right: 0; bottom: 0;
+  z-index: 10;
+  max-height: 82vh;
+  overflow-y: auto;
+  background: #FFFDF9;
+  border-radius: 20px 20px 0 0;
+  box-shadow: 0 -14px 32px -12px rgba(20, 12, 6, 0.35);
+  padding: 18px 20px calc(24px + env(safe-area-inset-bottom, 0px));
+  transform: translateY(100%);
+  transition: transform .45s cubic-bezier(.16, 1, .3, 1);
+}
+.personalizar-sheet.is-open{ transform: translateY(0); }
+
+.personalizar-header{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 0 0 14px;
+}
+.personalizar-header h2{
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1.15rem;
+  margin: 0;
+  color: var(--walnut);
+}
+.personalizar-close{
+  min-width: 40px;
+  min-height: 40px;
+  border-radius: 50%;
+  border: none;
+  background: var(--cream-deep);
+  color: var(--walnut);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex: none;
+}
+
+.personalizar-group{ margin: 0 0 18px; }
+.personalizar-group-label{
+  font-family: var(--font-label);
+  font-size: 0.68rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--saddle);
+  margin: 0 0 10px;
+}
+.chip-row{
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.chip-btn{
+  min-height: 40px;
+  padding: 8px 16px;
+  border-radius: 100px;
+  border: 1.5px solid var(--line);
+  background: #fff;
+  font-family: var(--font-label);
+  font-weight: 500;
+  font-size: 0.82rem;
+  color: var(--walnut-soft);
+  cursor: pointer;
+  transition: border-color .2s ease, background .2s ease, color .2s ease;
+}
+.chip-btn.activo{
+  border-color: var(--accent);
+  background: var(--accent);
+  color: var(--cream);
+  font-weight: 600;
+}
+.swatch-mini{
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 2px solid var(--cream);
+  box-shadow: 0 0 0 1.5px var(--line);
+  cursor: pointer;
+  padding: 0;
+}
+.swatch-mini.activo{ box-shadow: 0 0 0 2px var(--mustard); transform: scale(1.08); }
+
+.personalizar-resumen{
+  margin-top: 4px;
+  padding: 14px 16px;
+  border-radius: 14px;
+  background: var(--cream);
+  border: 1px solid var(--line);
+}
+.personalizar-resumen p{
+  margin: 0 0 4px;
+  font-size: 0.86rem;
+  color: var(--walnut-soft);
+}
+.personalizar-resumen p strong{ color: var(--walnut); }
+.personalizar-cta{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 46px;
+  margin-top: 12px;
+  border-radius: 100px;
+  background: var(--mustard);
+  color: var(--walnut);
+  font-family: var(--font-label);
+  font-weight: 600;
+  font-size: 0.9rem;
+  text-decoration: none;
+}
+
+@media (min-width: 761px){
+  .personalizar-sheet{
+    left: 50%;
+    right: auto;
+    max-width: 420px;
+    bottom: 24px;
+    border-radius: 18px;
+    transform: translate(-50%, calc(100% + 24px));
+  }
+  .personalizar-sheet.is-open{ transform: translate(-50%, 0); }
+}
+
+/* =========================================================
+   Contenido que scrollea encima del canvas
+   ========================================================= */
+#hero3d-root{
+  position: relative;
+  z-index: 1;
+  /* Las secciones son mucho más altas que un viewport (para dar
+     recorrido de scroll); sin esto, su caja "vacía" tapa el drag
+     hacia el canvas aunque no tengan nada visible ahí. Se reactiva
+     explícitamente en los elementos que sí deben responder al tap. */
+  pointer-events: none;
+}
+.scene{
+  position: relative;
+  background: transparent;
+}
+.scene-1{ height: 130svh; min-height: 620px; }
+.scene-2{ height: 320svh; }
+
+.scene-sticky{
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  min-height: 560px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 24px;
+  pointer-events: none; /* deja pasar el drag hacia el canvas */
+}
+.scene-sticky a,
+.scene-sticky button{ pointer-events: auto; }
+
+/* ---- Escena 1: hero ---- */
+/* El texto va arriba, no centrado: así nunca se superpone con la mesa,
+   que es la única que ocupa el centro de la pantalla. */
+.scene-1 .scene-sticky{
+  justify-content: flex-start;
+  padding-top: 56px;
+}
+.scene-1 .eyebrow{
+  font-family: var(--font-label);
+  font-size: 0.7rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin: 0 0 8px;
+}
+.scene-1 h1{
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: clamp(1.9rem, 8.4vw, 2.8rem);
+  line-height: 1.04;
+  margin: 0 auto 10px;
+  max-width: 16ch;
+  color: var(--walnut);
+}
+.scene-1 .hero3d-sub{
+  font-size: 0.92rem;
+  color: var(--walnut-soft);
+  max-width: 30ch;
+  margin: 0 auto;
+  /* red de seguridad: si en pantallas muy bajas igual queda cerca del
+     tablero, se mantiene legible sea cual sea lo que haya detrás */
+  text-shadow: 0 0 14px var(--bg-1), 0 0 6px var(--bg-1);
+}
+
+/* Pantallas bajas (celulares chicos, o con la barra del navegador
+   ocupando espacio): el padding-top NO baja de ~60px acá — es lo que
+   hace falta para no chocar contra el badge fijo de arriba a la
+   izquierda. El aire se recorta achicando tipografía/márgenes, no el
+   padding. */
+@media (max-height: 720px){
+  .scene-1 .scene-sticky{ padding-top: 60px; }
+  .scene-1 .eyebrow{ font-size: 0.62rem; margin-bottom: 6px; }
+  .scene-1 h1{ font-size: clamp(1.5rem, 7vw, 2.1rem); margin-bottom: 6px; }
+  .scene-1 .hero3d-sub{ font-size: 0.8rem; }
+}
+.drag-hint{
+  /* fixed, no absolute: .scene-1 mide 130svh, así que un "bottom" relativo
+     a esa caja cae fuera de la pantalla visible. Fixed = siempre relativo
+     al viewport real, sea cual sea la altura de la sección. */
+  position: fixed;
+  bottom: 138px;
+  left: 0; right: 0;
+  z-index: 4;
+  text-align: center;
+  font-family: var(--font-label);
+  font-weight: 500;
+  font-size: 0.85rem;
+  letter-spacing: 0.02em;
+  /* Cream, no accent: el fondo ahora ES el accent (túnel). */
+  color: var(--cream);
+  transition: opacity .4s ease;
+  pointer-events: none;
+  text-shadow: 0 0 10px rgba(0,0,0,0.45), 0 0 4px rgba(0,0,0,0.45);
+}
+.scroll-cue{
+  position: fixed;
+  bottom: 84px;
+  left: 50%;
+  z-index: 4;
+  transform: translateX(-50%);
+  color: var(--cream);
+  filter: drop-shadow(0 0 5px rgba(0,0,0,0.45));
+  background: none;
+  border: none;
+  padding: 10px;
+  cursor: pointer;
+  min-width: 44px;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: auto;
+  transition: opacity .4s ease;
+}
+@media (prefers-reduced-motion: no-preference){
+  .scroll-cue svg{ animation: hero3d-bob 1.8s ease-in-out infinite; }
+}
+@keyframes hero3d-bob{
+  0%,100%{ transform: translateY(0); }
+  50%{ transform: translateY(6px); }
+}
+
+/* ---- Escena 2: la mesa se aleja y achica ---- */
+/* Arriba siempre, nunca en el centro: ahí solo puede estar la mesa. */
+.scene-2 .scene-line{
+  position: absolute;
+  left: 24px; right: 24px;
+  top: 96px;
+  opacity: 0;
+  font-family: var(--font-display);
+  font-size: clamp(1.3rem, 5.6vw, 1.8rem);
+  line-height: 1.3;
+  /* Cream, no walnut: el fondo del túnel es oscuro (derivado de --accent),
+     un texto oscuro se perdería contra él. */
+  color: var(--cream);
+  max-width: 480px;
+  margin: 0 auto;
+  text-shadow: 0 0 18px rgba(0,0,0,0.4), 0 0 8px rgba(0,0,0,0.4);
+}
+
+/* =========================================================
+   Handoff — "Conocé nuestras mesas". Mismo fondo de siempre:
+   la experiencia 3D nunca cambió de paleta, así que esto no es
+   un corte, es una continuación.
+   ========================================================= */
+.handoff{
+  position: relative;
+  z-index: 1;
+  background: var(--cream);
+  color: var(--walnut);
+  padding: 64px 20px 80px;
+}
+.handoff .eyebrow{
+  font-family: var(--font-label);
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--saddle);
+  text-align: center;
+  margin: 0 0 8px;
+}
+.handoff h2{
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: clamp(1.8rem, 6vw, 2.6rem);
+  line-height: 1.1;
+  text-align: center;
+  margin: 0 0 40px;
+  color: var(--walnut);
+}
+.handoff-cards{
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+.handoff-card{
+  background: #FFFDF9;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  overflow: hidden;
+}
+.handoff-card img{ width:100%; aspect-ratio: 4/3; object-fit: cover; }
+.handoff-card-body{ padding: 18px; }
+.handoff-card h3{
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1.15rem;
+  line-height: 1.2;
+  margin: 0 0 8px;
+}
+.handoff-card p{
+  font-size: 0.88rem;
+  color: var(--walnut-soft);
+  margin: 0 0 16px;
+}
+.handoff-cta{
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 10px 18px;
+  border-radius: 100px;
+  background: var(--mustard);
+  color: var(--walnut);
+  font-family: var(--font-label);
+  font-weight: 600;
+  font-size: 0.85rem;
+  text-decoration: none;
+}
+.handoff-back{
+  text-align: center;
+  margin: 48px auto 0;
+  font-family: var(--font-label);
+  font-size: 0.82rem;
+  color: var(--saddle);
+  text-decoration: underline;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* =========================================================
+   Desktop — mobile es la base, esto son ajustes por encima
+   ========================================================= */
+@media (min-width: 761px){
+  .scene-1 h1{ font-size: clamp(2.2rem, 3.4vw, 2.9rem); margin-bottom: 10px; }
+  .scene-1 .eyebrow{ margin-bottom: 8px; }
+  .scene-2 .scene-line{ font-size: clamp(1.6rem, 3vw, 2.2rem); max-width: 620px; top: 110px; }
+
+  .color-rail{ right: 32px; }
+  .swatch{ width: 44px; height: 44px; }
+
+  .handoff-cards{ grid-template-columns: repeat(3, 1fr); }
+}
+
+/* =========================================================
+   "Burbujeo" al pasar el cursor — solo con mouse de verdad
+   (hover:hover + pointer:fine), nunca como hover pegajoso en
+   touch. Curva con rebote, no un scale plano.
+   ========================================================= */
+@media (hover: hover) and (pointer: fine){
+  .switcher-arrow, .switcher-pill, .scroll-cue, .swatch{
+    transition: transform .4s cubic-bezier(.34, 1.56, .64, 1), background .2s ease, box-shadow .2s ease;
+  }
+  .switcher-arrow:hover{ transform: scale(1.15); }
+  .switcher-pill:hover{ transform: scale(1.05); }
+  .scroll-cue:hover{ transform: translateX(-50%) scale(1.25); }
+  .swatch:hover{ transform: scale(1.18); }
+  .swatch.activo:hover{ transform: scale(1.22); }
+
+  .handoff-cta, .handoff-back{
+    transition: transform .35s cubic-bezier(.34, 1.56, .64, 1), background .2s ease;
+  }
+  .handoff-cta:hover{ transform: scale(1.05) translateY(-2px); }
+  .handoff-back:hover{ transform: scale(1.04); }
+
+  .personalizar-toggle, .personalizar-close, .chip-btn, .swatch-mini, .personalizar-cta{
+    transition: transform .35s cubic-bezier(.34, 1.56, .64, 1), background .2s ease, border-color .2s ease;
+  }
+  .personalizar-toggle:hover{ transform: scale(1.05); }
+  .personalizar-close:hover{ transform: scale(1.12) rotate(90deg); }
+  .chip-btn:hover{ border-color: var(--accent); transform: scale(1.05); }
+  .swatch-mini:hover{ transform: scale(1.15); }
+  .personalizar-cta:hover{ transform: scale(1.03); }
+}

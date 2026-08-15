@@ -326,7 +326,7 @@ document.addEventListener("keydown", (e) => {
 /* ---------------------------------------------------------
    7) Animación simple al hacer scroll (reveal)
    --------------------------------------------------------- */
-const revealTargets = document.querySelectorAll(".card, .oficio-grid, .hero-copy, .hero-media");
+const revealTargets = document.querySelectorAll(".card, .memory-intro, .hero-copy, .hero-media, .faq-item");
 revealTargets.forEach(el => el.setAttribute("data-reveal", ""));
 
 if ("IntersectionObserver" in window) {
@@ -343,6 +343,156 @@ if ("IntersectionObserver" in window) {
 } else {
   revealTargets.forEach(el => el.classList.add("is-visible"));
 }
+
+/* ---------------------------------------------------------
+   7b) Memory de Ganchito — reemplaza la vieja "Nuestro oficio".
+   Mazo de 16 cartas (8 imágenes reales del proyecto, cada una dos
+   veces), barajado distinto en cada partida. Flip 3D vía CSS
+   (.is-flipped / .is-matched, ver styles.css); acá solo el estado.
+   --------------------------------------------------------- */
+(function () {
+  const board = document.getElementById('memory-board');
+  if (!board) return;
+
+  const counterEl = document.getElementById('memory-pairs-found');
+  const completeEl = document.getElementById('memory-complete');
+  const restartBtn = document.getElementById('memory-restart');
+  const REDUCE_MOTION = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // Fotos reales del proyecto — mesas, detalle, taller y el isotipo.
+  // Nada de placeholders: son los mismos assets que usa el resto del sitio.
+  const IMAGES = [
+    { src: 'assets/images/PHOTO-2026-08-03-12-23-14.jpg', alt: 'Mesa Ratona de madera' },
+    { src: 'assets/images/PHOTO-2026-08-03-12-30-22.jpg', alt: 'Mesa Cubo' },
+    { src: 'assets/images/mesa-metal-2.jpg', alt: 'Mesa Ratona de metal' },
+    { src: 'assets/images/mesa-ratona-c-metal.jpg', alt: 'Detalle del mosaico y la pata metálica' },
+    { src: 'assets/images/WhatsApp Image 2026-08-04 at 14.42.40 (2).jpeg', alt: 'Mosaico pegado a mano sobre madera' },
+    { src: 'assets/images/WhatsApp Image 2026-08-04 at 14.42.41.jpeg', alt: 'Armado de la estructura en el taller' },
+    { src: 'assets/images/PHOTO-2026-08-03-12-23-12.jpg', alt: 'Mesa Ganchito en un living real' },
+    { src: 'assets/images/logo-icono.png', alt: 'Isotipo Ganchito' },
+  ];
+  const TOTAL_PAIRS = IMAGES.length;
+
+  let deck = [];
+  let firstIndex = null;
+  let secondIndex = null;
+  let lock = false;
+  let pairsFound = 0;
+
+  function shuffle(arr) {
+    const a = arr.slice();
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  }
+
+  function buildDeck() {
+    deck = shuffle(IMAGES.concat(IMAGES));
+  }
+
+  function cardMarkup(card) {
+    return `
+      <span class="memory-card-inner">
+        <span class="memory-card-face memory-card-back" aria-hidden="true">
+          <img src="assets/images/logo-icono.png" alt="">
+        </span>
+        <span class="memory-card-face memory-card-front">
+          <img src="${card.src}" alt="${card.alt}" loading="lazy">
+          <span class="memory-card-check" aria-hidden="true">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+          </span>
+        </span>
+      </span>`;
+  }
+
+  function render() {
+    board.innerHTML = '';
+    deck.forEach((card, i) => {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'memory-card';
+      btn.setAttribute('aria-label', `Carta oculta ${i + 1} de ${deck.length}`);
+      btn.setAttribute('aria-pressed', 'false');
+      btn.innerHTML = cardMarkup(card);
+      btn.addEventListener('click', () => onCardTap(i));
+      board.appendChild(btn);
+    });
+  }
+
+  function cardEl(i) { return board.children[i]; }
+
+  function onCardTap(i) {
+    if (lock) return;
+    const btn = cardEl(i);
+    if (!btn || btn.classList.contains('is-flipped') || btn.classList.contains('is-matched')) return;
+
+    flipUp(btn, deck[i]);
+
+    if (firstIndex === null) {
+      firstIndex = i;
+      return;
+    }
+
+    secondIndex = i;
+    lock = true;
+    const a = deck[firstIndex], b = deck[secondIndex];
+
+    if (a.src === b.src) {
+      window.setTimeout(() => {
+        markMatched(cardEl(firstIndex));
+        markMatched(cardEl(secondIndex));
+        pairsFound++;
+        if (counterEl) counterEl.textContent = String(pairsFound);
+        firstIndex = null; secondIndex = null; lock = false;
+        if (pairsFound === TOTAL_PAIRS) onGameComplete();
+      }, REDUCE_MOTION ? 30 : 350);
+    } else {
+      window.setTimeout(() => {
+        flipDown(cardEl(firstIndex));
+        flipDown(cardEl(secondIndex));
+        firstIndex = null; secondIndex = null; lock = false;
+      }, REDUCE_MOTION ? 200 : 700);
+    }
+  }
+
+  function flipUp(btn, card) {
+    btn.classList.add('is-flipped');
+    btn.setAttribute('aria-pressed', 'true');
+    btn.setAttribute('aria-label', card.alt);
+  }
+  function flipDown(btn) {
+    if (!btn) return;
+    btn.classList.remove('is-flipped');
+    btn.setAttribute('aria-pressed', 'false');
+    btn.setAttribute('aria-label', 'Carta oculta');
+  }
+  function markMatched(btn) {
+    if (!btn) return;
+    btn.classList.add('is-matched');
+    btn.setAttribute('aria-label', btn.querySelector('.memory-card-front img').alt + ' — pareja encontrada');
+  }
+
+  function onGameComplete() {
+    if (completeEl) {
+      completeEl.hidden = false;
+      requestAnimationFrame(() => completeEl.classList.add('is-visible'));
+    }
+  }
+
+  function newGame() {
+    firstIndex = null; secondIndex = null; lock = false; pairsFound = 0;
+    if (counterEl) counterEl.textContent = '0';
+    if (completeEl) { completeEl.classList.remove('is-visible'); completeEl.hidden = true; }
+    buildDeck();
+    render();
+  }
+
+  if (restartBtn) restartBtn.addEventListener('click', newGame);
+
+  newGame();
+})();
 
 /* ---------------------------------------------------------
    8) Año en el footer
@@ -400,45 +550,201 @@ document.querySelectorAll('[data-gallery]').forEach(gallery => {
 });
 
 /* ---------------------------------------------------------
-   10) Accordion Gallery — "El proceso"
-   Desktop: hover/foco expande el panel. Mobile: tap alterna
-   cuál panel está abierto (acordeón clásico, uno a la vez).
+   10) Galería circular — "El proceso"
+   Fila con scroll horizontal NATIVO (scroll-snap) — no es un gesto
+   simulado, así que en mobile jamás compite con el scroll vertical
+   de la página. La foto centrada se agranda; el resto se "curva"
+   hacia atrás (arco calculado en cada tick de scroll). Loop infinito
+   por triplicado del mazo: el usuario siempre vive en la copia del
+   medio, y si llega a pisar una punta se lo teletransporta de vuelta
+   sin animación (las copias son idénticas, no se nota).
    --------------------------------------------------------- */
 (function () {
-  const gallery = document.getElementById('accordion-gallery');
-  if (!gallery) return;
-  const panels = Array.from(gallery.querySelectorAll('.accordion-panel'));
-  if (!panels.length) return;
+  const track = document.getElementById('circular-track');
+  if (!track) return;
 
-  const isMobile = () => window.matchMedia('(max-width: 760px)').matches;
+  const prevBtn = document.getElementById('circular-prev');
+  const nextBtn = document.getElementById('circular-next');
+  const REDUCE_MOTION = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  function setActive(panel) {
-    panels.forEach(p => {
-      const active = p === panel;
-      p.classList.toggle('is-active', active);
-      p.setAttribute('aria-expanded', String(active));
+  const IMAGES = [
+    { src: 'assets/images/WhatsApp Image 2026-08-04 at 14.42.40 (1).jpeg', label: 'Lista en tu living' },
+    { src: 'assets/images/WhatsApp Image 2026-08-04 at 14.42.40 (2).jpeg', label: 'Pegado de mosaico' },
+    { src: 'assets/images/WhatsApp Image 2026-08-04 at 14.42.40.jpeg', label: 'Armado del mosaico' },
+    { src: 'assets/images/WhatsApp Image 2026-08-04 at 14.42.41 (1).jpeg', label: 'Terminación a mano' },
+    { src: 'assets/images/WhatsApp Image 2026-08-04 at 14.42.41.jpeg', label: 'Armado de estructura' },
+  ];
+  const N = IMAGES.length;
+  const deck = IMAGES.concat(IMAGES, IMAGES); // [copia A][copia B][copia C]
+
+  let items = [];
+
+  function buildTrack() {
+    track.innerHTML = '';
+    items = deck.map((img, i) => {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'circular-item';
+      btn.style.backgroundImage = `url('${img.src}')`;
+      btn.dataset.img = img.src;
+      // Solo la copia del medio (B) es alcanzable por teclado/lector de
+      // pantalla — A y C son puramente visuales, para el loop infinito.
+      const isMiddleCopy = i >= N && i < N * 2;
+      btn.setAttribute('aria-label', img.label);
+      if (!isMiddleCopy) { btn.tabIndex = -1; btn.setAttribute('aria-hidden', 'true'); }
+
+      const label = document.createElement('span');
+      label.className = 'circular-item-label';
+      label.textContent = img.label;
+      btn.appendChild(label);
+
+      track.appendChild(btn);
+      return btn;
     });
   }
+  buildTrack();
 
-  panels.forEach(panel => {
-    // Desktop: hover ya lo resuelve el CSS (:hover). Foco por teclado
-    // también vía CSS (:focus-visible). El click/tap decide cuál
-    // queda "fija" como activa (útil sobre todo en mobile).
-    panel.addEventListener('click', () => {
-      if (isMobile()) {
-        // Toggle: si ya estaba abierta, no la cerramos (siempre debe
-        // quedar una visible), si no, la abrimos.
-        setActive(panel);
-      } else {
-        setActive(panel);
-      }
+  function centerOn(index, behavior) {
+    const item = items[index];
+    if (!item) return;
+    const target = item.offsetLeft + item.offsetWidth / 2 - track.clientWidth / 2;
+    track.scrollTo({ left: target, behavior: behavior || 'auto' });
+  }
+
+  function currentCenterIndex() {
+    const idx = items.findIndex((it) => it.classList.contains('is-center'));
+    return idx === -1 ? N + Math.floor(N / 2) : idx;
+  }
+
+  // ---- Arco visual: en cada tick de scroll, cada ítem recibe un
+  // transform inline según su distancia al centro — sin animar el
+  // propio scroll, así queda 1:1 con el dedo/rueda/trackpad. ----
+  let ticking = false;
+  function updateArc() {
+    ticking = false;
+    const trackRect = track.getBoundingClientRect();
+    const centerX = trackRect.left + trackRect.width / 2;
+    let closest = null, closestDist = Infinity;
+
+    items.forEach((item) => {
+      const r = item.getBoundingClientRect();
+      const dist = (r.left + r.width / 2) - centerX;
+      const norm = Math.max(-1, Math.min(1, dist / (trackRect.width / 2)));
+      const absNorm = Math.abs(norm);
+
+      item.style.transform = REDUCE_MOTION
+        ? ''
+        : `translateY(${absNorm * 22}px) scale(${1 - absNorm * 0.24}) rotate(${norm * 8}deg)`;
+
+      if (Math.abs(dist) < closestDist) { closestDist = Math.abs(dist); closest = item; }
     });
-    panel.addEventListener('focus', () => setActive(panel));
+
+    items.forEach((item) => item.classList.toggle('is-center', item === closest));
+  }
+  function onScroll() {
+    if (!ticking) { ticking = true; requestAnimationFrame(updateArc); }
+  }
+  track.addEventListener('scroll', onScroll, { passive: true });
+
+  // ---- Loop infinito: al asentarse el scroll, si el centro cayó en
+  // la copia A o C, saltar a la equivalente en B (instantáneo). ----
+  let settleTimer = null;
+  track.addEventListener('scroll', () => {
+    clearTimeout(settleTimer);
+    settleTimer = setTimeout(() => {
+      const idx = currentCenterIndex();
+      const copy = Math.floor(idx / N); // 0, 1 o 2
+      if (copy === 1) return; // ya en la copia del medio
+      centerOn((idx % N) + N, 'auto');
+    }, 120);
+  }, { passive: true });
+
+  // ---- Flechas: pasan a la foto siguiente/anterior de a una ----
+  function step(dir) {
+    centerOn(currentCenterIndex() + dir, REDUCE_MOTION ? 'auto' : 'smooth');
+  }
+  if (prevBtn) prevBtn.addEventListener('click', () => step(-1));
+  if (nextBtn) nextBtn.addEventListener('click', () => step(1));
+
+  window.addEventListener('resize', () => centerOn(currentCenterIndex(), 'auto'));
+
+  // Arranque: centrado en la copia del medio, sin animación.
+  requestAnimationFrame(() => {
+    centerOn(N + Math.floor(N / 2), 'auto');
+    updateArc();
   });
 
-  // Estado inicial: la primera queda activa (ya viene con is-active
-  // en el HTML, esto solo asegura aria-expanded correcto).
-  setActive(panels[0]);
+  // ---- Long-press → ver la foto completa (proceso-lightbox) ----
+  // Nada de touch-action:none: el track sigue siendo scroll horizontal
+  // nativo, así que un swipe real cancela el long-press solo
+  // (pointercancel / el drift de abajo), sin comprometer el gesto.
+  const lightbox = document.getElementById('proceso-lightbox');
+  const lightboxImg = document.getElementById('proceso-lightbox-img');
+  const lightboxCaption = document.getElementById('proceso-lightbox-caption');
+  const lightboxClose = document.getElementById('proceso-lightbox-close');
+  const HOLD_MS = 480;
+  const DRIFT_PX = 14;
+  let pressTimer = null;
+  let pressStartX = 0, pressStartY = 0;
+  let suppressClickOn = null;
+
+  function openLightbox(item) {
+    if (!lightbox || !lightboxImg) return;
+    lightboxImg.src = item.dataset.img || '';
+    const label = item.querySelector('.circular-item-label');
+    const text = label ? label.textContent : '';
+    lightboxImg.alt = text;
+    if (lightboxCaption) lightboxCaption.textContent = text;
+    lightbox.classList.add('is-open');
+  }
+  function closeLightbox() { if (lightbox) lightbox.classList.remove('is-open'); }
+  if (lightboxClose) lightboxClose.addEventListener('click', closeLightbox);
+  if (lightbox) lightbox.addEventListener('click', (e) => { if (e.target === lightbox) closeLightbox(); });
+  window.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeLightbox(); });
+
+  function cancelPress(item) {
+    if (pressTimer) { clearTimeout(pressTimer); pressTimer = null; }
+    item.classList.remove('is-pressing');
+  }
+
+  track.addEventListener('pointerdown', (e) => {
+    const item = e.target.closest('.circular-item');
+    if (!item) return;
+    pressStartX = e.clientX; pressStartY = e.clientY;
+    item.classList.add('is-pressing');
+    pressTimer = setTimeout(() => {
+      pressTimer = null;
+      item.classList.remove('is-pressing');
+      suppressClickOn = item;
+      openLightbox(item);
+    }, HOLD_MS);
+  });
+  track.addEventListener('pointermove', (e) => {
+    if (!pressTimer) return;
+    const dx = e.clientX - pressStartX, dy = e.clientY - pressStartY;
+    if (Math.hypot(dx, dy) > DRIFT_PX) {
+      const item = e.target.closest('.circular-item');
+      if (item) cancelPress(item); else { clearTimeout(pressTimer); pressTimer = null; }
+    }
+  });
+  track.addEventListener('pointerup', (e) => {
+    const item = e.target.closest('.circular-item');
+    if (item) cancelPress(item);
+  });
+  track.addEventListener('pointercancel', (e) => {
+    const item = e.target.closest('.circular-item');
+    if (item) cancelPress(item);
+  });
+
+  // Tap corto: si vino de un long-press no hace nada (ya abrió el
+  // lightbox); si no, centra esa foto — "tocar una de al lado la trae
+  // al medio".
+  track.addEventListener('click', (e) => {
+    const item = e.target.closest('.circular-item');
+    if (!item) return;
+    if (suppressClickOn === item) { suppressClickOn = null; return; }
+    centerOn(items.indexOf(item), REDUCE_MOTION ? 'auto' : 'smooth');
+  });
 })();
 
 /* ---------------------------------------------------------
@@ -463,6 +769,11 @@ document.querySelectorAll('.faq-trigger').forEach(trigger => {
     }
   });
 });
+
+const faqWhatsapp = document.getElementById('faq-whatsapp');
+if (faqWhatsapp) {
+  faqWhatsapp.href = buildWhatsAppLink('Hola Ganchito! 👋 Tengo una consulta que no encontré en las preguntas frecuentes.');
+}
 
 /* =========================================================
    12) STORY NAV — progreso narrativo lateral

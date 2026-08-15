@@ -466,33 +466,168 @@ p{ margin:0; }
 }
 
 /* =========================================================
-   Nuestro oficio
+   Memory de Ganchito — reemplaza la vieja "Nuestro oficio". El mazo
+   (16 botones) lo genera script.js; acá va el marco visual: intro,
+   grilla, contador y el mensaje de cierre. Fondo crema-deep intacto,
+   misma familia tipográfica y paleta que el resto del sitio — nada
+   de colores nuevos ni estética de juego infantil.
    ========================================================= */
-.oficio{ padding: 100px 0; background: var(--cream-deep); }
-.oficio-grid{
-  display:grid;
-  grid-template-columns: 0.85fr 1.15fr;
-  gap: 64px;
-  align-items:center;
-}
-.framed-photo-alt{ transform: rotate(-1.6deg); }
-.framed-photo-alt img{ aspect-ratio: 1/1; }
+.oficio{ padding: 90px 0; background: var(--cream-deep); }
 
-.oficio-text{ margin-top: 18px; color: var(--ink-soft); max-width: 520px; }
-.oficio-list{ margin: 26px 0 32px; display:flex; flex-direction:column; gap:10px; }
-.oficio-list li{
-  position:relative;
-  padding-left: 22px;
-  font-size: 0.95rem;
-  color: var(--ink);
+.memory-intro{ max-width: 560px; margin: 0 auto 40px; }
+.memory-intro .section-sub{ margin-top: 10px; color: var(--ink-soft); }
+
+.memory-board{
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  max-width: 520px;
+  margin: 0 auto;
+  padding: 0 20px;
 }
-.oficio-list li::before{
-  content:"";
-  position:absolute;
-  left:0; top:8px;
-  width: 9px; height:9px;
+
+.memory-card{
+  position: relative;
+  aspect-ratio: 1 / 1;
+  border: none;
+  background: none;
+  padding: 0;
+  cursor: pointer;
+  perspective: 800px;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-user-select: none;
+  user-select: none;
+}
+.memory-card:focus-visible .memory-card-inner{
+  outline: 2px solid var(--mustard);
+  outline-offset: 3px;
+}
+
+.memory-card-inner{
+  position: absolute;
+  inset: 0;
+  border-radius: 10px;
+  transform-style: preserve-3d;
+  transition: transform .5s cubic-bezier(.4, 0.05, .2, 1);
+  box-shadow: var(--shadow-sm);
+}
+.memory-card.is-flipped .memory-card-inner,
+.memory-card.is-matched .memory-card-inner{
+  transform: rotateY(180deg);
+}
+
+.memory-card-face{
+  position: absolute;
+  inset: 0;
+  border-radius: 10px;
+  overflow: hidden;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.memory-card-back{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background:
+    repeating-conic-gradient(var(--cream) 0% 25%, var(--paper) 0% 50%) 0 0 / 16px 16px,
+    var(--line);
+  border: 1px solid var(--line);
+}
+.memory-card-back img{ width: 34%; opacity: 0.85; filter: brightness(0.35); }
+
+.memory-card-front{
+  transform: rotateY(180deg);
+  background: var(--paper);
+  border: 1px solid var(--line);
+}
+.memory-card-front img{
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  pointer-events: none;
+}
+
+/* Pareja encontrada: se queda destapada, con una marquita chica y
+   ligeramente asentada — sin sacarla del layout (evita que salten
+   las demás cartas). */
+.memory-card.is-matched{ cursor: default; }
+.memory-card.is-matched .memory-card-front{
+  box-shadow: inset 0 0 0 2px var(--mustard);
+}
+.memory-card-check{
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
   background: var(--mustard);
-  border-radius: 2px;
+  color: var(--paper);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transform: scale(0.6);
+  transition: opacity .25s ease .15s, transform .25s ease .15s;
+}
+.memory-card.is-matched .memory-card-check{ opacity: 1; transform: scale(1); }
+
+.memory-status{
+  max-width: 520px;
+  margin: 22px auto 0;
+  padding: 0 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.memory-counter{
+  margin: 0;
+  font-family: var(--font-label);
+  font-size: 0.85rem;
+  letter-spacing: 0.03em;
+  color: var(--ink-soft);
+}
+.memory-counter span{ font-weight: 600; color: var(--ink); }
+.memory-restart{
+  border: none;
+  background: none;
+  padding: 6px 2px;
+  font-family: var(--font-label);
+  font-size: 0.82rem;
+  color: var(--saddle);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+.memory-restart:hover{ color: var(--walnut); }
+
+.memory-complete{
+  max-width: 480px;
+  margin: 36px auto 0;
+  padding: 0 20px;
+  text-align: center;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity .5s ease, transform .5s ease;
+}
+.memory-complete.is-visible{ opacity: 1; transform: none; }
+.memory-complete-text{
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  color: var(--ink);
+  margin: 0 0 16px;
+}
+
+@media (min-width: 640px){
+  .memory-board{ max-width: 560px; gap: 12px; }
+}
+
+@media (prefers-reduced-motion: reduce){
+  .memory-card-inner, .memory-card-check, .memory-complete{
+    transition-duration: .01ms !important;
+  }
 }
 
 /* =========================================================
@@ -546,8 +681,6 @@ p{ margin:0; }
 @media (max-width: 980px){
   .hero-grid{ grid-template-columns: 1fr; gap: 40px; }
   .hero-media{ order:-1; max-width: 360px; margin: 0 auto; }
-  .oficio-grid{ grid-template-columns: 1fr; }
-  .oficio-media{ max-width: 360px; margin: 0 auto; }
   .cards-grid{ grid-template-columns: 1fr 1fr; }
   .footer-grid{ grid-template-columns: 1fr 1fr; }
 }
@@ -575,253 +708,490 @@ p{ margin:0; }
 }
 
 /* =========================================================
-   CONFIGURADOR 3D — INTEGRACIÓN
+   CONFIGURADOR 3D — PORTAL
+   Sección crema sin título ni texto — solo un círculo, a propósito
+   misterioso (sin explicar para qué es). Mantenerlo presionado revela
+   el motor 3D (hero3d-engine.js, compartido con experimental-3d/) con
+   switcher de mesas, rail de color y panel "Personalizar" completos.
+   Ver hero3d-portal.js (long-press) y hero3d-controls.js (UI post-reveal).
    ========================================================= */
 
 .configurador-section {
-  padding: 90px 0 100px;
+  padding: 70px 0 90px;
   background: var(--cream);
 }
 
-.configurador-inmersivo {
-  width: 100%;
-  height: auto;
-  min-height: auto;
-  overflow: visible;
-  padding: 28px 0 0;
-  display: flex;
-  flex-direction: column;
-}
-
-.configurador-inmersivo .configurador-overlay-top {
-  flex: 0 0 auto;
-  width: 100%;
-  max-width: none;
-  margin: 0 auto 20px;
-  padding: 0 24px;
-  text-align: center;
-}
-
-.configurador-inmersivo .configurador-overlay-top .eyebrow {
-  color: var(--saddle);
-  margin-bottom: 5px;
-}
-
-.configurador-inmersivo .configurador-overlay-top .section-title {
-  font-size: clamp(2rem, 3.5vw, 3rem);
-  line-height: 1;
-  color: var(--ink);
-}
-
-.configurador-inmersivo .ganchito-stage {
+.portal-stage {
   position: relative;
-  width: 100%;
-  height: auto;
-  margin: 0;
-  overflow: visible;
-  background: var(--cream);
-  box-shadow: none;
-  border-radius: 0;
-}
-
-.configurador-inmersivo #ganchito-canvas-box-desktop {
-  position: relative;
-  width: 100%;
-  height: 360px;
-  background: #1a1a2e;
+  width: min(1180px, calc(100% - 48px));
+  max-width: 1180px;
+  height: clamp(440px, 72svh, 640px);
+  margin: 0 auto;
   border-radius: var(--radius-lg);
   overflow: hidden;
-  cursor: grab;
+  background: var(--cream-deep);
   box-shadow: var(--shadow);
-  margin: 0 auto;
-  max-width: min(1180px, 100%);
 }
 
-.configurador-inmersivo #ganchito-canvas-box-desktop:active {
-  cursor: grabbing;
-}
-
-.configurador-inmersivo #ganchito-canvas-box-desktop canvas {
-  display: block;
+/* Canvas 3D — mismo motor y fondo "túnel" que experimental-3d/, pero
+   acotado a esta caja (no fixed/fullscreen) y clippeado a un círculo
+   chico hasta que se abre: es el "agujero negro" antes de tocarlo.
+   pointer-events:none mientras está cerrado — nunca compite con el
+   botón circular ni con el scroll de la página. */
+#hero3d-stage {
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
+  pointer-events: none;
+  clip-path: circle(30px at 50% 50%);
+  transition: clip-path 0.9s cubic-bezier(.65, 0, .35, 1);
+  background:
+    radial-gradient(ellipse 70% 58% at 50% 46%,
+      color-mix(in srgb, var(--accent, #C0392B) 55%, white) 0%,
+      color-mix(in srgb, var(--accent, #C0392B) 65%, white) 18%,
+      transparent 68%),
+    conic-gradient(from 0deg at 50% 50%,
+      color-mix(in srgb, var(--accent, #C0392B) 75%, black) 0deg 44deg,
+      color-mix(in srgb, var(--accent, #C0392B) 88%, white) 44deg 46deg,
+      color-mix(in srgb, var(--accent, #C0392B) 55%, black) 46deg 134deg,
+      color-mix(in srgb, var(--accent, #C0392B) 88%, white) 134deg 136deg,
+      color-mix(in srgb, var(--accent, #C0392B) 38%, black) 136deg 224deg,
+      color-mix(in srgb, var(--accent, #C0392B) 88%, white) 224deg 226deg,
+      color-mix(in srgb, var(--accent, #C0392B) 55%, black) 226deg 314deg,
+      color-mix(in srgb, var(--accent, #C0392B) 88%, white) 314deg 316deg,
+      color-mix(in srgb, var(--accent, #C0392B) 75%, black) 316deg 360deg
+    ),
+    color-mix(in srgb, var(--accent, #C0392B) 30%, black);
 }
 
-.ganchito-hint-configurador {
+.portal-stage.is-open #hero3d-stage {
+  pointer-events: auto;
+  clip-path: circle(120% at 50% 50%);
+}
+
+#hero3d-canvas {
+  position: relative;
+  z-index: 1;
   width: 100%;
-  margin: 16px auto 0;
-  color: var(--ink-soft);
+  height: 100%;
+  display: block;
+  opacity: 0;
+  transform: scale(0.9);
+  transition: opacity 0.7s ease 0.15s, transform 0.7s cubic-bezier(.22, 1, .36, 1) 0.15s;
+}
+
+.portal-stage.is-open #hero3d-canvas {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.portal-drag-hint {
+  position: absolute;
+  left: 50%;
+  bottom: 22px;
+  transform: translateX(-50%);
+  z-index: 2;
+  margin: 0;
+  color: var(--cream);
   font-family: var(--font-label);
-  font-size: 0.82rem;
+  font-size: 0.78rem;
   letter-spacing: 0.04em;
   text-align: center;
-  padding: 0 24px;
+  text-shadow: 0 1px 8px rgba(0,0,0,0.45);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.5s ease;
 }
 
-.configurador-inmersivo .ganchito-volver {
+.portal-drag-hint.is-visible { opacity: 1; }
+
+/* ---- Gate: solo el círculo, sin ninguna palabra que lo explique ---- */
+.portal-gate {
   position: absolute;
-  top: 12px;
-  left: 14px;
-  background: rgba(20, 33, 62, 0.75);
-  color: var(--cream);
-  border: none;
-  border-radius: 100px;
-  padding: 8px 16px;
-  font-family: var(--font-label);
-  font-size: 0.8rem;
-  font-weight: 500;
-  letter-spacing: 0.02em;
-  cursor: pointer;
-  backdrop-filter: blur(4px);
-  z-index: 10;
-  transition: background .15s ease, transform .15s ease;
+  inset: 0;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.5s ease, transform 0.5s ease;
 }
 
-.configurador-inmersivo .ganchito-volver:hover {
-  background: rgba(20, 33, 62, 0.92);
-  transform: translateY(-1px);
+.portal-gate.is-hidden {
+  opacity: 0;
+  transform: scale(0.85);
+  pointer-events: none;
 }
 
-.configurador-inmersivo .ganchito-placeholder {
-  display: none;
-}
-
-.configurador-inmersivo .ganchito-controles {
+.portal-orb {
   position: relative;
-  width: min(720px, 100%);
-  max-width: 720px;
-  margin: 40px auto 0;
+  width: 60px;
+  height: 60px;
   padding: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  touch-action: none;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+
+.portal-orb-core {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: #14151A;
+  box-shadow: 0 4px 18px rgba(0,0,0,0.35), inset 0 0 0 1px rgba(255,255,255,0.08);
+  transition: transform 0.55s ease;
+  animation: portal-orb-breathe 3.2s ease-in-out infinite;
+}
+
+.portal-orb-ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  box-shadow: 0 0 0 1.5px rgba(20,21,26,0.22);
+  opacity: 0.5;
+  transform: scale(1);
+  transition: opacity 0.55s ease, transform 0.55s ease, box-shadow 0.55s ease;
+  animation: portal-orb-ring-breathe 3.2s ease-in-out infinite;
+}
+
+/* Respiración sutil e indefinida — juego, curiosidad, "hay algo acá" —
+   sin decir jamás qué es ni para qué sirve. */
+@keyframes portal-orb-breathe {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.08); }
+}
+@keyframes portal-orb-ring-breathe {
+  0%, 100% { opacity: 0.35; transform: scale(1); }
+  50% { opacity: 0.7; transform: scale(1.22); }
+}
+
+.portal-orb.is-charging .portal-orb-core {
+  animation: none;
+  transform: scale(1.14);
+}
+
+.portal-orb.is-charging .portal-orb-ring {
+  animation: none;
+  opacity: 1;
+  transform: scale(1.55);
+  box-shadow: 0 0 0 1.5px rgba(192,57,43,0.55), 0 0 22px 4px rgba(192,57,43,0.35);
+}
+
+/* =========================================================
+   Switcher de mesas — flechas + nombre, centrado abajo del stage.
+   =========================================================== */
+.portal-switcher {
+  position: absolute;
+  left: 50%;
+  bottom: 18px;
+  transform: translateX(-50%);
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.5s ease 0.3s;
+}
+.portal-stage.is-open .portal-switcher { opacity: 1; pointer-events: auto; }
+
+.switcher-arrow {
+  width: 40px;
+  height: 40px;
+  min-width: 40px;
+  min-height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 253, 249, 0.6);
+  border: 1px solid rgba(42, 28, 19, 0.14);
+  color: var(--walnut);
+  backdrop-filter: blur(4px);
+  cursor: pointer;
+  transition: background .2s ease, transform .15s ease;
+}
+.switcher-arrow:active { transform: scale(0.92); }
+
+.switcher-pill {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 40px;
+  padding: 9px 20px;
+  border-radius: 100px;
+  background: var(--accent, #C0392B);
+  color: var(--cream);
+  font-family: var(--font-label);
+  font-weight: 600;
+  font-size: 0.85rem;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  box-shadow: 0 8px 18px -8px rgba(20, 12, 6, 0.45);
+}
+
+/* =========================================================
+   Rail de color principal — vertical, a la derecha del stage.
+   ========================================================= */
+.portal-color-rail {
+  position: absolute;
+  top: 50%;
+  right: 12px;
+  transform: translateY(-50%);
+  z-index: 2;
   display: flex;
   flex-direction: column;
-  gap: 0;
-  background: transparent;
-  overflow: visible;
-}
-
-.configurador-inmersivo .ganchito-controles.is-hidden {
-  display: none;
-}
-
-.configurador-inmersivo .ganchito-controles > .ganchito-grupo,
-.configurador-inmersivo .ganchito-controles > .ganchito-resumen-card {
-  width: 100%;
-  margin: 0;
-  padding: 22px 0;
-  border-bottom: 1px solid var(--line);
-}
-
-.configurador-inmersivo .ganchito-controles > .ganchito-grupo:first-child {
-  border-top: 1px solid var(--line);
-}
-
-.configurador-inmersivo .ganchito-controles .ganchito-label {
-  font-family: var(--font-label);
-  font-size: 0.76rem;
-  font-weight: 600;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--saddle);
-  margin: 0 0 12px;
-}
-
-.configurador-inmersivo .ganchito-controles .ganchito-btn-grupo {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-
-.configurador-inmersivo .ganchito-controles .ganchito-opt {
-  padding: 10px 18px;
-  border-radius: var(--radius);
-  border: 1.5px solid var(--line);
-  background: var(--paper);
-  color: var(--ink);
-  font-family: var(--font-label);
-  font-size: 0.85rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all .15s ease;
-}
-
-.configurador-inmersivo .ganchito-controles .ganchito-opt:hover {
-  background: var(--cream-deep);
-  border-color: var(--saddle);
-}
-
-.configurador-inmersivo .ganchito-controles .ganchito-opt.activo {
-  border: 2px solid var(--mustard);
-  color: var(--walnut-soft);
-  background: #FFF8EE;
-  font-weight: 600;
-}
-
-.configurador-inmersivo .ganchito-controles .ganchito-colores-wrap {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
   align-items: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.5s ease 0.3s;
+}
+.portal-stage.is-open .portal-color-rail { opacity: 1; pointer-events: auto; }
+
+.color-rail-label {
+  font-family: var(--font-label);
+  font-size: 0.58rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--cream);
+  text-align: center;
+  max-width: 8ch;
+  margin: 0 0 10px;
+  text-shadow: 0 0 10px rgba(0,0,0,0.45), 0 0 4px rgba(0,0,0,0.45);
 }
 
-.configurador-inmersivo .ganchito-controles .ganchito-color-dot,
-.configurador-inmersivo .ganchito-controles .ganchito-color-dot2 {
-  width: 30px;
-  height: 30px;
+.portal-color-rail .swatches {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.swatch {
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
-  border: 2.5px solid transparent;
+  border: 2px solid var(--cream);
+  box-shadow: 0 0 0 1.5px var(--line), 0 3px 8px -2px rgba(42,28,19,0.35);
   cursor: pointer;
   padding: 0;
-  transition: transform .15s ease, border-color .15s ease, box-shadow .15s ease;
-  box-shadow: 0 0 0 1.5px var(--line);
+  transition: transform .15s ease, box-shadow .15s ease;
 }
-
-.configurador-inmersivo .ganchito-controles .ganchito-color-dot:hover,
-.configurador-inmersivo .ganchito-controles .ganchito-color-dot2:hover {
+.swatch:active { transform: scale(0.9); }
+.swatch.activo {
+  box-shadow: 0 0 0 2px var(--mustard), 0 3px 10px -2px rgba(42,28,19,0.4);
   transform: scale(1.1);
 }
 
-.configurador-inmersivo .ganchito-controles .ganchito-color-dot.activo,
-.configurador-inmersivo .ganchito-controles .ganchito-color-dot2.activo {
-  border-color: var(--mustard);
-  box-shadow: 0 0 0 2px var(--ink);
-  transform: scale(1.15);
-}
-
-.configurador-inmersivo .ganchito-controles .ganchito-resumen-card {
-  padding: 16px 0 0;
-  background: transparent;
+/* =========================================================
+   Panel "Personalizar" — patrón, tamaño, color secundario y
+   resumen+WhatsApp, anclado DENTRO de #portal-stage (no fixed al
+   viewport: es "modo 3D" contenido en la sección, no un takeover).
+   ========================================================= */
+.personalizar-toggle {
+  position: absolute;
+  bottom: 18px;
+  right: 12px;
+  z-index: 4;
+  width: 42px;
+  height: 42px;
+  min-width: 42px;
+  min-height: 42px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   border: none;
+  background: var(--accent, #C0392B);
+  color: var(--cream);
+  box-shadow: 0 8px 18px -8px rgba(20, 12, 6, 0.45);
+  cursor: pointer;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s ease 0.3s, transform 0.15s ease;
+}
+.portal-stage.is-open .personalizar-toggle { opacity: 1; pointer-events: auto; }
+.personalizar-toggle:active { transform: scale(0.92); }
+
+.personalizar-backdrop {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  background: rgba(20, 12, 6, 0.38);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .35s ease;
+}
+.personalizar-backdrop.is-open { opacity: 1; pointer-events: auto; }
+
+.personalizar-sheet {
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  z-index: 6;
+  max-height: 82%;
+  overflow-y: auto;
+  background: #FFFDF9;
+  border-radius: 20px 20px 0 0;
+  box-shadow: 0 -14px 32px -12px rgba(20, 12, 6, 0.35);
+  padding: 18px 20px 24px;
+  transform: translateY(100%);
+  transition: transform .45s cubic-bezier(.16, 1, .3, 1);
+}
+.personalizar-sheet.is-open { transform: translateY(0); }
+
+.personalizar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 0 0 14px;
+}
+.personalizar-header h2 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1.1rem;
+  margin: 0;
+  color: var(--walnut);
+}
+.personalizar-close {
+  min-width: 38px;
+  min-height: 38px;
+  border-radius: 50%;
+  border: none;
+  background: var(--cream-deep);
+  color: var(--walnut);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex: none;
 }
 
-.configurador-inmersivo .ganchito-controles .ganchito-resumen-label {
+.personalizar-group { margin: 0 0 16px; }
+.personalizar-group-label {
   font-family: var(--font-label);
-  font-size: 0.75rem;
+  font-size: 0.66rem;
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--saddle);
-  margin-bottom: 6px;
+  margin: 0 0 10px;
 }
-
-.configurador-inmersivo .ganchito-controles .ganchito-resumen-texto {
-  font-family: var(--font-display);
-  font-size: 1rem;
+.chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.chip-btn {
+  min-height: 38px;
+  padding: 8px 15px;
+  border-radius: 100px;
+  border: 1.5px solid var(--line);
+  background: #fff;
+  font-family: var(--font-label);
+  font-weight: 500;
+  font-size: 0.8rem;
+  color: var(--walnut-soft);
+  cursor: pointer;
+  transition: border-color .2s ease, background .2s ease, color .2s ease;
+}
+.chip-btn.activo {
+  border-color: var(--accent, #C0392B);
+  background: var(--accent, #C0392B);
+  color: var(--cream);
   font-weight: 600;
-  color: var(--ink);
-  margin-bottom: 14px;
 }
+.swatch-mini {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: 2px solid var(--cream);
+  box-shadow: 0 0 0 1.5px var(--line);
+  cursor: pointer;
+  padding: 0;
+}
+.swatch-mini.activo { box-shadow: 0 0 0 2px var(--mustard); transform: scale(1.08); }
 
-.configurador-inmersivo .ganchito-controles .ganchito-resumen-card .btn {
+.personalizar-resumen {
+  margin-top: 4px;
+  padding: 14px 16px;
+  border-radius: 14px;
+  background: var(--cream);
+  border: 1px solid var(--line);
+}
+#portal-resumen-text {
+  margin: 0 0 4px;
+  font-size: 0.85rem;
+  color: var(--walnut-soft);
+}
+.personalizar-cta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   width: 100%;
-  padding: 12px 20px;
+  min-height: 44px;
+  margin-top: 12px;
+  border-radius: 100px;
+  background: var(--mustard);
+  color: var(--walnut);
+  font-family: var(--font-label);
+  font-weight: 600;
   font-size: 0.88rem;
+  text-decoration: none;
 }
 
-@media (max-width: 860px) {
-  .configurador-grid {
-    grid-template-columns: 1fr;
+@media (min-width: 761px) {
+  .portal-color-rail { right: 24px; }
+  .swatch { width: 36px; height: 36px; }
+  .personalizar-toggle { right: 24px; }
+  .personalizar-sheet {
+    left: 50%;
+    right: auto;
+    max-width: 420px;
+    bottom: 20px;
+    border-radius: 18px;
+    transform: translate(-50%, calc(100% + 20px));
   }
-  .ganchito-canvas-box {
-    height: 300px;
+  .personalizar-sheet.is-open { transform: translate(-50%, 0); }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .switcher-arrow, .swatch {
+    transition: transform .4s cubic-bezier(.34, 1.56, .64, 1), background .2s ease, box-shadow .2s ease;
+  }
+  .switcher-arrow:hover { transform: scale(1.15); }
+  .switcher-pill:hover { transform: scale(1.04); }
+  .swatch:hover { transform: scale(1.18); }
+  .swatch.activo:hover { transform: scale(1.22); }
+
+  .personalizar-toggle, .personalizar-close, .chip-btn, .swatch-mini, .personalizar-cta {
+    transition: transform .35s cubic-bezier(.34, 1.56, .64, 1), background .2s ease, border-color .2s ease;
+  }
+  .personalizar-toggle:hover { transform: scale(1.06); }
+  .personalizar-close:hover { transform: scale(1.12) rotate(90deg); }
+  .chip-btn:hover { border-color: var(--accent, #C0392B); transform: scale(1.05); }
+  .swatch-mini:hover { transform: scale(1.15); }
+  .personalizar-cta:hover { transform: scale(1.03); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #hero3d-stage, #hero3d-canvas, .portal-gate,
+  .portal-orb-core, .portal-orb-ring, .portal-drag-hint,
+  .portal-switcher, .portal-color-rail, .personalizar-toggle {
+    transition-duration: 0.01ms !important;
+    animation: none !important;
+  }
+}
+
+@media (max-width: 760px) {
+  .portal-stage {
+    width: calc(100% - 24px);
+    height: clamp(420px, 78svh, 620px);
+    border-radius: 16px;
   }
 }
 
@@ -1065,11 +1435,33 @@ p{ margin:0; }
 .faq-trigger[aria-expanded="true"] .faq-icon { transform: rotate(45deg); border-color: var(--mustard); }
 
 .faq-body {
-  display: grid;
-  grid-template-rows: 0fr;
-  transition: grid-template-rows .28s ease;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height .32s ease;
 }
-.faq-body.is-open { grid-template-rows: 1fr; }
+.faq-body.is-open { max-height: 320px; }
+.faq-item[data-reveal]{
+  transition-duration: .5s;
+}
+.faq-item:nth-child(1){ transition-delay: 0s; }
+.faq-item:nth-child(2){ transition-delay: .06s; }
+.faq-item:nth-child(3){ transition-delay: .12s; }
+.faq-item:nth-child(4){ transition-delay: .18s; }
+.faq-item:nth-child(5){ transition-delay: .24s; }
+.faq-item:nth-child(6){ transition-delay: .3s; }
+
+.faq-cta{
+  margin: 40px auto 0;
+  max-width: 760px;
+  text-align: center;
+}
+.faq-cta-text{
+  margin: 0 0 14px;
+  color: var(--ink-soft);
+  font-family: var(--font-label);
+  font-size: 0.92rem;
+}
+
 .faq-body > p {
   overflow: hidden;
   padding: 0 4px 22px;
@@ -1077,26 +1469,6 @@ p{ margin:0; }
   font-size: 0.97rem;
   line-height: 1.7;
   margin: 0;
-}
-
-/* =========================================================
-   Color dot secundario (configurador)
-   ========================================================= */
-.ganchito-color-dot2 {
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
-  border: 2.5px solid transparent;
-  cursor: pointer;
-  padding: 0;
-  transition: transform .15s ease, border-color .15s ease, box-shadow .15s ease;
-  box-shadow: 0 0 0 1.5px var(--line);
-}
-.ganchito-color-dot2:hover { transform: scale(1.1); }
-.ganchito-color-dot2.activo {
-  border-color: var(--mustard);
-  box-shadow: 0 0 0 2px var(--ink);
-  transform: scale(1.15);
 }
 
 /* =========================================================
@@ -1706,682 +2078,6 @@ p{ margin:0; }
 /* Util genérica para ocultar sin pelear con display:flex/grid */
 .is-hidden { display: none !important; }
 
-/* ===========================================================
-   Botón "← Ver las 3 mesas" (desktop, flotante sobre el canvas)
-   =========================================================== */
-.ganchito-volver {
-  position: absolute;
-  top: 12px;
-  left: 14px;
-  background: rgba(20, 33, 62, 0.75);
-  color: var(--cream);
-  border: none;
-  border-radius: 100px;
-  padding: 8px 16px;
-  font-family: var(--font-label);
-  font-size: 0.8rem;
-  font-weight: 500;
-  letter-spacing: 0.02em;
-  cursor: pointer;
-  backdrop-filter: blur(4px);
-  transition: background .15s ease, transform .15s ease;
-}
-.ganchito-volver:hover {
-  background: rgba(20, 33, 62, 0.92);
-  transform: translateY(-1px);
-}
-
-/* ===========================================================
-   Placeholder que se ve mientras no se eligió mesa (desktop)
-   =========================================================== */
-.ganchito-controles-wrap {
-  display: flex;
-  flex-direction: column;
-}
-.ganchito-placeholder {
-  padding: 2rem 1.4rem;
-  border-radius: var(--radius-lg);
-  border: 1px dashed var(--line);
-  background: var(--cream-deep);
-  display: flex;
-  align-items: center;
-  min-height: 300px;
-}
-.ganchito-placeholder p {
-  font-family: var(--font-display);
-  font-size: 1.15rem;
-  color: var(--ink-soft);
-  line-height: 1.5;
-}
-
-/* Cursor de "elegible" en el canvas mientras estás en el showroom */
-.ganchito-canvas-box { cursor: grab; }
-.ganchito-canvas-box:active { cursor: grabbing; }
-
-
-/* =========================================================
-   CONFIGURADOR 3D — layout vertical definitivo
-   ========================================================= */
-
-/* =========================================================
-   CONFIGURADOR 3D — INTEGRACIÓN
-   ========================================================= */
-
-.configurador-section {
-  padding: 90px 0 100px;
-  background: var(--cream);
-}
-
-.configurador-inmersivo {
-  width: 100%;
-  height: auto;
-  min-height: auto;
-  overflow: visible;
-  padding: 28px 0 0;
-  display: flex;
-  flex-direction: column;
-}
-
-.configurador-inmersivo .configurador-overlay-top {
-  flex: 0 0 auto;
-  width: 100%;
-  max-width: none;
-  margin: 0 auto 20px;
-  padding: 0 24px;
-  text-align: center;
-}
-
-.configurador-inmersivo .configurador-overlay-top .eyebrow {
-  color: var(--saddle);
-  margin-bottom: 5px;
-}
-
-.configurador-inmersivo .configurador-overlay-top .section-title {
-  font-size: clamp(2rem, 3.5vw, 3rem);
-  line-height: 1;
-  color: var(--ink);
-}
-
-.configurador-inmersivo .ganchito-stage {
-  position: relative;
-  width: 100%;
-  height: auto;
-  margin: 0;
-  overflow: visible;
-  background: var(--cream);
-  box-shadow: none;
-  border-radius: 0;
-}
-
-.configurador-inmersivo #ganchito-canvas-box-desktop {
-  position: relative;
-  width: 100%;
-  height: 360px;
-  background: #1a1a2e;
-  border-radius: var(--radius-lg);
-  overflow: hidden;
-  cursor: grab;
-  box-shadow: var(--shadow);
-  margin: 0 auto;
-  max-width: min(1180px, 100%);
-}
-
-.configurador-inmersivo #ganchito-canvas-box-desktop:active {
-  cursor: grabbing;
-}
-
-.configurador-inmersivo #ganchito-canvas-box-desktop canvas {
-  display: block;
-  width: 100%;
-  height: 100%;
-}
-
-.ganchito-hint-configurador {
-  width: 100%;
-  margin: 16px auto 0;
-  color: var(--ink-soft);
-  font-family: var(--font-label);
-  font-size: 0.82rem;
-  letter-spacing: 0.04em;
-  text-align: center;
-  padding: 0 24px;
-}
-
-.configurador-inmersivo .ganchito-volver {
-  position: absolute;
-  top: 12px;
-  left: 14px;
-  background: rgba(20, 33, 62, 0.75);
-  color: var(--cream);
-  border: none;
-  border-radius: 100px;
-  padding: 8px 16px;
-  font-family: var(--font-label);
-  font-size: 0.8rem;
-  font-weight: 500;
-  letter-spacing: 0.02em;
-  cursor: pointer;
-  backdrop-filter: blur(4px);
-  z-index: 10;
-  transition: background .15s ease, transform .15s ease;
-}
-
-.configurador-inmersivo .ganchito-volver:hover {
-  background: rgba(20, 33, 62, 0.92);
-  transform: translateY(-1px);
-}
-
-.configurador-inmersivo .ganchito-placeholder {
-  display: none;
-}
-
-.configurador-inmersivo .ganchito-controles {
-  position: relative;
-  width: min(720px, 100%);
-  max-width: 720px;
-  margin: 40px auto 0;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 0;
-  background: transparent;
-  overflow: visible;
-}
-
-.configurador-inmersivo .ganchito-controles.is-hidden {
-  display: none;
-}
-
-.configurador-inmersivo .ganchito-controles > .ganchito-grupo,
-.configurador-inmersivo .ganchito-controles > .ganchito-resumen-card {
-  width: 100%;
-  margin: 0;
-  padding: 22px 0;
-  border-bottom: 1px solid var(--line);
-}
-
-.configurador-inmersivo .ganchito-controles > .ganchito-grupo:first-child {
-  border-top: 1px solid var(--line);
-}
-
-.configurador-inmersivo .ganchito-controles .ganchito-label {
-  font-family: var(--font-label);
-  font-size: 0.76rem;
-  font-weight: 600;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--saddle);
-  margin: 0 0 12px;
-}
-
-.configurador-inmersivo .ganchito-controles .ganchito-btn-grupo {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-
-.configurador-inmersivo .ganchito-controles .ganchito-opt {
-  padding: 10px 18px;
-  border-radius: var(--radius);
-  border: 1.5px solid var(--line);
-  background: var(--paper);
-  color: var(--ink);
-  font-family: var(--font-label);
-  font-size: 0.85rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all .15s ease;
-}
-
-.configurador-inmersivo .ganchito-controles .ganchito-opt:hover {
-  background: var(--cream-deep);
-  border-color: var(--saddle);
-}
-
-.configurador-inmersivo .ganchito-controles .ganchito-opt.activo {
-  border: 2px solid var(--mustard);
-  color: var(--walnut-soft);
-  background: #FFF8EE;
-  font-weight: 600;
-}
-
-.configurador-inmersivo .ganchito-controles .ganchito-colores-wrap {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-  align-items: center;
-}
-
-.configurador-inmersivo .ganchito-controles .ganchito-color-dot,
-.configurador-inmersivo .ganchito-controles .ganchito-color-dot2 {
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
-  border: 2.5px solid transparent;
-  cursor: pointer;
-  padding: 0;
-  transition: transform .15s ease, border-color .15s ease, box-shadow .15s ease;
-  box-shadow: 0 0 0 1.5px var(--line);
-}
-
-.configurador-inmersivo .ganchito-controles .ganchito-color-dot:hover,
-.configurador-inmersivo .ganchito-controles .ganchito-color-dot2:hover {
-  transform: scale(1.1);
-}
-
-.configurador-inmersivo .ganchito-controles .ganchito-color-dot.activo,
-.configurador-inmersivo .ganchito-controles .ganchito-color-dot2.activo {
-  border-color: var(--mustard);
-  box-shadow: 0 0 0 2px var(--ink);
-  transform: scale(1.15);
-}
-
-.configurador-inmersivo .ganchito-controles .ganchito-resumen-card {
-  padding: 16px 0 0;
-  background: transparent;
-  border: none;
-}
-
-.configurador-inmersivo .ganchito-controles .ganchito-resumen-label {
-  font-family: var(--font-label);
-  font-size: 0.75rem;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--saddle);
-  margin-bottom: 6px;
-}
-
-.configurador-inmersivo .ganchito-controles .ganchito-resumen-texto {
-  font-family: var(--font-display);
-  font-size: 1rem;
-  font-weight: 600;
-  color: var(--ink);
-  margin-bottom: 14px;
-}
-
-.configurador-inmersivo .ganchito-controles .ganchito-resumen-card .btn {
-  width: 100%;
-  padding: 12px 20px;
-  font-size: 0.88rem;
-}
-
-@media (min-width: 761px) {
-  .configurador-inmersivo {
-    height: auto;
-    padding: 28px 0 0;
-  }
-
-  .configurador-inmersivo.overview-mode {
-    height: auto;
-    overflow: visible;
-    padding-bottom: 90px;
-  }
-
-  .configurador-inmersivo #ganchito-canvas-box-desktop {
-    height: 400px;
-    width: 100%;
-    max-width: none;
-    border-radius: 0;
-    margin: 0;
-    box-shadow: none;
-  }
-
-  .ganchito-hint-configurador {
-    margin: 12px 0 0;
-    padding: 0 24px;
-  }
-
-  .configurador-inmersivo .ganchito-controles {
-    width: min(1180px, 100%);
-    max-width: 1180px;
-    margin: 28px auto 0;
-    padding: 0 24px;
-  }
-}
-
-@media (max-width: 760px) {
-  .configurador-inmersivo {
-    height: 100svh;
-    min-height: 600px;
-    overflow: hidden;
-    padding: 16px 12px 0;
-  }
-
-  .configurador-inmersivo .configurador-overlay-top {
-    margin: 0 auto 10px;
-    padding: 0;
-  }
-
-  .configurador-inmersivo .configurador-overlay-top .eyebrow {
-    font-size: 0.65rem;
-  }
-
-  .configurador-inmersivo .configurador-overlay-top .section-title {
-    font-size: clamp(1.6rem, 6vw, 2.2rem);
-  }
-
-  .configurador-inmersivo #ganchito-canvas-box-desktop {
-    height: 260px;
-    border-radius: 12px;
-  }
-
-  .ganchito-hint-configurador {
-    margin: 8px 0 0;
-    font-size: 0.74rem;
-    padding: 0 12px;
-  }
-
-  .configurador-inmersivo .ganchito-controles {
-    width: 100%;
-    max-width: none;
-    margin: 12px 0 0;
-    padding: 0 12px;
-    flex: 1 1 auto;
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
-  }
-
-  .configurador-inmersivo .ganchito-controles > .ganchito-grupo,
-  .configurador-inmersivo .ganchito-controles > .ganchito-resumen-card {
-    padding: 14px 0;
-  }
-
-  .configurador-inmersivo .ganchito-controles .ganchito-label {
-    font-size: 0.68rem;
-    margin-bottom: 8px;
-  }
-
-  .configurador-inmersivo .ganchito-controles .ganchito-opt {
-    padding: 8px 12px;
-    font-size: 0.75rem;
-  }
-
-  .configurador-inmersivo .ganchito-controles .ganchito-color-dot,
-  .configurador-inmersivo .ganchito-controles .ganchito-color-dot2 {
-    width: 28px;
-    height: 28px;
-  }
-
-  .configurador-inmersivo .ganchito-controles .ganchito-resumen-label {
-    font-size: 0.63rem;
-  }
-
-  .configurador-inmersivo .ganchito-controles .ganchito-resumen-texto {
-    font-size: 0.9rem;
-  }
-
-  .configurador-inmersivo .ganchito-controles .ganchito-resumen-card .btn {
-    min-height: 36px;
-    padding: 8px 12px;
-    font-size: 0.75rem;
-  }
-}
-
-/* =========================================================
-   MOBILE COMPACTO
-   Canvas y configurador visibles en la misma pantalla
-   ========================================================= */
-
-@media (max-width: 760px) {
-  .configurador-inmersivo {
-    height: 100svh;
-    min-height: 600px;
-    overflow: hidden;
-    padding: 16px 12px 0;
-  }
-
-  .configurador-inmersivo .configurador-overlay-top {
-    margin: 0 auto 10px;
-    padding: 0;
-  }
-
-  .configurador-inmersivo .configurador-overlay-top .eyebrow {
-    font-size: 0.65rem;
-  }
-
-  .configurador-inmersivo .configurador-overlay-top .section-title {
-    font-size: clamp(1.6rem, 6vw, 2.2rem);
-  }
-
-  .configurador-inmersivo #ganchito-canvas-box-desktop {
-    height: 260px;
-    border-radius: 12px;
-  }
-
-  .ganchito-hint-configurador {
-    margin: 8px 0 0;
-    font-size: 0.74rem;
-    padding: 0 12px;
-  }
-
-  .configurador-inmersivo .ganchito-controles {
-    width: 100%;
-    max-width: none;
-    margin: 12px 0 0;
-    padding: 0 12px;
-    flex: 1 1 auto;
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
-  }
-
-  .configurador-inmersivo .ganchito-controles > .ganchito-grupo,
-  .configurador-inmersivo .ganchito-controles > .ganchito-resumen-card {
-    padding: 14px 0;
-  }
-
-  .configurador-inmersivo .ganchito-controles .ganchito-label {
-    font-size: 0.68rem;
-    margin-bottom: 8px;
-  }
-
-  .configurador-inmersivo .ganchito-controles .ganchito-opt {
-    padding: 8px 12px;
-    font-size: 0.75rem;
-  }
-
-  .configurador-inmersivo .ganchito-controles .ganchito-color-dot,
-  .configurador-inmersivo .ganchito-controles .ganchito-color-dot2 {
-    width: 28px;
-    height: 28px;
-  }
-
-  .configurador-inmersivo .ganchito-controles .ganchito-resumen-label {
-    font-size: 0.63rem;
-  }
-
-  .configurador-inmersivo .ganchito-controles .ganchito-resumen-texto {
-    font-size: 0.9rem;
-  }
-
-  .configurador-inmersivo .ganchito-controles .ganchito-resumen-card .btn {
-    min-height: 36px;
-    padding: 8px 12px;
-    font-size: 0.75rem;
-  }
-}
-/* =========================================================
-   DESKTOP — canvas full width + configurador visible abajo
-   ========================================================= */
-
-@media (min-width: 761px) {
-
-    .configurador-inmersivo {
-    width: 100%;
-    height: 100svh;
-    min-height: 700px;
-    overflow: hidden;
-    padding: 28px 0 0;
-    display: flex;
-    flex-direction: column;
-  }
-
-  /* Título */
-  .configurador-inmersivo .configurador-overlay-top {
-    flex: 0 0 auto;
-    width: 100%;
-    max-width: none;
-    margin: 0 auto 16px;
-    padding: 0 24px;
-  }
-
-  .configurador-inmersivo .configurador-overlay-top .eyebrow {
-    margin-bottom: 5px;
-    font-size: 0.72rem;
-  }
-
-  .configurador-inmersivo .configurador-overlay-top .section-title {
-    font-size: clamp(2rem, 3.5vw, 3rem);
-    line-height: 1;
-  }
-
-  /* Canvas realmente de borde a borde */
-  .configurador-inmersivo .ganchito-stage {
-    flex: 0 0 clamp(360px, 52svh, 570px);
-    width: 100%;
-    height: auto;
-    min-height: 360px;
-    max-height: 570px;
-    margin: 0;
-    border-radius: 0;
-    overflow: hidden;
-    background: #1a1a2e;
-    box-shadow: none;
-  }
-
-  .configurador-inmersivo #ganchito-canvas-box-desktop {
-    width: 100%;
-    height: 100%;
-    border-radius: 0;
-    box-shadow: none;
-  }
-
-  .configurador-inmersivo #ganchito-canvas-box-desktop canvas {
-    width: 100%;
-    height: 100%;
-    display: block;
-  }
-  /* AGREGA ESTO AL FINAL DEL BLOQUE @media */
-  .configurador-inmersivo.overview-mode {
-    height: auto;
-    min-height: auto;
-    overflow: visible;
-    padding-bottom: 90px;
-  }
-
-  /* Indicador debajo del canvas */
-  .ganchito-hint-configurador {
-    flex: 0 0 auto;
-    margin: 8px auto 8px;
-    font-size: 0.76rem;
-  }
-
-  /* Configurador ocupa el resto de la pantalla */
-  .configurador-inmersivo .ganchito-controles {
-    flex: 1 1 auto;
-    min-height: 0;
-    width: min(1180px, calc(100% - 48px));
-    max-width: 1180px;
-    margin: 0 auto;
-    padding: 0 0 20px;
-    overflow-y: auto;
-    overscroll-behavior: contain;
-
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    align-content: start;
-    gap: 0 32px;
-
-    background: transparent;
-    box-shadow: none;
-    border-radius: 0;
-  }
-
-  /* Oculta la manija del antiguo bottom sheet */
-  .configurador-inmersivo .ganchito-controles::before {
-    display: none;
-  }
-
-  /* Cada control como bloque compacto */
-  .configurador-inmersivo .ganchito-controles > .ganchito-grupo,
-  .configurador-inmersivo .ganchito-controles > .ganchito-resumen-card {
-    width: 100%;
-    min-width: 0;
-    padding: 8px 0;
-    margin: 0;
-    border-top: 1px solid var(--line);
-    border-bottom: 0;
-  }
-
-  .configurador-inmersivo .ganchito-controles .ganchito-label {
-    margin-bottom: 5px;
-    font-size: 0.7rem;
-  }
-
-  /* Los botones pueden ocupar varias líneas */
-  .configurador-inmersivo .ganchito-controles .ganchito-btn-grupo {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-    overflow: visible;
-  }
-
-  .configurador-inmersivo .ganchito-controles .ganchito-opt {
-    min-height: 32px;
-    padding: 7px 12px;
-    font-size: 0.75rem;
-  }
-
-  /* Colores */
-  .configurador-inmersivo .ganchito-controles .ganchito-colores-wrap {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    overflow: visible;
-  }
-
-  .configurador-inmersivo .ganchito-controles .ganchito-color-dot,
-  .configurador-inmersivo .ganchito-controles .ganchito-color-dot2 {
-    width: 28px;
-    height: 28px;
-  }
-
-  /* El resumen ocupa todo el ancho inferior */
-  .configurador-inmersivo .ganchito-controles > .ganchito-resumen-card {
-    grid-column: 1 / -1;
-    display: grid;
-    grid-template-columns: 150px 1fr auto;
-    align-items: center;
-    gap: 12px;
-    padding: 10px 0 14px;
-    border-bottom: 1px solid var(--line);
-  }
-
-  .configurador-inmersivo .ganchito-controles .ganchito-resumen-label {
-    margin: 0;
-    font-size: 0.65rem;
-  }
-
-  .configurador-inmersivo .ganchito-controles .ganchito-resumen-texto {
-    margin: 0;
-    font-size: 0.88rem;
-  }
-
-  .configurador-inmersivo .ganchito-controles .ganchito-resumen-card .btn {
-    min-height: 36px;
-    padding: 7px 14px;
-    font-size: 0.72rem;
-  }
-
-  /* Scrollbar discreta */
-  .configurador-inmersivo .ganchito-controles::-webkit-scrollbar {
-    width: 4px;
-  }
-
-  .configurador-inmersivo .ganchito-controles::-webkit-scrollbar-thumb {
-    background: rgba(20, 33, 62, 0.22);
-    border-radius: 10px;
-  }
-}
 /* =========================================================
    MODAL — galería de fotos (Bloque 2)
    ========================================================= */
@@ -2479,108 +2175,195 @@ p{ margin:0; }
   .modal-gallery-arrow{ width: 34px; height: 34px; font-size: 1.1rem; }
 }
 /* =========================================================
-   ACCORDION GALLERY — El proceso (Bloque 6)
+   GALERÍA CIRCULAR — El proceso
+   Fila arrastrable/scrolleable con scroll-snap nativo (mobile-safe:
+   es scroll horizontal de verdad, no un gesto simulado). La foto
+   centrada se agranda y se "endereza"; las de los costados se curvan
+   hacia atrás — el arco lo calcula script.js en cada tick de scroll
+   (rAF) y lo escribe como transform inline por ítem. Loop infinito
+   por triplicado del mazo (ver script.js).
    ========================================================= */
-.accordion-gallery {
-  margin-top: 44px;
-  padding: 0 24px 90px;
+.circular-gallery {
+  position: relative;
+  margin: 44px auto 90px;
   max-width: 1180px;
-  margin-left: auto;
-  margin-right: auto;
-  display: flex;
-  gap: 8px;
-  height: 420px;
+  padding: 0 20px;
 }
 
-.accordion-panel {
+.circular-track {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  height: clamp(280px, 60vw, 420px);
+  padding: 28px 4vw;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-snap-type: x mandatory;
+  scroll-padding-inline: 50%;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.circular-track::-webkit-scrollbar{ display: none; }
+
+.circular-item {
   position: relative;
-  flex: 1;
-  min-width: 0;
+  flex: none;
   height: 100%;
+  aspect-ratio: 3 / 4;
   border: none;
+  padding: 0;
   border-radius: var(--radius-lg);
+  overflow: hidden;
+  cursor: pointer;
   background-size: cover;
   background-position: center;
-  cursor: pointer;
-  overflow: hidden;
-  transition: flex-grow .5s cubic-bezier(.22,.68,0,1.01);
-  padding: 0;
+  box-shadow: var(--shadow-sm);
+  scroll-snap-align: center;
+  -webkit-user-select: none;
+  user-select: none;
 }
-
-.accordion-panel::after {
+.circular-item::after {
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(0deg, rgba(20,20,25,0.75) 0%, rgba(20,20,25,0.15) 45%, rgba(20,20,25,0.05) 100%);
-  transition: opacity .35s ease;
-  opacity: 0.55;
+  background: linear-gradient(0deg, rgba(20,20,25,0.7) 0%, rgba(20,20,25,0.1) 45%, rgba(20,20,25,0.02) 100%);
+  opacity: 0.5;
+  transition: opacity .3s ease;
 }
+.circular-item.is-center::after{ opacity: 0.85; }
 
-.accordion-panel.is-active,
-.accordion-panel:hover,
-.accordion-panel:focus-visible {
-  flex-grow: 4;
-}
-.accordion-panel.is-active::after,
-.accordion-panel:hover::after,
-.accordion-panel:focus-visible::after {
-  opacity: 0.9;
-}
+/* Mantener presionada la foto la abre completa (proceso-lightbox) —
+   sin touch-action:none: el long-press convive con el drag/scroll
+   horizontal nativo del track (se cancela solo si el toque se
+   convierte en swipe, ver script.js). */
+.circular-item.is-pressing { filter: brightness(1.15); }
 
-.accordion-panel-label {
+.circular-item-label {
   position: absolute;
-  left: 18px;
-  bottom: 16px;
+  left: 16px;
+  bottom: 14px;
   z-index: 2;
   color: var(--cream);
   font-family: var(--font-label);
-  font-size: 0.82rem;
-  letter-spacing: 0.04em;
+  font-size: 0.8rem;
+  letter-spacing: 0.03em;
   white-space: nowrap;
   opacity: 0;
-  transform: translateY(8px);
-  transition: opacity .3s ease .05s, transform .3s ease .05s;
+  transform: translateY(6px);
+  transition: opacity .3s ease, transform .3s ease;
 }
-.accordion-panel.is-active .accordion-panel-label,
-.accordion-panel:hover .accordion-panel-label,
-.accordion-panel:focus-visible .accordion-panel-label {
+.circular-item.is-center .circular-item-label{
   opacity: 1;
   transform: translateY(0);
 }
 
-.accordion-panel:focus-visible {
+.circular-item:focus-visible {
   outline: 2px solid var(--mustard);
-  outline-offset: 2px;
+  outline-offset: 3px;
 }
 
-@media (max-width: 760px) {
-  .accordion-gallery {
-    flex-direction: column;
-    height: auto;
-    padding: 0 16px 60px;
-    gap: 10px;
-  }
-  .accordion-panel {
-    height: 68px;
-    flex: none;
-    transition: height .4s ease;
-  }
-  .accordion-panel.is-active {
-    height: 240px;
-  }
-  .accordion-panel:hover,
-  .accordion-panel:focus-visible {
-    /* En mobile no hay hover real; solo manda .is-active (tap) */
-    height: 68px;
-  }
-  .accordion-panel.is-active:hover,
-  .accordion-panel.is-active:focus-visible {
-    height: 240px;
-  }
-  .accordion-panel-label {
-    opacity: 1;
-    transform: none;
-    font-size: 0.78rem;
+.circular-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 3;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 253, 249, 0.75);
+  border: 1px solid rgba(42, 28, 19, 0.14);
+  color: var(--walnut);
+  backdrop-filter: blur(4px);
+  cursor: pointer;
+  transition: background .2s ease, transform .15s ease;
+}
+.circular-arrow:hover{ background: rgba(255, 253, 249, 0.95); }
+.circular-arrow:active{ transform: translateY(-50%) scale(0.92); }
+.circular-arrow-prev{ left: -6px; }
+.circular-arrow-next{ right: -6px; }
+
+@media (min-width: 640px) {
+  .circular-gallery{ padding: 0 44px; }
+  .circular-arrow{ width: 44px; height: 44px; }
+  .circular-arrow-prev{ left: -4px; }
+  .circular-arrow-next{ right: -4px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .circular-track{ scroll-behavior: auto; }
+}
+
+/* =========================================================
+   Lightbox de "El proceso" — foto completa (object-fit:contain, sin
+   recortar), abre con long-press sobre cualquier ítem de la galería
+   circular.
+   ========================================================= */
+.proceso-lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  padding: 32px 20px calc(32px + env(safe-area-inset-bottom, 0px));
+  background: rgba(15, 12, 9, 0.9);
+  backdrop-filter: blur(6px);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .3s ease;
+}
+.proceso-lightbox.is-open {
+  opacity: 1;
+  pointer-events: auto;
+}
+.proceso-lightbox-img {
+  max-width: min(100%, 900px);
+  max-height: 78vh;
+  object-fit: contain;
+  border-radius: 10px;
+  box-shadow: 0 24px 60px -20px rgba(0,0,0,0.6);
+  transform: scale(0.96);
+  transition: transform .3s ease;
+}
+.proceso-lightbox.is-open .proceso-lightbox-img {
+  transform: scale(1);
+}
+.proceso-lightbox-caption {
+  margin: 0;
+  color: var(--cream);
+  font-family: var(--font-label);
+  font-size: 0.85rem;
+  letter-spacing: 0.03em;
+  text-align: center;
+}
+.proceso-lightbox-close {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255,255,255,0.12);
+  color: var(--cream);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background .2s ease, transform .15s ease;
+}
+.proceso-lightbox-close:hover { background: rgba(255,255,255,0.22); }
+.proceso-lightbox-close:active { transform: scale(0.92); }
+
+@media (prefers-reduced-motion: reduce) {
+  .circular-item, .proceso-lightbox, .proceso-lightbox-img {
+    transition-duration: 0.01ms !important;
   }
 }
 /* ==================== PAGE LOADER ==================== */
@@ -2626,3 +2409,4 @@ p{ margin:0; }
 body.mp-loading {
     overflow: hidden;
 }
+
