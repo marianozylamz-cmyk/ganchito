@@ -631,6 +631,142 @@ p{ margin:0; }
 }
 
 /* =========================================================
+   Cupón "ticket" — pop-up al ganar el memory. Estética de vale de
+   video-club: bordes punteados, perforación central, número gigante.
+   ========================================================= */
+.coupon-popup{
+  position: fixed;
+  inset: 0;
+  z-index: 300;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: rgba(20, 12, 6, 0.55);
+  backdrop-filter: blur(4px);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .3s ease;
+}
+.coupon-popup.is-open{ opacity: 1; pointer-events: auto; }
+
+.coupon-card{
+  position: relative;
+  width: 100%;
+  max-width: 340px;
+  padding: 34px 28px 26px;
+  background: var(--paper);
+  border: 2px dashed var(--saddle);
+  border-radius: 16px;
+  text-align: center;
+  transform: rotate(-1.5deg) scale(0.92);
+  transition: transform .35s cubic-bezier(.34,1.56,.64,1);
+  box-shadow: 0 24px 50px -18px rgba(20,12,6,0.5);
+}
+.coupon-popup.is-open .coupon-card{ transform: rotate(-1.5deg) scale(1); }
+
+.coupon-close{
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: none;
+  background: var(--cream-deep);
+  color: var(--walnut);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.coupon-eyebrow{
+  margin: 0 0 6px;
+  font-family: var(--font-label);
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--saddle);
+}
+.coupon-percent{
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 4.6rem;
+  line-height: 1;
+  color: var(--mustard);
+}
+.coupon-percent span{ font-size: 2rem; vertical-align: super; }
+.coupon-desc{
+  margin: 4px 0 20px;
+  color: var(--ink-soft);
+  font-size: 0.95rem;
+}
+
+.coupon-perf{
+  height: 0;
+  border-top: 2px dashed var(--line);
+  margin: 0 -28px 20px;
+  position: relative;
+}
+.coupon-perf::before, .coupon-perf::after{
+  content: "";
+  position: absolute;
+  top: -9px;
+  width: 18px; height: 18px;
+  border-radius: 50%;
+  background: var(--cream);
+}
+.coupon-perf::before{ left: -9px; }
+.coupon-perf::after{ right: -9px; }
+
+.coupon-code-row{
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 18px;
+}
+.coupon-code{
+  flex: 1;
+  padding: 10px 14px;
+  border-radius: 8px;
+  border: 1.5px dashed var(--line);
+  background: var(--cream-deep);
+  font-family: var(--font-label);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: var(--ink);
+}
+.coupon-copy{
+  flex: none;
+  padding: 10px 14px;
+  border-radius: 8px;
+  border: none;
+  background: var(--ink);
+  color: var(--cream);
+  font-family: var(--font-label);
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background .15s ease;
+}
+.coupon-copy:hover{ background: var(--saddle); }
+.coupon-copy.is-copied{ background: var(--mustard); color: var(--walnut); }
+
+.coupon-wsp{ width: 100%; }
+.coupon-fine{
+  margin: 14px 0 0;
+  font-size: 0.76rem;
+  color: var(--ink-soft);
+  opacity: 0.8;
+}
+
+@media (prefers-reduced-motion: reduce){
+  .coupon-popup, .coupon-card{ transition-duration: .01ms !important; }
+}
+
+/* =========================================================
    Footer
    ========================================================= */
 .site-footer{ background: var(--walnut); color: var(--cream); margin-top: 0; }
@@ -789,7 +925,7 @@ p{ margin:0; }
 .portal-drag-hint {
   position: absolute;
   left: 50%;
-  bottom: 22px;
+  top: 18px;
   transform: translateX(-50%);
   z-index: 2;
   margin: 0;
@@ -806,7 +942,11 @@ p{ margin:0; }
 
 .portal-drag-hint.is-visible { opacity: 1; }
 
-/* ---- Gate: solo el círculo, sin ninguna palabra que lo explique ---- */
+/* ---- Gate: el botón queda SIEMPRE centrado en el punto exacto donde
+   #hero3d-stage recorta su círculo (clip-path circle(30px at 50% 50%))
+   — nada de flex-column con el hint adentro, eso corría el centro del
+   botón hacia arriba y lo desalineaba del "ojo de cerradura" del túnel
+   detrás. El hint va posicionado aparte, debajo, sin afectar el centro. */
 .portal-gate {
   position: absolute;
   inset: 0;
@@ -815,6 +955,23 @@ p{ margin:0; }
   align-items: center;
   justify-content: center;
   transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+/* Arranca como instrucción neutra y se va poniendo más insistente a
+   medida que el usuario suelta antes de tiempo (ver hero3d-portal.js) —
+   la "voz" del botón, no una explicación seria de qué hace. */
+.portal-orb-hint {
+  position: absolute;
+  top: calc(50% + 46px);
+  left: 50%;
+  transform: translateX(-50%);
+  margin: 0;
+  max-width: 220px;
+  text-align: center;
+  color: var(--ink-soft);
+  font-family: var(--font-label);
+  font-size: 0.8rem;
+  letter-spacing: 0.02em;
 }
 
 .portal-gate.is-hidden {
@@ -2410,3 +2567,158 @@ body.mp-loading {
     overflow: hidden;
 }
 
+/* =========================================================
+   EASTER EGG — el mosaico fugitivo (ver easter-egg.js)
+   Un cuadradito "que se cayó ahí", cerca de un borde de pantalla.
+   Tocarlo lo hace huir a otro borde con un mensaje cada vez más
+   cargoso; al 4to toque se queda quieto y desde el propio mosaico
+   nace un bocadillo invitando a seguir a Ganchito en Instagram.
+   ========================================================= */
+.mosaic-fugitive{
+  position: fixed;
+  z-index: 55;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transform: scale(0.6) rotate(var(--rot, 0deg));
+  transition: opacity .3s ease, transform .3s cubic-bezier(.34,1.56,.64,1);
+  -webkit-tap-highlight-color: transparent;
+}
+.mosaic-fugitive.is-visible{ opacity: 1; transform: scale(1) rotate(var(--rot, 0deg)); }
+.mosaic-fugitive.is-fleeing{ opacity: 0; transform: scale(0.5) rotate(var(--rot, 0deg)); }
+
+.mosaic-fugitive-tile{
+  width: 26px;
+  height: 26px;
+  border-radius: 4px;
+  background: var(--ink);
+  box-shadow: inset 0 0 0 1.5px rgba(255,255,255,0.18), 0 3px 10px -3px rgba(0,0,0,0.5);
+  animation: mosaic-fugitive-drift 4.5s ease-in-out infinite;
+}
+@keyframes mosaic-fugitive-drift{
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-5px) rotate(4deg); }
+}
+
+.mosaic-fugitive-tag{
+  position: fixed;
+  z-index: 56;
+  left: 50%;
+  bottom: 70px;
+  transform: translateX(-50%) translateY(6px);
+  margin: 0;
+  padding: 8px 16px;
+  border-radius: 100px;
+  background: var(--ink);
+  color: var(--cream);
+  font-family: var(--font-label);
+  font-size: 0.8rem;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .3s ease, transform .3s ease;
+}
+.mosaic-fugitive-tag.is-visible{ opacity: 1; transform: translateX(-50%) translateY(0); }
+
+@media (min-width: 761px){
+  .mosaic-fugitive-tag{ bottom: 32px; }
+}
+
+/* ---- Bocadillo del payoff (4to toque): nace del mosaico, no un modal
+   centrado. Crece siempre hacia el centro de pantalla (ver
+   positionPayoff() en easter-egg.js) — 4 variantes según de qué lado
+   "sale", cada una con su colita apuntando de vuelta al mosaico. ---- */
+.mosaic-payoff{
+  position: fixed;
+  z-index: 57;
+  width: min(78vw, 250px);
+  padding: 16px 18px;
+  background: var(--paper);
+  border-radius: 14px;
+  box-shadow: 0 16px 36px -14px rgba(20,12,6,0.4);
+  opacity: 0;
+  transform: scale(0.85);
+  transition: opacity .3s ease, transform .35s cubic-bezier(.34,1.56,.64,1);
+  pointer-events: none;
+}
+.mosaic-payoff.is-visible{
+  opacity: 1;
+  transform: scale(1);
+  pointer-events: auto;
+}
+.mosaic-payoff::before{
+  content: "";
+  position: absolute;
+  width: 0;
+  height: 0;
+  border: 8px solid transparent;
+}
+.mosaic-payoff.opens-down-right{ transform-origin: top left; }
+.mosaic-payoff.opens-down-left{ transform-origin: top right; }
+.mosaic-payoff.opens-up-right{ transform-origin: bottom left; }
+.mosaic-payoff.opens-up-left{ transform-origin: bottom right; }
+
+.mosaic-payoff.opens-down-right::before{ top: -7px; left: 18px; border-bottom-color: var(--paper); }
+.mosaic-payoff.opens-down-left::before{ top: -7px; right: 18px; border-bottom-color: var(--paper); }
+.mosaic-payoff.opens-up-right::before{ bottom: -7px; left: 18px; border-top-color: var(--paper); }
+.mosaic-payoff.opens-up-left::before{ bottom: -7px; right: 18px; border-top-color: var(--paper); }
+
+.mosaic-payoff-close{
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: none;
+  background: var(--cream-deep);
+  color: var(--walnut);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.mosaic-payoff-text{
+  margin: 0 26px 14px 0;
+  color: var(--ink);
+  font-family: var(--font-display);
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.mosaic-payoff-cta{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: 100%;
+  min-height: 42px;
+  padding: 10px 16px;
+  border-radius: 100px;
+  background: var(--ink);
+  color: var(--cream);
+  font-family: var(--font-label);
+  font-weight: 600;
+  font-size: 0.82rem;
+  letter-spacing: 0.02em;
+  text-decoration: none;
+  text-align: center;
+  transition: background .15s ease, transform .15s ease;
+}
+.mosaic-payoff-cta:hover{ background: var(--ink-soft); }
+.mosaic-payoff-cta:active{ transform: scale(0.97); }
+
+@media (prefers-reduced-motion: reduce){
+  .mosaic-fugitive, .mosaic-fugitive-tag, .mosaic-payoff{
+    transition-duration: .01ms !important;
+  }
+  .mosaic-fugitive-tile{ animation: none; }
+}

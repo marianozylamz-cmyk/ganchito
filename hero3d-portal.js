@@ -12,19 +12,28 @@
   const portalStage = document.getElementById('portal-stage');
   const gate = document.getElementById('portal-gate');
   const orb = document.getElementById('portal-orb');
+  const orbHint = document.getElementById('portal-orb-hint');
   const dragHint = document.getElementById('portal-drag-hint');
   if (!portalStage || !gate || !orb) return;
 
   const HOLD_MS = 550;
   const DRIFT_PX = 16;
 
+  // El botón "habla": empieza neutro y se pone cada vez más insistente
+  // cada vez que sueltan antes de tiempo — el chiste es que te cargue
+  // un poco hasta que finalmente mantenés apretado.
+  const HINTS = ['Apretá el botón', 'Pero apretá con ganas', 'Dale! Mantené apretado'];
+  let attempts = 0;
+
   let pressTimer = null;
+  let pressActive = false;
   let activePointerId = null;
   let startX = 0, startY = 0;
   let revealed = false;
 
   function startPress(pointerId, x, y) {
     if (revealed) return;
+    pressActive = true;
     activePointerId = pointerId;
     startX = x; startY = y;
     orb.classList.add('is-charging');
@@ -32,12 +41,20 @@
   }
 
   function cancelPress() {
+    if (!pressActive) return; // ya se procesó este intento (evita doble conteo)
+    pressActive = false;
     if (pressTimer) { window.clearTimeout(pressTimer); pressTimer = null; }
     orb.classList.remove('is-charging');
     activePointerId = null;
+
+    if (orbHint) {
+      attempts = Math.min(attempts + 1, HINTS.length - 1);
+      orbHint.textContent = HINTS[attempts];
+    }
   }
 
   function completePress() {
+    pressActive = false;
     pressTimer = null;
     orb.classList.remove('is-charging');
     reveal();

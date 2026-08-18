@@ -479,6 +479,64 @@ if ("IntersectionObserver" in window) {
       completeEl.hidden = false;
       requestAnimationFrame(() => completeEl.classList.add('is-visible'));
     }
+    window.setTimeout(openCouponPopup, 700); // deja asentarse el "ganaste" antes del cupón
+  }
+
+  // ---- Cupón "ticket" — mismo código siempre (sin backend ni checkout,
+  // se valida a mano por WhatsApp). Si ya lo reclamó antes en este
+  // navegador, la segunda vez el chiste cambia en vez de repetir el
+  // mismo texto solemne. ----
+  const COUPON_CODE = 'GANCHITO10';
+  const COUPON_KEY = 'ganchitoCouponClaimed';
+  const couponPopup = document.getElementById('coupon-popup');
+  const couponEyebrow = document.getElementById('coupon-eyebrow');
+  const couponClose = document.getElementById('coupon-close');
+  const couponCopyBtn = document.getElementById('coupon-copy');
+  const couponWsp = document.getElementById('coupon-wsp');
+
+  function openCouponPopup() {
+    if (!couponPopup) return;
+    const alreadyClaimed = localStorage.getItem(COUPON_KEY) === '1';
+    if (couponEyebrow) {
+      couponEyebrow.textContent = alreadyClaimed
+        ? 'Ya lo habías ganado, pero tomá, insistí no más'
+        : 'Encontraste las 8 parejas';
+    }
+    if (couponWsp) {
+      const msg = alreadyClaimed
+        ? `Hola Ganchito! 👋 Jugué de nuevo al memory (sí, otra vez) y quiero mi ${COUPON_CODE}, dale.`
+        : `Hola Ganchito! 👋 Encontré las 8 parejas del juego 🎉 Quiero mi 10% de descuento en mi primera mesa con el código ${COUPON_CODE}.`;
+      couponWsp.href = buildWhatsAppLink(msg);
+    }
+    localStorage.setItem(COUPON_KEY, '1');
+    couponPopup.classList.add('is-open');
+  }
+  function closeCouponPopup() {
+    if (couponPopup) couponPopup.classList.remove('is-open');
+  }
+  if (couponClose) couponClose.addEventListener('click', closeCouponPopup);
+  if (couponPopup) {
+    couponPopup.addEventListener('click', (e) => { if (e.target === couponPopup) closeCouponPopup(); });
+  }
+  window.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && couponPopup && couponPopup.classList.contains('is-open')) closeCouponPopup();
+  });
+  if (couponCopyBtn) {
+    couponCopyBtn.addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(COUPON_CODE);
+      } catch (err) {
+        // Sin permiso/API de portapapeles (ej. contexto no seguro): el
+        // código ya está visible y seleccionable a mano, no hace falta
+        // avisar de un error para esto.
+      }
+      couponCopyBtn.textContent = '¡Copiado!';
+      couponCopyBtn.classList.add('is-copied');
+      window.setTimeout(() => {
+        couponCopyBtn.textContent = 'Copiar';
+        couponCopyBtn.classList.remove('is-copied');
+      }, 1600);
+    });
   }
 
   function newGame() {

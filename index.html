@@ -395,16 +395,17 @@
         <span class="portal-orb-ring" aria-hidden="true"></span>
         <span class="portal-orb-core" aria-hidden="true"></span>
       </button>
+      <p class="portal-orb-hint" id="portal-orb-hint" aria-live="polite">Apretá el botón</p>
     </div>
 
   </div>
 
 </section>
 
-  <!-- Puente configurador → oficio -->
+  <!-- Puente configurador → memory -->
   <div class="story-bridge" data-bridge>
     <a href="#oficio" class="bridge-link">
-      <span class="bridge-text">¿Cómo se hace una mesa así?</span>
+      <span class="bridge-text">¿Querés aprender más? Hay un juego escondido</span>
       <span class="bridge-arrow">↓</span>
     </a>
   </div>
@@ -430,6 +431,27 @@
     <div class="memory-complete" id="memory-complete" hidden>
       <p class="memory-complete-text">Conociste Ganchito pieza por pieza.</p>
       <a href="#mesas" class="btn btn-ink">Ver la colección</a>
+    </div>
+
+    <!-- Cupón "estilo ticket" — aparece al completar el memory. Sin
+         checkout ni backend: el código es un gesto fijo, se valida a
+         mano cuando escriben por WhatsApp (ver script.js). -->
+    <div class="coupon-popup" id="coupon-popup">
+      <div class="coupon-card">
+        <button class="coupon-close" id="coupon-close" aria-label="Cerrar">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+        <p class="coupon-eyebrow" id="coupon-eyebrow">Encontraste las 8 parejas</p>
+        <p class="coupon-percent">10<span>%</span></p>
+        <p class="coupon-desc">de descuento en tu primera mesa</p>
+        <div class="coupon-perf" aria-hidden="true"></div>
+        <div class="coupon-code-row">
+          <span class="coupon-code" id="coupon-code">GANCHITO10</span>
+          <button class="coupon-copy" id="coupon-copy" type="button">Copiar</button>
+        </div>
+        <a class="btn btn-mustard coupon-wsp" id="coupon-wsp" target="_blank" rel="noopener">Canjear por WhatsApp</a>
+        <p class="coupon-fine">Válido para tu primera compra. Mostralo cuando nos escribas.</p>
+      </div>
     </div>
   </section>
 
@@ -634,7 +656,23 @@
   </div>
 </footer>
 
+<!-- ============ EASTER EGG — el mosaico fugitivo ============ -->
+<!-- Objeto decorativo, no un control real: aria-hidden + tabindex="-1"
+     a propósito (ver easter-egg.js). -->
+<button class="mosaic-fugitive" id="mosaic-fugitive" aria-hidden="true" tabindex="-1" hidden>
+  <span class="mosaic-fugitive-tile"></span>
+</button>
+<p class="mosaic-fugitive-tag" id="mosaic-fugitive-tag" aria-hidden="true"></p>
 
+<!-- Payoff del 4to toque: nace del mosaico (posición calculada en JS,
+     ver positionPayoff()), no un modal centrado. -->
+<div class="mosaic-payoff" id="mosaic-payoff" aria-hidden="true" hidden>
+  <button class="mosaic-payoff-close" id="mosaic-payoff-close" aria-label="Cerrar">
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+  </button>
+  <p class="mosaic-payoff-text">Bue, ya que sos intenso...<br>apretá este botón 👇</p>
+  <a class="mosaic-payoff-cta" id="mosaic-payoff-link" href="https://www.instagram.com/ganchito.olav/" target="_blank" rel="noopener">Seguir en Instagram</a>
+</div>
 
 <script src="script.js"></script>
 <script src="admin.js"></script>
@@ -659,6 +697,7 @@
 <script src="hero3d-engine.js"></script>
 <script src="hero3d-portal.js"></script>
 <script src="hero3d-controls.js"></script>
+<script src="easter-egg.js"></script>
 
 </body>
 </html>
