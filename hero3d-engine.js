@@ -139,12 +139,21 @@ window.HeroScene = (function () {
   let interactionEnabled = false;
   let pinchStartDist = 0, zoomDistance = 0;
 
+  // touch-action queda SIEMPRE en 'pan-y', abierto o cerrado: así un swipe
+  // vertical con el dedo sobre el canvas scrollea la página de forma nativa
+  // (el browser lo detecta apenas el gesto es predominantemente vertical y
+  // dispara 'pointercancel', que ya cortamos el drag más abajo), mientras
+  // que un gesto horizontal no matchea ninguna acción nativa permitida y
+  // sigue llegando a los pointer events de acá abajo para rotar la mesa.
+  // 'pan-y' tampoco habilita pinch-zoom nativo de la página, así que el
+  // pinch de 2 dedos sigue siendo exclusivamente nuestro (zoom de cámara).
+  canvas.style.touchAction = 'pan-y';
+
   function setInteractionEnabled(v) {
     interactionEnabled = v;
-    canvas.style.touchAction = v ? 'none' : 'pan-y';
     if (!v) isPointerDown = false;
   }
-  setInteractionEnabled(false); // sincroniza el touch-action inicial
+  setInteractionEnabled(false);
 
   function onPointerDown(e) {
     if (!interactionEnabled) return;

@@ -33,6 +33,7 @@
   // ---------- AJUSTÁ ACÁ ----------
   const START_SELECTOR = '.faq-section';  // acá empieza a aparecer el mosaico
   const BUFFER_VH        = 70;  // scroll extra invisible después del footer, para que cierre 100% sin tapar nada
+  const BUFFER_VH_MOBILE  = 45; // en mobile, 70vh de scroll "vacío" al final se siente como que la página quedó trabada; se acorta solo ahí
   const COLOR_TILE       = '#F4EEE1'; // pieza "blanca" (fondo del logo)
   const COLOR_LOGO       = '#14213E'; // azul (trazo del logo)
   const GROUT             = '#E3D9C4';
@@ -128,7 +129,8 @@
       bufferEl.setAttribute('aria-hidden', 'true');
       document.body.appendChild(bufferEl);
     }
-    bufferEl.style.cssText = `height:${BUFFER_VH}vh;width:100%;pointer-events:none;`;
+    const vh = window.innerWidth <= 760 ? BUFFER_VH_MOBILE : BUFFER_VH;
+    bufferEl.style.cssText = `height:${vh}vh;width:100%;pointer-events:none;`;
   }
 
   // Arma el Set de celdas del logo a partir de LOGO_PATTERN,
